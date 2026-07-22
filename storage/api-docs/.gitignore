@@ -1,0 +1,4 @@
+*.json
+!.gitignore
+admin-docs.json
+api-docs.json
