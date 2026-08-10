@@ -14,10 +14,15 @@ Shift + Alt + F
 php artisan l5-swagger:generate
 php artisan l5-swagger:generate admin
 
+php artisan make:module Products
+php artisan make:module Calculate
+php artisan make:module Invoice
+php artisan make:module Invoice
+
 
 php artisan module:seed Setting
 php artisan module:seed ListBusiness
-php artisan module:make-controller AdminSettingsController 
+php artisan module:make-controller AdminSettingsController
 php artisan module:make-migration create_users_table User
 php artisan module:make-model User User
 
