@@ -23,11 +23,7 @@ return new class extends Migration
             // ارتباط با کشور
             // هر قالب می‌تواند مختص یک کشور باشد
             // در صورت حذف کشور، قالب‌های مربوطه نیز حذف می‌شوند
-            $table->foreignId('country_id')
-                  ->constrained('countries')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('country_id');
 
             // نام قالب (مثلاً "نمودار حساب‌های استاندارد ایران")
             $table->string('name', 100);

@@ -20,11 +20,7 @@ return new class extends Migration
 
             // ارتباط با شرکت (برای سیستم‌های چندشرکتی)
             // در صورت حذف شرکت، تمام دفترهای روزنامه مربوطه نیز حذف می‌شوند
-            $table->foreignId('company_id')
-                  ->constrained('companies')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('company_id');
 
             // کد شناسایی دفتر روزنامه (منحصر‌به‌فرد برای هر شرکت)
             $table->string('code', 50);

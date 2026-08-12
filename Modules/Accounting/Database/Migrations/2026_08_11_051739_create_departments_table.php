@@ -15,16 +15,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('departments', function (Blueprint $table) {
-            // شناسه اصلی (auto-increment)
             $table->id();
 
             // ارتباط با شرکت (برای سیستم‌های چندشرکتی)
             // در صورت حذف شرکت، تمام دپارتمان‌های مربوطه نیز حذف می‌شوند
-            $table->foreignId('company_id')
-                  ->constrained('companies')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('company_id');
 
             // کد شناسایی دپارتمان (منحصر‌به‌فرد برای هر شرکت)
             $table->string('code', 50);
@@ -34,20 +29,10 @@ return new class extends Migration
             
             // دپارتمان والد (برای ساختار سلسله‌مراتبی)
             // اگر null باشد، به معنای دپارتمان سطح بالا (ریشه) است
-            $table->foreignId('parent_id')
-                  ->nullable()
-                  ->constrained('departments')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('parent_id');
 
             // مدیر دپارتمان (ارتباط با جدول users یا employees)
-            $table->foreignId('manager_id')
-                  ->nullable()
-                  ->constrained('users') // یا employees
-                  ->onDelete('set null')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('manager_id');
 
             // وضعیت فعال/غیرفعال
             $table->boolean('is_active')->default(true)->index();

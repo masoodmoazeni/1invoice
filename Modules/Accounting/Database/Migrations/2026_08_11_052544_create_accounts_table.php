@@ -19,11 +19,7 @@ return new class extends Migration
             $table->id();
 
             // ارتباط با شرکت (برای سیستم‌های چندشرکتی)
-            $table->foreignId('company_id')
-                  ->constrained('companies')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('company_id');
 
             // کد حساب (ساختار سلسله‌مراتبی مانند: 1, 1.1, 1.1.1)
             $table->string('account_code', 50);
@@ -32,12 +28,7 @@ return new class extends Migration
             $table->string('account_name', 100);
             
             // حساب والد (برای ساختار سلسله‌مراتبی)
-            $table->foreignId('parent_id')
-                  ->nullable()
-                  ->constrained('accounts')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('parent_id');
 
             // دسته‌بندی حساب (دارایی، بدهی، سرمایه، درآمد، هزینه)
             $table->enum('account_category', [
@@ -55,12 +46,7 @@ return new class extends Migration
             $table->enum('normal_balance', ['debit', 'credit'])->default('debit');
 
             // ارز حساب (در صورت نیاز به ارز خاص)
-            $table->foreignId('currency_id')
-                  ->nullable()
-                  ->constrained('currencies')
-                  ->onDelete('restrict')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('currency_id');
 
             // آیا اجازه ثبت سند در این حساب وجود دارد؟
             $table->boolean('allow_posting')->default(true);

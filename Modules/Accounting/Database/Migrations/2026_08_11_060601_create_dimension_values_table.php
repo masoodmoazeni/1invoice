@@ -21,11 +21,7 @@ return new class extends Migration
 
             // ارتباط با بعد (هر مقدار متعلق به یک بعد است)
             // در صورت حذف بعد، تمام مقادیر مربوطه نیز حذف می‌شوند
-            $table->foreignId('dimension_id')
-                  ->constrained('dimensions')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('dimension_id');
 
             // کد شناسایی مقدار (منحصر‌به‌فرد برای هر بعد)
             $table->string('code', 50);
@@ -35,12 +31,7 @@ return new class extends Migration
             
             // مقدار والد (برای ساختار سلسله‌مراتبی)
             // اگر null باشد، به معنای مقدار سطح بالا (ریشه) است
-            $table->foreignId('parent_id')
-                  ->nullable()
-                  ->constrained('dimension_values')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('parent_id');
 
             // زمان‌های ایجاد و بروزرسانی
             $table->timestamps();

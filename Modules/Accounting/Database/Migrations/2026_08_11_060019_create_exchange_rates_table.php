@@ -19,18 +19,10 @@ return new class extends Migration
             $table->id();
 
             // ارز مبدا
-            $table->foreignId('from_currency_id')
-                  ->constrained('currencies')
-                  ->onDelete('restrict')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('from_currency_id');
 
             // ارز مقصد
-            $table->foreignId('to_currency_id')
-                  ->constrained('currencies')
-                  ->onDelete('restrict')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('to_currency_id');
 
             // نرخ ارز (مقدار to_currency به ازای 1 واحد from_currency)
             $table->decimal('rate', 15, 6)->default(1);

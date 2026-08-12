@@ -20,11 +20,7 @@ return new class extends Migration
 
             // ارتباط با شرکت (برای سیستم‌های چندشرکتی)
             // در صورت حذف شرکت، تمام شعب مربوطه نیز حذف می‌شوند
-            $table->foreignId('company_id')
-                  ->constrained('companies')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('company_id');
 
             // کد شناسایی شعبه (منحصر‌به‌فرد برای هر شرکت)
             $table->string('code', 50);
@@ -33,11 +29,7 @@ return new class extends Migration
             $table->string('name', 100);
             
             // ارتباط با کشور
-            $table->foreignId('country_id')
-                  ->constrained('countries')
-                  ->onDelete('restrict') // جلوگیری از حذف کشوری که شعبه دارد
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('country_id');
 
             // نام شهر
             $table->string('city', 100)->nullable();
@@ -52,12 +44,7 @@ return new class extends Migration
             $table->string('email', 100)->nullable()->unique();
             
             // مدیر شعبه (ارتباط با جدول users یا employees)
-            $table->foreignId('manager_id')
-                  ->nullable()
-                  ->constrained('users') // یا employees
-                  ->onDelete('set null')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('manager_id');
 
             // آیا این شعبه به‌عنوان شعبه پیش‌فرض شرکت است؟
             $table->boolean('is_default')->default(false)->index();

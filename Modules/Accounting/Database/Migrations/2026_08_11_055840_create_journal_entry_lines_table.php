@@ -20,53 +20,25 @@ return new class extends Migration
 
             // ارتباط با سند حسابداری
             // در صورت حذف سند، تمام ردیف‌های مربوطه نیز حذف می‌شوند
-            $table->foreignId('journal_entry_id')
-                  ->constrained('journal_entries')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('journal_entry_id');
 
             // شماره ردیف (برای ترتیب نمایش)
             $table->unsignedInteger('line_no')->default(0);
 
             // ارتباط با حساب مالی
-            $table->foreignId('account_id')
-                  ->constrained('accounts')
-                  ->onDelete('restrict')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('account_id');
 
             // ارتباط با طرف حساب (مشتری/تامین‌کننده/کارمند و ...)
-            $table->foreignId('partner_id')
-                  ->nullable()
-                  ->constrained('partners')
-                  ->onDelete('set null')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('partner_id');
 
             // ارتباط با پروژه
-            $table->foreignId('project_id')
-                  ->nullable()
-                  ->constrained('projects')
-                  ->onDelete('set null')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('project_id');
 
             // ارتباط با دپارتمان
-            $table->foreignId('department_id')
-                  ->nullable()
-                  ->constrained('departments')
-                  ->onDelete('set null')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('department_id');
 
             // ارتباط با مرکز هزینه
-            $table->foreignId('cost_center_id')
-                  ->nullable()
-                  ->constrained('cost_centers')
-                  ->onDelete('set null')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('cost_center_id');
 
             // شرح ردیف
             $table->text('description')->nullable();
@@ -78,12 +50,7 @@ return new class extends Migration
             $table->decimal('credit', 15, 2)->default(0);
 
             // ارز ردیف (در صورت متفاوت بودن با ارز سند)
-            $table->foreignId('currency_id')
-                  ->nullable()
-                  ->constrained('currencies')
-                  ->onDelete('set null')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('currency_id');
 
             // نرخ ارز (در صورت متفاوت بودن با ارز سند)
             $table->decimal('exchange_rate', 10, 4)->nullable();

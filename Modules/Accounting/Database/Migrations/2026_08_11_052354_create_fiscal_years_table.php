@@ -20,11 +20,7 @@ return new class extends Migration
 
             // ارتباط با شرکت (برای سیستم‌های چندشرکتی)
             // در صورت حذف شرکت، تمام سال‌های مالی مربوطه نیز حذف می‌شوند
-            $table->foreignId('company_id')
-                  ->constrained('companies')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('company_id');
 
             // نام سال مالی (مثلاً سال مالی ۱۴۰۳)
             $table->string('name', 100);

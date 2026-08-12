@@ -19,26 +19,13 @@ return new class extends Migration
             $table->id();
 
             // ارتباط با شرکت (سیستم چندشرکتی)
-            $table->foreignId('company_id')
-                  ->constrained('companies')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('company_id');
 
             // ارتباط با دفتر روزنامه (در صورت وجود)
-            $table->foreignId('journal_id')
-                  ->nullable()
-                  ->constrained('journals')
-                  ->onDelete('restrict')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('journal_id');
 
             // ارتباط با سال مالی
-            $table->foreignId('fiscal_year_id')
-                  ->constrained('fiscal_years')
-                  ->onDelete('restrict')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('fiscal_year_id');
 
             // شماره سند (شماره منحصر‌به‌فرد در هر سال مالی)
             $table->string('document_no', 50);
@@ -63,11 +50,7 @@ return new class extends Migration
             ])->default('draft')->index();
 
             // ارز سند
-            $table->foreignId('currency_id')
-                  ->constrained('currencies')
-                  ->onDelete('restrict')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('currency_id');
 
             // نرخ ارز (در صورت استفاده از ارز غیر از ارز پایه)
             $table->decimal('exchange_rate', 10, 4)->default(1);
@@ -80,20 +63,10 @@ return new class extends Migration
             $table->decimal('total_credit', 15, 2)->default(0);
 
             // ایجاد کننده سند
-            $table->foreignId('created_by')
-                  ->nullable()
-                  ->constrained('users')
-                  ->onDelete('set null')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('created_by');
 
             // تایید کننده سند
-            $table->foreignId('approved_by')
-                  ->nullable()
-                  ->constrained('users')
-                  ->onDelete('set null')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('approved_by');
 
             // تاریخ تایید
             $table->timestamp('approved_at')->nullable();

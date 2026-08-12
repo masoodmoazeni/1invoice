@@ -15,32 +15,27 @@ return new class extends Migration
     public function up()
     {
         Schema::create('countries', function (Blueprint $table) {
-            // شناسه اصلی (auto-increment)
             $table->id();
 
-            // کد دو حرفی کشور (مثلاً IR, US)
-            $table->string('iso2', 2)->unique()->index();
+            $table->string('iso2', 2)->comment('کد دو حرفی کشور')->unique()->index();
             
-            // کد سه حرفی کشور (مثلاً IRN, USA)
-            $table->string('iso3', 3)->unique()->index();
+            $table->string('iso3', 3)->comment('کد سه حرفی کشور')->unique()->index();
             
-            // نام کامل کشور (مثلاً Iran, United States)
-            $table->string('name', 100);
+            $table->string('name', 100)->comment('نام کامل کشور');
             
-            // کد عددی کشور (مثلاً 364 برای ایران)
-            $table->string('numeric_code', 10)->nullable();
+            $table->string('numeric_code', 10)->comment('کد عددی کشور')->nullable();
             
-            // کد تلفن کشور (مثلاً 98+)
-            $table->string('phone_code', 10)->nullable();
+            $table->string('phone_code', 10)->comment('کد تلفن کشور')->nullable();
             
-            // نام پایتخت
-            $table->string('capital', 100)->nullable();
+            $table->string('capital', 100)->comment('نام پایتخت')->nullable();
             
-            // وضعیت فعال/غیرفعال (پیش‌فرض فعال)
             $table->boolean('is_active')->default(true);
 
-            // زمان‌های ایجاد و بروزرسانی (created_at, updated_at)
             $table->timestamps();
+            $table->softDeletes();
+
+
+            $table->comment('جدول اطلاعات کشورها');
         });
     }
 

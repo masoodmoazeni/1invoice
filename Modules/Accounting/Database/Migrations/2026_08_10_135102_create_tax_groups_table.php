@@ -15,33 +15,21 @@ return new class extends Migration
     public function up()
     {
         Schema::create('tax_groups', function (Blueprint $table) {
-            // شناسه اصلی (auto-increment)
             $table->id();
 
-            // ارتباط با شرکت (برای سیستم‌های چندشرکتی)
-            // در صورت حذف شرکت، تمام گروه‌های مالیاتی مربوطه نیز حذف می‌شوند
-            $table->foreignId('company_id')
-                  ->constrained('companies')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('company_id');
 
-            // کد شناسایی گروه مالیاتی (منحصر‌به‌فرد برای هر شرکت)
-            $table->string('code', 50);
+            $table->string('code', 50)->comment('کد شناسایی گروه مالیاتی (منحصر‌به‌فرد برای هر شرکت)');
             
-            // نام گروه مالیاتی (مثلاً مالیات‌های استاندارد، مالیات‌های ویژه)
-            $table->string('name', 100);
+            $table->string('name', 100)->comment('نام گروه مالیاتی (مثلاً مالیات‌های استاندارد، مالیات‌های ویژه)');
             
-            // توضیحات تکمیلی درباره گروه مالیاتی
             $table->text('description')->nullable();
 
-            // زمان‌های ایجاد و بروزرسانی
             $table->timestamps();
+            $table->softDeletes();
 
-            // ایندکس ترکیبی برای جلوگیری از تکرار کد گروه مالیاتی در هر شرکت
             $table->unique(['company_id', 'code']);
 
-            // ایندکس ترکیبی برای جستجوی سریع‌تر گروه‌های مالیاتی یک شرکت
             $table->index(['company_id', 'name']);
         });
     }

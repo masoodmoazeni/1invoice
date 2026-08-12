@@ -15,28 +15,22 @@ return new class extends Migration
     public function up()
     {
         Schema::create('languages', function (Blueprint $table) {
-            // شناسه اصلی (auto-increment)
             $table->id();
 
-            // کد زبان بر اساس استاندارد (مثلاً fa, en, ar, fr)
-            // از نوع char با طول 2 برای کدهای دوحرفی ISO 639-1
-            $table->char('code', 2)->unique()->index();
+            $table->char('code', 5)->unique()->coment('کد زبان بر اساس استاندارد (مثلاً fa, en, ar, fr)')->index();
             
-            // نام کامل زبان به انگلیسی (مثلاً Persian, English, Arabic)
-            $table->string('name', 100);
+            $table->string('name', 100)->comment('نام کامل زبان به انگلیسی (مثلاً Persian, English, Arabic)');
             
-            // نام بومی زبان (مثلاً فارسی, English, العربية)
-            $table->string('native_name', 100)->nullable();
+            $table->string('native_name', 100)->comment('نام بومی زبان (مثلاً فارسی, English, العربية)')->nullable();
             
-            // جهت نوشتار: rtl (راست به چپ) یا ltr (چپ به راست)
-            // با مقدار پیش‌فرض ltr برای اکثر زبان‌ها
             $table->enum('direction', ['ltr', 'rtl'])->default('ltr')->index();
             
-            // وضعیت فعال/غیرفعال (پیش‌فرض فعال)
             $table->boolean('is_active')->default(true)->index();
 
-            // زمان‌های ایجاد و بروزرسانی (created_at, updated_at)
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->comment('جدول اطلاعات زبانی');
         });
     }
 

@@ -15,32 +15,22 @@ return new class extends Migration
     public function up()
     {
         Schema::create('time_zones', function (Blueprint $table) {
-            // شناسه اصلی (auto-increment)
             $table->id();
 
-            // کلید خارجی برای ارتباط با جدول countries
-            // در صورت حذف کشور، تمام منطقه‌های زمانی مربوطه نیز حذف می‌شوند (CASCADE)
-            $table->foreignId('country_id')
-                  ->constrained('countries')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('country_id');
 
-            // نام منطقه زمانی (مثلاً Asia/Tehran, America/New_York)
-            $table->string('name', 100)->unique();
+            $table->string('name', 100)->comment('نام منطقه زمانی (مثلاً Asia/Tehran, America/New_York)')->unique();
             
-            // مقدار UTC Offset (مثلاً +03:30, -05:00)
-            $table->string('utc_offset', 10);
+            $table->string('utc_offset', 10)->comment('مقدار UTC Offset (مثلاً +03:30, -05:00)');
             
-            // وضعیت پیش‌فرض بودن منطقه زمانی برای کشور مربوطه
-            // هر کشور فقط یک منطقه زمانی پیش‌فرض می‌تواند داشته باشد
             $table->boolean('is_default')->default(false);
 
-            // زمان‌های ایجاد و بروزرسانی (created_at, updated_at)
             $table->timestamps();
+            $table->softDeletes();
 
-            // ایندکس ترکیبی برای جستجوی سریع‌تر بر اساس کشور و وضعیت پیش‌فرض
             $table->index(['country_id', 'is_default']);
+
+            $table->comment('جدول اطلاعات موقعیت زمانی');
         });
     }
 

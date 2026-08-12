@@ -20,20 +20,11 @@ return new class extends Migration
 
             // ارتباط با شرکت (سیستم چندشرکتی)
             // در صورت حذف شرکت، تمام حساب‌های بانکی مربوطه حذف می‌شوند
-            $table->foreignId('company_id')
-                  ->constrained('companies')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('company_id');
 
             // ارتباط با طرف حساب (در صورت وجود)
             // می‌تواند برای مشتری، تامین‌کننده، کارمند و غیره باشد
-            $table->foreignId('partner_id')
-                  ->nullable()
-                  ->constrained('partners')
-                  ->onDelete('set null')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('partner_id');
 
             // نام بانک
             $table->string('bank_name', 100);
@@ -51,11 +42,7 @@ return new class extends Migration
             $table->string('swift', 11)->nullable();
             
             // ارز حساب بانکی
-            $table->foreignId('currency_id')
-                  ->constrained('currencies')
-                  ->onDelete('restrict')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('currency_id');
 
             // آیا این حساب بانکی به‌عنوان پیش‌فرض استفاده شود؟
             $table->boolean('is_default')->default(false)->index();
