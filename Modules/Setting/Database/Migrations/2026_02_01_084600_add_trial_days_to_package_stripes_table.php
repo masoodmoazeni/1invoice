@@ -13,9 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('packages', function (Blueprint $table) {
-            $table->integer('trial_days')->after('stripe_price_id')->default(0)->comment('trial days for subscription');
-        });
+        // Schema::table('packages', function (Blueprint $table) {
+        //     $table->integer('trial_days')->after('stripe_price_id')->default(0)->comment('trial days for subscription');
+        // });
     }
 
     /**

@@ -8,9 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('package_orders', function (Blueprint $table) {
-            $table->text('stripe_checkout_url')->nullable()->after('stripe_session_id');
-        });
+        // Schema::table('package_orders', function (Blueprint $table) {
+        //     $table->text('stripe_checkout_url')->nullable()->after('stripe_session_id');
+        // });
     }
 
     public function down(): void

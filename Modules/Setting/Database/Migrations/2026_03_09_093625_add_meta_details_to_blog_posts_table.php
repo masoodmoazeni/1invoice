@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('blog_posts', function (Blueprint $table) {
-            $table->string('meta_title')->nullable()->after('status');
-            $table->text('meta_description')->nullable()->after('meta_title');
-            $table->string('og_image')->nullable()->after('meta_description');
-        });
+        // Schema::table('blog_posts', function (Blueprint $table) {
+        //     $table->string('meta_title')->nullable()->after('status');
+        //     $table->text('meta_description')->nullable()->after('meta_title');
+        //     $table->string('og_image')->nullable()->after('meta_description');
+        // });
     }
 
     /**

@@ -13,9 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('package_orders', function (Blueprint $table) {
-            $table->string('stripe_customer_email')->after('stripe_customer_id')->nullable()->comment('Customer email on stripe');
-        });
+        // Schema::table('package_orders', function (Blueprint $table) {
+        //     $table->string('stripe_customer_email')->after('stripe_customer_id')->nullable()->comment('Customer email on stripe');
+        // });
     }
 
     /**

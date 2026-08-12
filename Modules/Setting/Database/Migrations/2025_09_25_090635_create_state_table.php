@@ -13,17 +13,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('states', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('country_id');
-            $table->string('state_code', 3)->unique()->nullable();
-            $table->string('name');
-            $table->string('description')->nullable();
-            $table->text('disclaimer')->nullable();
-            $table->tinyInteger('status')->default(true);
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        // Schema::create('states', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->unsignedBigInteger('country_id');
+        //     $table->string('state_code', 3)->unique()->nullable();
+        //     $table->string('name');
+        //     $table->string('description')->nullable();
+        //     $table->text('disclaimer')->nullable();
+        //     $table->tinyInteger('status')->default(true);
+        //     $table->timestamps();
+        //     $table->softDeletes();
+        // });
     }
 
     /**

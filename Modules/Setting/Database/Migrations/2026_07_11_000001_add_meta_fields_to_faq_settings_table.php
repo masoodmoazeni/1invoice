@@ -15,39 +15,39 @@ return new class extends Migration
 
     public function up(): void
     {
-        Schema::table('faq_settings', function (Blueprint $table) {
-            if (!Schema::hasColumn('faq_settings', 'meta_title')) {
-                $table->string('meta_title')->nullable()->after('schema');
-            }
+        // Schema::table('faq_settings', function (Blueprint $table) {
+        //     if (!Schema::hasColumn('faq_settings', 'meta_title')) {
+        //         $table->string('meta_title')->nullable()->after('schema');
+        //     }
 
-            if (!Schema::hasColumn('faq_settings', 'meta_description')) {
-                $table->text('meta_description')->nullable()->after('meta_title');
-            }
-        });
+        //     if (!Schema::hasColumn('faq_settings', 'meta_description')) {
+        //         $table->text('meta_description')->nullable()->after('meta_title');
+        //     }
+        // });
 
-        if (Schema::hasTable('faq_settings')) {
-            $now = now();
+        // if (Schema::hasTable('faq_settings')) {
+        //     $now = now();
 
-            if (!DB::table('faq_settings')->exists()) {
-                DB::table('faq_settings')->insert([
-                    'schema' => null,
-                    'meta_title' => self::DEFAULT_META_TITLE,
-                    'meta_description' => self::DEFAULT_META_DESCRIPTION,
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ]);
-            } else {
-                foreach (DB::table('faq_settings')->get() as $row) {
-                    DB::table('faq_settings')
-                        ->where('id', $row->id)
-                        ->update([
-                            'meta_title' => $row->meta_title ?? self::DEFAULT_META_TITLE,
-                            'meta_description' => $row->meta_description ?? self::DEFAULT_META_DESCRIPTION,
-                            'updated_at' => $now,
-                        ]);
-                }
-            }
-        }
+        //     if (!DB::table('faq_settings')->exists()) {
+        //         DB::table('faq_settings')->insert([
+        //             'schema' => null,
+        //             'meta_title' => self::DEFAULT_META_TITLE,
+        //             'meta_description' => self::DEFAULT_META_DESCRIPTION,
+        //             'created_at' => $now,
+        //             'updated_at' => $now,
+        //         ]);
+        //     } else {
+        //         foreach (DB::table('faq_settings')->get() as $row) {
+        //             DB::table('faq_settings')
+        //                 ->where('id', $row->id)
+        //                 ->update([
+        //                     'meta_title' => $row->meta_title ?? self::DEFAULT_META_TITLE,
+        //                     'meta_description' => $row->meta_description ?? self::DEFAULT_META_DESCRIPTION,
+        //                     'updated_at' => $now,
+        //                 ]);
+        //         }
+        //     }
+        // }
     }
 
     public function down(): void

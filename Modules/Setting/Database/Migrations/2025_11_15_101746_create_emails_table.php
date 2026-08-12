@@ -13,14 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('emails', function (Blueprint $table) {
-            $table->id();
-            $table->string('firstname');
-            $table->string('lastname');
-            $table->string('email');
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        // Schema::create('emails', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('firstname');
+        //     $table->string('lastname');
+        //     $table->string('email');
+        //     $table->timestamps();
+        //     $table->softDeletes();
+        // });
     }
 
     /**

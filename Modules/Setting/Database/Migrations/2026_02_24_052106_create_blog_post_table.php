@@ -13,24 +13,24 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('blog_posts')) {
-            Schema::create('blog_posts', function (Blueprint $table) {
-                $table->id();
+        // if (!Schema::hasTable('blog_posts')) {
+        //     Schema::create('blog_posts', function (Blueprint $table) {
+        //         $table->id();
 
-                $table->string('title');
-                $table->string('slug')->unique();
+        //         $table->string('title');
+        //         $table->string('slug')->unique();
 
-                $table->string('featured_image')->nullable();
+        //         $table->string('featured_image')->nullable();
 
-                $table->longText('content');
+        //         $table->longText('content');
 
-                $table->enum('status', ['draft', 'published'])->default('draft')->index();
-                $table->timestamp('published_at')->nullable();
+        //         $table->enum('status', ['draft', 'published'])->default('draft')->index();
+        //         $table->timestamp('published_at')->nullable();
 
-                $table->timestamps();
-                $table->softDeletes();
-            });
-        }
+        //         $table->timestamps();
+        //         $table->softDeletes();
+        //     });
+        // }
     }
 
     /**

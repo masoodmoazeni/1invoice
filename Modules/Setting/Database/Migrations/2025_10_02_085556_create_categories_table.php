@@ -13,15 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('categories', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('parent_id')->nullable();
-            $table->string('title');
-            $table->text('description')->nullable();
-            $table->tinyInteger('status')->default(1);
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        // Schema::create('categories', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->unsignedBigInteger('parent_id')->nullable();
+        //     $table->string('title');
+        //     $table->text('description')->nullable();
+        //     $table->tinyInteger('status')->default(1);
+        //     $table->timestamps();
+        //     $table->softDeletes();
+        // });
     }
 
     /**

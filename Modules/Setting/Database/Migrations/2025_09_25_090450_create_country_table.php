@@ -13,16 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('countries', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('country_code', 3)->unique()->nullable();
-            $table->string('description')->nullable();
-            $table->string('flag')->nullable();
-            $table->tinyInteger('status')->default(true);
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        // Schema::create('countries', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('name');
+        //     $table->string('country_code', 3)->unique()->nullable();
+        //     $table->string('description')->nullable();
+        //     $table->string('flag')->nullable();
+        //     $table->tinyInteger('status')->default(true);
+        //     $table->timestamps();
+        //     $table->softDeletes();
+        // });
     }
 
     /**

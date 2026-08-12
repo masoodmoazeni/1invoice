@@ -13,15 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('sale_advantages', function (Blueprint $table) {
-            $table->id();
-            $table->string('type')->comment('sale=for sale type , advantage = unique advantage');
-            $table->string('title');
-            $table->string('description')->nullable();
-            $table->tinyInteger('status')->default(true);
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        // Schema::create('sale_advantages', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('type')->comment('sale=for sale type , advantage = unique advantage');
+        //     $table->string('title');
+        //     $table->string('description')->nullable();
+        //     $table->tinyInteger('status')->default(true);
+        //     $table->timestamps();
+        //     $table->softDeletes();
+        // });
     }
 
     /**
