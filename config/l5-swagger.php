@@ -18,6 +18,7 @@ return [
                     app_path('Swagger/api/OpenApi.php'),
                     base_path('Modules/Setting/Http/Controllers'),
                     base_path('Modules/User/Http/Controllers'),
+                    base_path('Modules/Accounting/Http/Controllers'),
                 ],
                 'docs_json' => 'api-docs.json',
                 'docs_yaml' => 'api-docs.yaml',

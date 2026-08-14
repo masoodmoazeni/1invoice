@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
+use Modules\Accounting\Http\Controllers\v1\CompanyController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,6 +15,10 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/accounting', function (Request $request) {
-    return $request->user();
+Route::prefix('v1')->group(function () {
+    
+    Route::prefix('company')->group(function () {
+        Route::get('/', [CompanyController::class, 'index']);
+    });
+
 });
