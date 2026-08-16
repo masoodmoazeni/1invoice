@@ -5,8 +5,10 @@ namespace Modules\Accounting\Http\Controllers\v1;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController;
 use Illuminate\Support\Facades\Log;
-use Modules\Accounting\Http\Requests\CountryRequest;
 use Modules\Accounting\Services\CountryService;
+
+use Modules\Accounting\Http\Requests\Country\CountryRequest;
+use Modules\Accounting\Http\Requests\Country\CountryUpdateRequest;
 
 class CountryController extends BaseController
 {
@@ -37,12 +39,12 @@ class CountryController extends BaseController
     {
         try {
             $perPage = $request->get('per_page', 15);
-            $filters = $request->only(['search', 'is_active', 'sort_by', 'sort_order']);
-            
-            // حذف فیلترهای null
-            $filters = array_filter($filters, function ($value) {
-                return $value !== null && $value !== '';
-            });
+            $search = request()->get('search', null);
+
+            $filters = [];
+            if ($search) {
+                $filters['search'] = $search;
+            }
 
             $countries = $this->countryService->getPaginate($perPage, $filters);
 
@@ -117,7 +119,7 @@ class CountryController extends BaseController
     public function show($id)
     {
         try {
-            $country = $this->countryService->findById($id);
+            $country = $this->countryService->find($id);
             
             if (!$country) {
                 return $this->errorResponse('کشور مورد نظر یافت نشد', 404);
@@ -162,30 +164,13 @@ class CountryController extends BaseController
      *     )
      * )
      */
-    public function update(Request $request, $id)
+    public function update(CountryUpdateRequest $request, $id)
     {
         try {
-            // بررسی وجود کشور
-            if (!$this->countryService->exists($id)) {
-                return $this->errorResponse('کشور مورد نظر یافت نشد', 404);
-            }
+            
+            $validatedData = $request->validated();
 
-            // اعتبارسنجی داده‌ها
-            $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-                'iso2' => 'sometimes|string|max:2|unique:countries,iso2,' . $id,
-                'iso3' => 'sometimes|string|max:3|unique:countries,iso3,' . $id,
-                'name' => 'sometimes|string|max:100',
-                'numeric_code' => 'nullable|string|max:10',
-                'phone_code' => 'nullable|string|max:10',
-                'capital' => 'nullable|string|max:100',
-                'is_active' => 'sometimes|boolean',
-            ]);
-
-            if ($validator->fails()) {
-                return $this->errorResponse($validator->errors()->first(), 422);
-            }
-
-            $country = $this->countryService->update($id, $request->all());
+            $country = $this->countryService->update($id, $validatedData);
 
             return $this->successResponse($country, 'کشور با موفقیت به‌روزرسانی شد');
         } catch (\Exception $ex) {
@@ -207,10 +192,7 @@ class CountryController extends BaseController
     public function destroy($id)
     {
         try {
-            if (!$this->countryService->exists($id)) {
-                return $this->errorResponse('کشور مورد نظر یافت نشد', 404);
-            }
-
+            
             $this->countryService->delete($id);
 
             return $this->successResponse(null, 'کشور با موفقیت حذف شد');

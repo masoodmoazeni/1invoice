@@ -7,8 +7,11 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
-use Modules\Accounting\Http\Requests\CompanyRequest;
+
 use Modules\Accounting\Services\CompanyService;
+
+use Modules\Accounting\Http\Requests\Company\CompanyRequest;
+use Modules\Accounting\Http\Requests\Company\CompanyUpdateRequest;
 
 class CompanyController extends BaseController
 {
@@ -136,13 +139,45 @@ class CompanyController extends BaseController
     }
 
     /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
+     * @OA\Get(
+     *     path="/company/{id}",
+     *     summary="show specific company",
+     *     tags={"Company"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Company ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Company details retrieved successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Company not found"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed to retrieve company"
+     *     )
+     * )
      */
     public function show($id)
     {
-        return view('accounting::show');
+        try {
+            $company = $this->companyService->find($id);
+            
+            if (!$company) {
+                return $this->errorResponse('Company not found', 404);
+            }
+
+            return $this->successResponse($company);
+        } catch (\Exception $ex) {
+            Log::error($ex->getMessage());
+            return $this->errorResponse('Failed to retrieve company: ' . $ex->getMessage(), 500);
+        }
     }
 
     /**
@@ -156,23 +191,147 @@ class CompanyController extends BaseController
     }
 
     /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
+     * @OA\Put(
+     *     path="/company/{id}",
+     *     summary="update company",
+     *     tags={"Company"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Company ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="code", type="string", maxLength=50, example="COMP-001", description="کد یکتای شرکت"),
+     *             @OA\Property(property="name", type="string", maxLength=255, example="شرکت نمونه", description="نام شرکت"),
+     *             @OA\Property(property="legal_name", type="string", maxLength=255, nullable=true, example="شرکت نمونه با مسئولیت محدود", description="نام حقوقی شرکت"),
+     *             @OA\Property(property="country_id", type="integer", nullable=true, example=1, description="شناسه کشور"),
+     *             @OA\Property(property="base_currency_id", type="integer", nullable=true, example=1, description="شناسه ارز پایه"),
+     *             @OA\Property(property="language_id", type="integer", nullable=true, example=1, description="شناسه زبان"),
+     *             @OA\Property(property="timezone_id", type="integer", nullable=true, example=1, description="شناسه منطقه زمانی"),
+     *             @OA\Property(property="tax_number", type="string", maxLength=50, nullable=true, example="1234567890", description="شماره مالیاتی"),
+     *             @OA\Property(property="registration_number", type="string", maxLength=50, nullable=true, example="12345", description="شماره ثبت شرکت"),
+     *             @OA\Property(property="phone", type="string", maxLength=20, nullable=true, example="021-12345678", description="شماره تلفن"),
+     *             @OA\Property(property="mobile", type="string", maxLength=20, nullable=true, example="09121234567", description="شماره همراه"),
+     *             @OA\Property(property="email", type="string", format="email", maxLength=255, nullable=true, example="info@company.com", description="آدرس ایمیل"),
+     *             @OA\Property(property="website", type="string", format="url", maxLength=255, nullable=true, example="https://www.company.com", description="آدرس وبسایت"),
+     *             @OA\Property(property="address", type="string", nullable=true, example="تهران، خیابان اصلی، پلاک ۱۲۳", description="آدرس کامل"),
+     *             @OA\Property(property="postal_code", type="string", maxLength=20, nullable=true, example="1234567890", description="کد پستی"),
+     *             @OA\Property(property="city", type="string", maxLength=100, nullable=true, example="تهران", description="شهر"),
+     *             @OA\Property(property="state", type="string", maxLength=100, nullable=true, example="تهران", description="استان"),
+     *             @OA\Property(property="logo", type="string", maxLength=255, nullable=true, example="uploads/company/logo.png", description="مسیر فایل لوگو"),
+     *             @OA\Property(property="fiscal_year_start_month", type="integer", minimum=1, maximum=12, example=1, description="ماه شروع سال مالی (1-12)"),
+     *             @OA\Property(property="is_active", type="boolean", example=true, description="وضعیت فعال/غیرفعال")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Company updated successfully"),
+     *     @OA\Response(response=404, description="Company not found"),
+     *     @OA\Response(response=422, description="Validation error"),
+     *     @OA\Response(response=500, description="Failed to update company")
+     * )
      */
-    public function update(Request $request, $id)
+    public function update(CompanyUpdateRequest $request, $id)
     {
-        //
+        try {
+            $validatedData = $request->validated();
+            
+            $company = $this->companyService->update($id, $validatedData);
+            
+            if (!$company) {
+                return $this->errorResponse('Company not found', 404);
+            }
+
+            return $this->successResponse($company, 'Company updated successfully');
+        } catch (\Exception $ex) {
+            Log::error($ex->getMessage());
+            return $this->errorResponse('Failed to update company: ' . $ex->getMessage(), 500);
+        }
     }
 
     /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
+     * @OA\Delete(
+     *     path="/company/{id}",
+     *     summary="delete company",
+     *     tags={"Company"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Company ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Company deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Company not found"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed to delete company"
+     *     )
+     * )
      */
     public function destroy($id)
     {
-        //
+        try {
+            $result = $this->companyService->delete($id);
+            
+            if (!$result) {
+                return $this->errorResponse('Company not found', 404);
+            }
+
+            return $this->successResponse(null, 'Company deleted successfully');
+        } catch (\Exception $ex) {
+            Log::error($ex->getMessage());
+            return $this->errorResponse('Failed to delete company: ' . $ex->getMessage(), 500);
+        }
+    }
+
+    /**
+     * @OA\Patch(
+     *     path="/company/{id}/toggle-status",
+     *     summary="toggle company status",
+     *     tags={"Company"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Company ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Company status toggled successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Company not found"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed to toggle company status"
+     *     )
+     * )
+     */
+    public function toggleStatus($id)
+    {
+        try {
+            $company = $this->companyService->toggleStatus($id);
+            
+            if (!$company) {
+                return $this->errorResponse('Company not found', 404);
+            }
+
+            return $this->successResponse($company, 'Company status toggled successfully');
+        } catch (\Exception $ex) {
+            Log::error($ex->getMessage());
+            return $this->errorResponse('Failed to toggle company status: ' . $ex->getMessage(), 500);
+        }
     }
 }

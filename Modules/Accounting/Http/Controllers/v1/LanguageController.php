@@ -5,8 +5,10 @@ namespace Modules\Accounting\Http\Controllers\v1;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController;
 use Illuminate\Support\Facades\Log;
-use Modules\Accounting\Http\Requests\LanguageRequest;
 use Modules\Accounting\Services\LanguageService;
+
+use Modules\Accounting\Http\Requests\Language\LanguageRequest;
+use Modules\Accounting\Http\Requests\Language\LanguageUpdateRequest;
 
 class LanguageController extends BaseController
 {
@@ -39,11 +41,12 @@ class LanguageController extends BaseController
     {
         try {
             $perPage = $request->get('per_page', 15);
-            $filters = $request->only(['search', 'code', 'direction', 'is_active', 'sort_by', 'sort_order']);
-            
-            $filters = array_filter($filters, function ($value) {
-                return $value !== null && $value !== '';
-            });
+            $search = request()->get('search', null);
+
+            $filters = [];
+            if ($search) {
+                $filters['search'] = $search;
+            }
 
             $languages = $this->languageService->getPaginate($perPage, $filters);
 
@@ -91,7 +94,7 @@ class LanguageController extends BaseController
     public function show($id)
     {
         try {
-            $language = $this->languageService->findById($id);
+            $language = $this->languageService->find($id);
             
             if (!$language) {
                 return $this->errorResponse('زبان مورد نظر یافت نشد', 404);
@@ -116,26 +119,12 @@ class LanguageController extends BaseController
      *     @OA\Response(response=422, description="خطا در اعتبارسنجی")
      * )
      */
-    public function update(Request $request, $id)
+    public function update(LanguageUpdateRequest $request, $id)
     {
         try {
-            if (!$this->languageService->exists($id)) {
-                return $this->errorResponse('زبان مورد نظر یافت نشد', 404);
-            }
+            $validatedData = $request->validated();
 
-            $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-                'code' => 'sometimes|string|max:5|unique:languages,code,' . $id,
-                'name' => 'sometimes|string|max:100',
-                'native_name' => 'nullable|string|max:100',
-                'direction' => 'sometimes|in:ltr,rtl',
-                'is_active' => 'sometimes|boolean',
-            ]);
-
-            if ($validator->fails()) {
-                return $this->errorResponse($validator->errors()->first(), 422);
-            }
-
-            $language = $this->languageService->update($id, $request->all());
+            $language = $this->languageService->update($id, $validatedData);
 
             return $this->successResponse($language, 'زبان با موفقیت به‌روزرسانی شد');
         } catch (\Exception $ex) {
@@ -157,10 +146,7 @@ class LanguageController extends BaseController
     public function destroy($id)
     {
         try {
-            if (!$this->languageService->exists($id)) {
-                return $this->errorResponse('زبان مورد نظر یافت نشد', 404);
-            }
-
+            
             $this->languageService->delete($id);
 
             return $this->successResponse(null, 'زبان با موفقیت حذف شد');
@@ -183,9 +169,7 @@ class LanguageController extends BaseController
     public function toggleStatus($id)
     {
         try {
-            if (!$this->languageService->exists($id)) {
-                return $this->errorResponse('زبان مورد نظر یافت نشد', 404);
-            }
+            
 
             $language = $this->languageService->toggleStatus($id);
 
