@@ -19,6 +19,7 @@ Route::prefix('v1')->group(function () {
     
     Route::prefix('company')->group(function () {
         Route::get('/', [CompanyController::class, 'index']);
+        Route::post('/', [CompanyController::class, 'create']);
     });
 
 });

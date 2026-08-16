@@ -11,6 +11,7 @@ use Exception;
 class TimeZonesTableSeeder extends Seeder
 {
     /**
+     * php artisan module:seed Accounting --class=TimeZonesTableSeeder
      * Run the database seeds.
      *
      * @return void
@@ -18,7 +19,7 @@ class TimeZonesTableSeeder extends Seeder
     public function run()
     {
         try {
-            DB::table('time_zones')->truncate();
+            DB::table('timezones')->truncate();
 
             DB::beginTransaction();
 
@@ -380,7 +381,7 @@ class TimeZonesTableSeeder extends Seeder
             foreach ($chunks as $chunk) {
                 if (!empty($chunk)) {
                     try {
-                        DB::table('time_zones')->insert($chunk);
+                        DB::table('timezones')->insert($chunk);
                         $insertedCount += count($chunk);
                     } catch (Exception $e) {
                         // لاگ خطا و ادامه
@@ -390,7 +391,7 @@ class TimeZonesTableSeeder extends Seeder
                         if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
                             foreach ($chunk as $record) {
                                 try {
-                                    DB::table('time_zones')->insert($record);
+                                    DB::table('timezones')->insert($record);
                                     $insertedCount++;
                                 } catch (Exception $innerE) {
                                     Log::warning('Skipped duplicate time zone: ' . $record['name']);

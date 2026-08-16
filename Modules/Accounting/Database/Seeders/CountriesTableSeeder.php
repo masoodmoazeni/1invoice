@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class CountriesTableSeeder extends Seeder
 {
     /**
+     * php artisan module:seed Accounting --class=CountriesTableSeeder
      * Run the database seeds.
      *
      * @return void

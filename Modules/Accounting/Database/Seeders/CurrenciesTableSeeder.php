@@ -10,6 +10,7 @@ use Exception;
 class CurrenciesTableSeeder extends Seeder
 {
     /**
+     * php artisan module:seed Accounting --class=CurrenciesTableSeeder
      * Run the database seeds.
      *
      * @return void

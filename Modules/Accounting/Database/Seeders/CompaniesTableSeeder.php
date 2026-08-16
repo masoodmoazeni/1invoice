@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 class CompaniesTableSeeder extends Seeder
 {
     /**
+     * php artisan module:seed Accounting --class=CompaniesTableSeeder
      * Run the database seeds.
      * پر کردن جدول companies با اطلاعات نمونه
      *

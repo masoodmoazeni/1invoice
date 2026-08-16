@@ -8,10 +8,9 @@ use Modules\Accounting\Repositories\CompanyRepository;
 
 class CompanyService extends BaseService
 {
-    protected $company;
-
     public function __construct(CompanyRepository $company)
     {
+        parent::__construct($company);
         $this->company = $company;
     }
 }

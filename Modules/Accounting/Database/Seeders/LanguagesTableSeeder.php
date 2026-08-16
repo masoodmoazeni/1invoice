@@ -10,6 +10,7 @@ use Exception;
 class LanguagesTableSeeder extends Seeder
 {
     /**
+     * php artisan module:seed Accounting --class=LanguagesTableSeeder
      * Run the database seeds.
      *
      * @return void
