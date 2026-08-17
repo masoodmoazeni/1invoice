@@ -15,31 +15,22 @@ return new class extends Migration
     public function up()
     {
         Schema::create('journal_entries', function (Blueprint $table) {
-            // شناسه اصلی (auto-increment)
             $table->id();
 
-            // ارتباط با شرکت (سیستم چندشرکتی)
-            $table->unsignedBigInteger('company_id');
+            $table->unsignedBigInteger('company_id')->comment('ارتباط با شرکت (سیستم چندشرکتی)');
 
-            // ارتباط با دفتر روزنامه (در صورت وجود)
-            $table->unsignedBigInteger('journal_id');
+            $table->unsignedBigInteger('journal_id')->comment('ارتباط با دفتر روزنامه (در صورت وجود)');
 
-            // ارتباط با سال مالی
-            $table->unsignedBigInteger('fiscal_year_id');
+            $table->unsignedBigInteger('fiscal_year_id')->comment('ارتباط با سال مالی');
 
-            // شماره سند (شماره منحصر‌به‌فرد در هر سال مالی)
-            $table->string('document_no', 50);
+            $table->string('document_no', 50)->comment('شماره سند (شماره منحصر‌به‌فرد در هر سال مالی)');
             
-            // شماره مرجع (شماره سند مرجع یا فاکتور)
-            $table->string('reference_no', 50)->nullable();
+            $table->string('reference_no', 50)->comment('شماره مرجع (شماره سند مرجع یا فاکتور)')->nullable();
             
-            // تاریخ سند
-            $table->date('document_date');
+            $table->date('document_date')->comment('تاریخ سند');
             
-            // تاریخ ثبت در سیستم
-            $table->date('posting_date')->nullable();
+            $table->date('posting_date')->comment('تاریخ ثبت در سیستم')->nullable();
             
-            // وضعیت سند
             $table->enum('status', [
                 'draft',       // پیش‌نویس
                 'pending',     // در انتظار تایید
@@ -47,37 +38,28 @@ return new class extends Migration
                 'posted',      // ثبت نهایی
                 'rejected',    // رد شده
                 'voided'       // باطل شده
-            ])->default('draft')->index();
+            ])->default('draft')->comment('وضعیت سند')->index();
 
-            // ارز سند
-            $table->unsignedBigInteger('currency_id');
+            $table->unsignedBigInteger('currency_id')->comment('ارز سند');
 
-            // نرخ ارز (در صورت استفاده از ارز غیر از ارز پایه)
-            $table->decimal('exchange_rate', 10, 4)->default(1);
+            $table->decimal('exchange_rate', 10, 4)->comment('نرخ ارز (در صورت استفاده از ارز غیر از ارز پایه)')->default(1);
 
-            // شرح سند
-            $table->text('description')->nullable();
+            $table->text('description')->comment('شرح سند')->nullable();
 
-            // مجموع بدهکار و بستانکار (برای اعتبارسنجی)
-            $table->decimal('total_debit', 15, 2)->default(0);
+            $table->decimal('total_debit', 15, 2)->comment('مجموع بدهکار و بستانکار (برای اعتبارسنجی)')->default(0);
             $table->decimal('total_credit', 15, 2)->default(0);
 
-            // ایجاد کننده سند
-            $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('created_by')->comment('ایجاد کننده سند');
 
-            // تایید کننده سند
-            $table->unsignedBigInteger('approved_by');
+            $table->unsignedBigInteger('approved_by')->comment('تایید کننده سند');
 
-            // تاریخ تایید
-            $table->timestamp('approved_at')->nullable();
+            $table->timestamp('approved_at')->comment('تاریخ تایید')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
 
-            // ایندکس ترکیبی برای جلوگیری از تکرار شماره سند در هر سال مالی
             $table->unique(['company_id', 'fiscal_year_id', 'document_no']);
 
-            // ایندکس‌های ترکیبی برای جستجوی سریع‌تر
             $table->index(['company_id', 'status']);
             $table->index(['company_id', 'document_date']);
             $table->index(['company_id', 'posting_date']);

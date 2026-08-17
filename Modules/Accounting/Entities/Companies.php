@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Companies extends Model
 {
-    use SoftDeletes, HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * The table associated with the model.

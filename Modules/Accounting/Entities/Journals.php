@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class Journals extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * نام جدول در دیتابیس

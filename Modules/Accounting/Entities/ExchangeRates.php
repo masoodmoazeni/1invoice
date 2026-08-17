@@ -8,7 +8,7 @@ use Carbon\Carbon;
 
 class ExchangeRates extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * نام جدول در دیتابیس

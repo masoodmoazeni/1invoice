@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class AccountTemplates extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * نام جدول در دیتابیس

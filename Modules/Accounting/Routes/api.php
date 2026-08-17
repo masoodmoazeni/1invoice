@@ -7,6 +7,7 @@ use Modules\Accounting\Http\Controllers\v1\CompanyController;
 use Modules\Accounting\Http\Controllers\v1\CountryController;
 use Modules\Accounting\Http\Controllers\v1\LanguageController;
 use Modules\Accounting\Http\Controllers\v1\AccountController;
+use Modules\Accounting\Http\Controllers\v1\BankAccountController;
 use Modules\Accounting\Http\Controllers\v1\AccountTemplateController;
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +36,14 @@ Route::prefix('v1')->group(function () {
         Route::get('/{id}', [AccountTemplateController::class, 'show']);
         Route::put('/{id}', [AccountTemplateController::class, 'update']);
         Route::delete('/{id}', [AccountTemplateController::class, 'destroy']);
+    });
+
+    Route::prefix('bank-account')->group(function () {
+        Route::get('/', [BankAccountController::class, 'index']);
+        Route::post('/', [BankAccountController::class, 'create']);
+        Route::get('/{id}', [BankAccountController::class, 'show']);
+        Route::put('/{id}', [BankAccountController::class, 'update']);
+        Route::delete('/{id}', [BankAccountController::class, 'destroy']);
     });
     
     Route::prefix('company')->group(function () {

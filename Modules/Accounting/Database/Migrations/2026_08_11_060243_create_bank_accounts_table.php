@@ -18,7 +18,6 @@ return new class extends Migration
             $table->id();
 
             $table->unsignedBigInteger('company_id');
-            $table->unsignedBigInteger('partner_id');
 
             $table->string('bank_name', 100)->comment('نام بانک');
             
