@@ -15,48 +15,33 @@ return new class extends Migration
     public function up()
     {
         Schema::create('bank_accounts', function (Blueprint $table) {
-            // شناسه اصلی (auto-increment)
             $table->id();
 
-            // ارتباط با شرکت (سیستم چندشرکتی)
-            // در صورت حذف شرکت، تمام حساب‌های بانکی مربوطه حذف می‌شوند
             $table->unsignedBigInteger('company_id');
-
-            // ارتباط با طرف حساب (در صورت وجود)
-            // می‌تواند برای مشتری، تامین‌کننده، کارمند و غیره باشد
             $table->unsignedBigInteger('partner_id');
 
-            // نام بانک
-            $table->string('bank_name', 100);
+            $table->string('bank_name', 100)->comment('نام بانک');
             
-            // نام شعبه بانک
-            $table->string('branch_name', 100)->nullable();
+            $table->string('branch_name', 100)->comment('نام شعبه بانک')->nullable();
             
-            // شماره حساب بانکی
-            $table->string('account_number', 50);
+            $table->string('account_number', 50)->comment('شماره حساب بانکی');
             
-            // شماره شبا (IBAN - International Bank Account Number)
-            $table->string('iban', 34)->nullable()->unique();
+            $table->string('iban', 34)->comment('شماره شبا (IBAN - International Bank Account Number)')->nullable()->unique();
             
-            // کد سوئیفت (Swift/BIC Code)
-            $table->string('swift', 11)->nullable();
+            $table->string('swift', 11)->comment('کد سوئیفت (Swift/BIC Code)')->nullable();
             
-            // ارز حساب بانکی
-            $table->unsignedBigInteger('currency_id');
+            $table->unsignedBigInteger('currency_id')->comment('ارز حساب بانکی');
 
-            // آیا این حساب بانکی به‌عنوان پیش‌فرض استفاده شود؟
-            $table->boolean('is_default')->default(false)->index();
+            $table->boolean('is_default')->comment('آیا این حساب بانکی به‌عنوان پیش‌فرض استفاده شود؟')->default(false)->index();
             
-            // وضعیت فعال/غیرفعال
-            $table->boolean('is_active')->default(true)->index();
+            $table->boolean('is_active')->comment('وضعیت فعال/غیرفعال')->default(true)->index();
 
-            // زمان‌های ایجاد و بروزرسانی
             $table->timestamps();
+            $table->softDeletes();
 
-            // ایندکس ترکیبی برای جلوگیری از تکرار شماره حساب در هر شرکت
             $table->unique(['company_id', 'account_number']);
 
-            // ایندکس‌های ترکیبی برای جستجوی سریع‌تر
+            
             $table->index(['company_id', 'partner_id']);
             $table->index(['company_id', 'currency_id']);
             $table->index(['company_id', 'is_default', 'is_active']);

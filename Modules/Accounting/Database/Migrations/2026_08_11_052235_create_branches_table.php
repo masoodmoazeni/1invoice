@@ -15,50 +15,35 @@ return new class extends Migration
     public function up()
     {
         Schema::create('branches', function (Blueprint $table) {
-            // شناسه اصلی (auto-increment)
             $table->id();
 
-            // ارتباط با شرکت (برای سیستم‌های چندشرکتی)
-            // در صورت حذف شرکت، تمام شعب مربوطه نیز حذف می‌شوند
-            $table->unsignedBigInteger('company_id');
+            $table->unsignedBigInteger('company_id')->comment('ارتباط با شرکت (برای سیستم‌های چندشرکتی) - در صورت حذف شرکت، تمام شعب مربوطه نیز حذف می‌شوند');
 
-            // کد شناسایی شعبه (منحصر‌به‌فرد برای هر شرکت)
-            $table->string('code', 50);
+            $table->string('code', 50)->comment('کد شناسایی شعبه (منحصر‌به‌فرد برای هر شرکت)');
             
-            // نام شعبه
-            $table->string('name', 100);
+            $table->string('name', 100)->comment('نام شعبه');
             
-            // ارتباط با کشور
-            $table->unsignedBigInteger('country_id');
+            $table->unsignedBigInteger('country_id')->comment('ارتباط با کشور');
 
-            // نام شهر
-            $table->string('city', 100)->nullable();
+            $table->string('city', 100)->comment('نام شهر')->nullable();
             
-            // آدرس کامل شعبه
-            $table->text('address')->nullable();
+            $table->text('address')->comment('آدرس کامل شعبه')->nullable();
             
-            // شماره تلفن شعبه
-            $table->string('phone', 20)->nullable();
+            $table->string('phone', 20)->comment('شماره تلفن شعبه')->nullable();
             
-            // آدرس ایمیل شعبه
-            $table->string('email', 100)->nullable()->unique();
+            $table->string('email', 100)->comment('آدرس ایمیل شعبه')->nullable()->unique();
             
-            // مدیر شعبه (ارتباط با جدول users یا employees)
-            $table->unsignedBigInteger('manager_id');
+            $table->unsignedBigInteger('manager_id')->comment('مدیر شعبه (ارتباط با جدول users یا employees)');
 
-            // آیا این شعبه به‌عنوان شعبه پیش‌فرض شرکت است؟
-            $table->boolean('is_default')->default(false)->index();
+            $table->boolean('is_default')->default(false)->comment('آیا این شعبه به‌عنوان شعبه پیش‌فرض شرکت است؟')->index();
             
-            // وضعیت فعال/غیرفعال
-            $table->boolean('is_active')->default(true)->index();
+            $table->boolean('is_active')->comment('وضعیت فعال/غیرفعال')->default(true)->index();
 
-            // زمان‌های ایجاد و بروزرسانی
             $table->timestamps();
+            $table->softDeletes();
 
-            // ایندکس ترکیبی برای جلوگیری از تکرار کد شعبه در هر شرکت
             $table->unique(['company_id', 'code']);
 
-            // ایندکس ترکیبی برای جستجوی سریع‌تر شعب یک شرکت
             $table->index(['company_id', 'is_active']);
             $table->index(['country_id', 'city']);
             $table->index(['is_default', 'is_active']);

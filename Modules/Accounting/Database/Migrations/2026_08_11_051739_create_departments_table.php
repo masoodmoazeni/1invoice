@@ -17,33 +17,23 @@ return new class extends Migration
         Schema::create('departments', function (Blueprint $table) {
             $table->id();
 
-            // ارتباط با شرکت (برای سیستم‌های چندشرکتی)
-            // در صورت حذف شرکت، تمام دپارتمان‌های مربوطه نیز حذف می‌شوند
-            $table->unsignedBigInteger('company_id');
+            $table->unsignedBigInteger('company_id')->comment('در صورت حذف شرکت، تمام دپارتمان‌های مربوطه نیز حذف می‌شوند');
 
-            // کد شناسایی دپارتمان (منحصر‌به‌فرد برای هر شرکت)
-            $table->string('code', 50);
+            $table->string('code', 50)->comment('کد شناسایی دپارتمان (منحصر‌به‌فرد برای هر شرکت)');
             
-            // نام دپارتمان
-            $table->string('name', 100);
+            $table->string('name', 100)->comment('نام دپارتمان');
             
-            // دپارتمان والد (برای ساختار سلسله‌مراتبی)
-            // اگر null باشد، به معنای دپارتمان سطح بالا (ریشه) است
-            $table->unsignedBigInteger('parent_id');
+            $table->unsignedBigInteger('parent_id')->comment('دپارتمان والد (برای ساختار سلسله‌مراتبی) اگر null باشد، به معنای دپارتمان سطح بالا (ریشه) است');
 
-            // مدیر دپارتمان (ارتباط با جدول users یا employees)
-            $table->unsignedBigInteger('manager_id');
+            $table->unsignedBigInteger('manager_id')->comment('مدیر دپارتمان (ارتباط با جدول users یا employees)');
 
-            // وضعیت فعال/غیرفعال
-            $table->boolean('is_active')->default(true)->index();
+            $table->boolean('is_active')->default(true)->comment('وضعیت فعال/غیرفعال')->index();
 
-            // زمان‌های ایجاد و بروزرسانی
             $table->timestamps();
+            $table->softDeletes();
 
-            // ایندکس ترکیبی برای جلوگیری از تکرار کد دپارتمان در هر شرکت
             $table->unique(['company_id', 'code']);
 
-            // ایندکس ترکیبی برای جستجوی سریع‌تر دپارتمان‌های یک شرکت
             $table->index(['company_id', 'is_active']);
             $table->index(['parent_id', 'is_active']);
         });

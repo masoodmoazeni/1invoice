@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Modules\Accounting\Http\Controllers\v1\CompanyController;
 use Modules\Accounting\Http\Controllers\v1\CountryController;
 use Modules\Accounting\Http\Controllers\v1\LanguageController;
+use Modules\Accounting\Http\Controllers\v1\AccountController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,6 +19,14 @@ use Modules\Accounting\Http\Controllers\v1\LanguageController;
 */
 
 Route::prefix('v1')->group(function () {
+    
+    Route::prefix('account')->group(function () {
+        Route::get('/', [AccountController::class, 'index']);
+        Route::post('/', [AccountController::class, 'create']);
+        Route::get('/{id}', [AccountController::class, 'show']);
+        Route::put('/{id}', [AccountController::class, 'update']);
+        Route::delete('/{id}', [AccountController::class, 'destroy']);
+    });
     
     Route::prefix('company')->group(function () {
         Route::get('/', [CompanyController::class, 'index']);

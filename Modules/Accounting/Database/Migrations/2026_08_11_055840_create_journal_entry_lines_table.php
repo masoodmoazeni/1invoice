@@ -15,53 +15,35 @@ return new class extends Migration
     public function up()
     {
         Schema::create('journal_entry_lines', function (Blueprint $table) {
-            // شناسه اصلی (auto-increment)
             $table->id();
 
-            // ارتباط با سند حسابداری
-            // در صورت حذف سند، تمام ردیف‌های مربوطه نیز حذف می‌شوند
-            $table->unsignedBigInteger('journal_entry_id');
+            $table->unsignedBigInteger('journal_entry_id')->comment('ارتباط با سند حسابداری - در صورت حذف سند، تمام ردیف‌های مربوطه نیز حذف می‌شوند');
 
-            // شماره ردیف (برای ترتیب نمایش)
-            $table->unsignedInteger('line_no')->default(0);
+            $table->unsignedInteger('line_no')->comment('شماره ردیف (برای ترتیب نمایش)')->default(0);
 
-            // ارتباط با حساب مالی
-            $table->unsignedBigInteger('account_id');
+            $table->unsignedBigInteger('account_id')->comment('ارتباط با حساب مالی');
 
-            // ارتباط با طرف حساب (مشتری/تامین‌کننده/کارمند و ...)
-            $table->unsignedBigInteger('partner_id');
+            $table->unsignedBigInteger('partner_id')->comment('ارتباط با طرف حساب (مشتری/تامین‌کننده/کارمند و ...)');
 
-            // ارتباط با پروژه
-            $table->unsignedBigInteger('project_id');
+            $table->unsignedBigInteger('project_id')->comment('ارتباط با پروژه');
 
-            // ارتباط با دپارتمان
-            $table->unsignedBigInteger('department_id');
+            $table->unsignedBigInteger('department_id')->comment('ارتباط با دپارتمان');
 
-            // ارتباط با مرکز هزینه
-            $table->unsignedBigInteger('cost_center_id');
+            $table->unsignedBigInteger('cost_center_id')->comment('ارتباط با مرکز هزینه');
 
-            // شرح ردیف
-            $table->text('description')->nullable();
+            $table->text('description')->comment('شرح ردیف')->nullable();
 
-            // مبلغ بدهکار
-            $table->decimal('debit', 15, 2)->default(0);
+            $table->decimal('debit', 15, 2)->comment('مبلغ بدهکار')->default(0);
             
-            // مبلغ بستانکار
-            $table->decimal('credit', 15, 2)->default(0);
+            $table->decimal('credit', 15, 2)->comment('مبلغ بستانکار')->default(0);
 
-            // ارز ردیف (در صورت متفاوت بودن با ارز سند)
-            $table->unsignedBigInteger('currency_id');
+            $table->unsignedBigInteger('currency_id')->comment('ارز ردیف (در صورت متفاوت بودن با ارز سند)');
 
-            // نرخ ارز (در صورت متفاوت بودن با ارز سند)
-            $table->decimal('exchange_rate', 10, 4)->nullable();
+            $table->decimal('exchange_rate', 10, 4)->comment('نرخ ارز (در صورت متفاوت بودن با ارز سند)')->nullable();
 
-            // زمان‌های ایجاد و بروزرسانی
             $table->timestamps();
-            
-            // حذف نرم (soft delete)
             $table->softDeletes();
 
-            // ایندکس‌های ترکیبی برای جستجوی سریع‌تر
             $table->index(['journal_entry_id', 'line_no']);
             $table->index(['account_id', 'debit', 'credit']);
             $table->index(['partner_id']);

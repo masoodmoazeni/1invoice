@@ -15,69 +15,53 @@ return new class extends Migration
     public function up()
     {
         Schema::create('accounts', function (Blueprint $table) {
-            // شناسه اصلی (auto-increment)
             $table->id();
 
-            // ارتباط با شرکت (برای سیستم‌های چندشرکتی)
             $table->unsignedBigInteger('company_id');
 
-            // کد حساب (ساختار سلسله‌مراتبی مانند: 1, 1.1, 1.1.1)
-            $table->string('account_code', 50);
+            $table->string('account_code', 50)->nullable();
             
-            // نام حساب
-            $table->string('account_name', 100);
+            $table->string('account_name', 100)->comment('نام حساب')->nullable();
             
-            // حساب والد (برای ساختار سلسله‌مراتبی)
-            $table->unsignedBigInteger('parent_id');
+            $table->unsignedBigInteger('parent_id')->comment('حساب والد (برای ساختار سلسله‌مراتبی)')->nullable();
 
-            // دسته‌بندی حساب (دارایی، بدهی، سرمایه، درآمد، هزینه)
+            
             $table->enum('account_category', [
                 'asset',      // دارایی
                 'liability',  // بدهی
                 'equity',     // سرمایه
                 'revenue',    // درآمد
                 'expense'     // هزینه
-            ])->index();
+            ])->comment('// دسته‌بندی حساب (دارایی، بدهی، سرمایه، درآمد، هزینه)')->nullable()->index();
 
-            // نوع حساب (جزئی یا کل)
-            $table->enum('account_type', ['detail', 'header'])->default('detail');
+            $table->enum('account_type', ['detail', 'header'])->nullable()->comment('نوع حساب (جزئی یا کل)')->default('detail');
 
-            // مانده عادی (بدهکار یا بستانکار)
-            $table->enum('normal_balance', ['debit', 'credit'])->default('debit');
+            $table->enum('normal_balance', ['debit', 'credit'])->nullable()->comment('مانده عادی (بدهکار یا بستانکار)')->default('debit');
 
-            // ارز حساب (در صورت نیاز به ارز خاص)
-            $table->unsignedBigInteger('currency_id');
+            $table->unsignedBigInteger('currency_id')->comment('ارز حساب (در صورت نیاز به ارز خاص)');
 
-            // آیا اجازه ثبت سند در این حساب وجود دارد؟
-            $table->boolean('allow_posting')->default(true);
+            $table->boolean('allow_posting')->nullable()->comment('آیا اجازه ثبت سند در این حساب وجود دارد؟')->default(true);
 
-            // آیا این حساب سیستمی است (غیرقابل حذف یا تغییر توسط کاربر)
-            $table->boolean('is_system')->default(false);
+            $table->boolean('is_system')->nullable()->comment('آیا این حساب سیستمی است (غیرقابل حذف یا تغییر توسط کاربر)')->default(false);
 
-            // وضعیت فعال/غیرفعال
-            $table->boolean('is_active')->default(true)->index();
+            $table->boolean('is_active')->nullable()->comment('وضعیت فعال/غیرفعال')->default(true)->index();
 
-            // سطح حساب در ساختار سلسله‌مراتبی (به‌صورت خودکار محاسبه می‌شود)
-            $table->unsignedInteger('level')->default(0);
+            $table->unsignedInteger('level')->comment('سطح حساب در ساختار سلسله‌مراتبی (به‌صورت خودکار محاسبه می‌شود)')->default(0);
 
-            // ترتیب نمایش
-            $table->unsignedInteger('sort_order')->default(0);
+            $table->unsignedInteger('sort_order')->comment('ترتیب نمایش')->default(0);
 
-            // زمان‌های ایجاد و بروزرسانی
             $table->timestamps();
-            
-            // حذف نرم (soft delete)
             $table->softDeletes();
 
-            // ایندکس ترکیبی برای جلوگیری از تکرار کد حساب در هر شرکت
             $table->unique(['company_id', 'account_code']);
 
-            // ایندکس‌های ترکیبی برای جستجوی سریع‌تر
             $table->index(['company_id', 'account_category']);
             $table->index(['company_id', 'is_active']);
             $table->index(['company_id', 'account_type']);
             $table->index(['parent_id', 'level']);
             $table->index(['account_category', 'normal_balance']);
+
+            $table->comment('جدول اطلاعات حساب‌های مالی قسمت حساب‌ها');
         });
     }
 

@@ -15,20 +15,14 @@ return new class extends Migration
     public function up()
     {
         Schema::create('journals', function (Blueprint $table) {
-            // شناسه اصلی (auto-increment)
             $table->id();
 
-            // ارتباط با شرکت (برای سیستم‌های چندشرکتی)
-            // در صورت حذف شرکت، تمام دفترهای روزنامه مربوطه نیز حذف می‌شوند
             $table->unsignedBigInteger('company_id');
 
-            // کد شناسایی دفتر روزنامه (منحصر‌به‌فرد برای هر شرکت)
-            $table->string('code', 50);
+            $table->string('code', 50)->comment('کد شناسایی دفتر روزنامه (منحصر‌به‌فرد برای هر شرکت)');
             
-            // نام دفتر روزنامه
-            $table->string('name', 100);
+            $table->string('name', 100)->comment('نام دفتر روزنامه');
             
-            // نوع دفتر روزنامه
             $table->enum('type', [
                 'general',      // دفتر روزنامه عمومی
                 'sales',        // دفتر روزنامه فروش
@@ -39,21 +33,17 @@ return new class extends Migration
                 'inventory',    // دفتر روزنامه انبار
                 'adjustment',   // دفتر روزنامه تعدیلات
                 'closing'       // دفتر روزنامه اختتامیه
-            ])->default('general')->index();
+            ])->default('general')->comment('نوع دفتر روزنامه')->index();
 
-            // آیا این دفتر روزنامه به‌عنوان پیش‌فرض استفاده شود؟
-            $table->boolean('is_default')->default(false)->index();
+            $table->boolean('is_default')->default(false)->comment('آیا این دفتر روزنامه به‌عنوان پیش‌فرض استفاده شود؟')->index();
             
-            // وضعیت فعال/غیرفعال
-            $table->boolean('is_active')->default(true)->index();
+            $table->boolean('is_active')->default(true)->comment('وضعیت فعال/غیرفعال')->index();
 
-            // زمان‌های ایجاد و بروزرسانی
             $table->timestamps();
+            $table->softDeletes();
 
-            // ایندکس ترکیبی برای جلوگیری از تکرار کد دفتر روزنامه در هر شرکت
             $table->unique(['company_id', 'code']);
 
-            // ایندکس ترکیبی برای جستجوی سریع‌تر
             $table->index(['company_id', 'type']);
             $table->index(['company_id', 'is_default', 'is_active']);
         });

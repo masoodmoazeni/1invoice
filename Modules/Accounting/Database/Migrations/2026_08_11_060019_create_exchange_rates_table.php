@@ -15,31 +15,23 @@ return new class extends Migration
     public function up()
     {
         Schema::create('exchange_rates', function (Blueprint $table) {
-            // شناسه اصلی (auto-increment)
             $table->id();
 
-            // ارز مبدا
-            $table->unsignedBigInteger('from_currency_id');
+            $table->unsignedBigInteger('from_currency_id')->comment('ارز مبدا');
 
-            // ارز مقصد
-            $table->unsignedBigInteger('to_currency_id');
+            $table->unsignedBigInteger('to_currency_id')->comment('ارز مقصد');
 
-            // نرخ ارز (مقدار to_currency به ازای 1 واحد from_currency)
-            $table->decimal('rate', 15, 6)->default(1);
+            $table->decimal('rate', 15, 6)->comment('نرخ ارز (مقدار to_currency به ازای 1 واحد from_currency)')->default(1);
 
-            // تاریخ اعتبار نرخ ارز
-            $table->date('effective_date')->index();
+            $table->date('effective_date')->comment('تاریخ اعتبار نرخ ارز')->index();
 
-            // منبع دریافت نرخ ارز (API، دستی، بانک مرکزی و ...)
-            $table->string('source', 100)->nullable();
+            $table->string('source', 100)->comment('منبع دریافت نرخ ارز (API، دستی، بانک مرکزی و ...)')->nullable();
 
-            // زمان‌های ایجاد
             $table->timestamps();
+            $table->softDeletes();
 
-            // ایندکس ترکیبی برای جلوگیری از تکرار نرخ ارز در یک تاریخ
             $table->unique(['from_currency_id', 'to_currency_id', 'effective_date'], 'unique_exchange_rate');
 
-            // ایندکس‌های ترکیبی برای جستجوی سریع‌تر
             $table->index(['from_currency_id', 'to_currency_id']);
             $table->index(['effective_date', 'from_currency_id']);
         });

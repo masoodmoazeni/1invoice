@@ -71,10 +71,7 @@ return new class extends Migration
             // تاریخ تایید
             $table->timestamp('approved_at')->nullable();
 
-            // زمان‌های ایجاد و بروزرسانی
             $table->timestamps();
-            
-            // حذف نرم (soft delete)
             $table->softDeletes();
 
             // ایندکس ترکیبی برای جلوگیری از تکرار شماره سند در هر سال مالی

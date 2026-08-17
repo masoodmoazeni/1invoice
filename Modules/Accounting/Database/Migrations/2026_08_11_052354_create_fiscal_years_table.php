@@ -15,21 +15,15 @@ return new class extends Migration
     public function up()
     {
         Schema::create('fiscal_years', function (Blueprint $table) {
-            // شناسه اصلی (auto-increment)
             $table->id();
 
-            // ارتباط با شرکت (برای سیستم‌های چندشرکتی)
-            // در صورت حذف شرکت، تمام سال‌های مالی مربوطه نیز حذف می‌شوند
-            $table->unsignedBigInteger('company_id');
+            $table->unsignedBigInteger('company_id')->comment(' در صورت حذف شرکت، تمام سال‌های مالی مربوطه نیز حذف می‌شوند - ارتباط با شرکت (برای سیستم‌های چندشرکتی)');
 
-            // نام سال مالی (مثلاً سال مالی ۱۴۰۳)
-            $table->string('name', 100);
+            $table->string('name', 100)->comment('نام سال مالی (مثلاً سال مالی ۱۴۰۳)');
             
-            // تاریخ شروع سال مالی
-            $table->date('start_date');
+            $table->date('start_date')->comment('تاریخ شروع سال مالی');
             
-            // تاریخ پایان سال مالی
-            $table->date('end_date');
+            $table->date('end_date')->comment('تاریخ پایان سال مالی');
             
             // وضعیت سال مالی: 
             // open = باز و قابل استفاده
@@ -40,24 +34,16 @@ return new class extends Migration
                   ->default('pending')
                   ->index();
             
-            // آیا این سال مالی به‌عنوان سال مالی پیش‌فرض شرکت است؟
-            $table->boolean('is_default')->default(false)->index();
+            $table->boolean('is_default')->comment('آیا این سال مالی به‌عنوان سال مالی پیش‌فرض شرکت است؟')->default(false)->index();
             
-            // تاریخ قفل شدن سال مالی (برای جلوگیری از تغییرات پس از این تاریخ)
-            $table->timestamp('lock_date')->nullable();
+            $table->timestamp('lock_date')->comment('تاریخ قفل شدن سال مالی (برای جلوگیری از تغییرات پس از این تاریخ)')->nullable();
             
-            // زمان‌های ایجاد و بروزرسانی
             $table->timestamps();
-            
-            // حذف نرم (soft delete)
             $table->softDeletes();
 
-            // ایندکس ترکیبی برای جلوگیری از تداخل تاریخ‌ها در یک شرکت
-            // دو سال مالی نمی‌توانند تاریخ‌های همپوشانی داشته باشند
             $table->unique(['company_id', 'start_date']);
             $table->unique(['company_id', 'end_date']);
 
-            // ایندکس‌های ترکیبی برای جستجوی سریع‌تر
             $table->index(['company_id', 'status']);
             $table->index(['company_id', 'is_default']);
             $table->index(['start_date', 'end_date']);
