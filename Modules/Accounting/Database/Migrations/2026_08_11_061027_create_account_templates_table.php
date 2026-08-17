@@ -17,12 +17,8 @@ return new class extends Migration
     public function up()
     {
         Schema::create('account_templates', function (Blueprint $table) {
-            // شناسه اصلی (auto-increment)
             $table->id();
 
-            // ارتباط با کشور
-            // هر قالب می‌تواند مختص یک کشور باشد
-            // در صورت حذف کشور، قالب‌های مربوطه نیز حذف می‌شوند
             $table->unsignedBigInteger('country_id');
 
             // نام قالب (مثلاً "نمودار حساب‌های استاندارد ایران")

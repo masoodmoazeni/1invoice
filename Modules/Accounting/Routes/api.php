@@ -7,6 +7,7 @@ use Modules\Accounting\Http\Controllers\v1\CompanyController;
 use Modules\Accounting\Http\Controllers\v1\CountryController;
 use Modules\Accounting\Http\Controllers\v1\LanguageController;
 use Modules\Accounting\Http\Controllers\v1\AccountController;
+use Modules\Accounting\Http\Controllers\v1\AccountTemplateController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -26,6 +27,14 @@ Route::prefix('v1')->group(function () {
         Route::get('/{id}', [AccountController::class, 'show']);
         Route::put('/{id}', [AccountController::class, 'update']);
         Route::delete('/{id}', [AccountController::class, 'destroy']);
+    });
+
+    Route::prefix('account-template')->group(function () {
+        Route::get('/', [AccountTemplateController::class, 'index']);
+        Route::post('/', [AccountTemplateController::class, 'create']);
+        Route::get('/{id}', [AccountTemplateController::class, 'show']);
+        Route::put('/{id}', [AccountTemplateController::class, 'update']);
+        Route::delete('/{id}', [AccountTemplateController::class, 'destroy']);
     });
     
     Route::prefix('company')->group(function () {

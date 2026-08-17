@@ -4,7 +4,7 @@ namespace Modules\Accounting\Services;
 
 
 use App\Services\BaseService;
-use Modules\Accounting\Repositories\AccountRepository;
+use Modules\Accounting\Repositories\AccountTemplateRepository;
 
 class AccountTemplateService extends BaseService
 {

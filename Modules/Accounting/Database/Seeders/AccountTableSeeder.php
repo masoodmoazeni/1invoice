@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Schema;
 class AccountTableSeeder extends Seeder
 {
     /**
+     * php artisan module:seed Accounting --class=AccountTableSeeder
      * Run the database seeds.
      */
     public function run(): void
