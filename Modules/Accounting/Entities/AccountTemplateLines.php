@@ -50,25 +50,9 @@ class AccountTemplateLines extends Model
      * دسته‌بندی: دارایی
      */
     const CATEGORY_ASSET = 'asset';
-    
-    /**
-     * دسته‌بندی: بدهی
-     */
     const CATEGORY_LIABILITY = 'liability';
-    
-    /**
-     * دسته‌بندی: سرمایه
-     */
     const CATEGORY_EQUITY = 'equity';
-    
-    /**
-     * دسته‌بندی: درآمد
-     */
     const CATEGORY_REVENUE = 'revenue';
-    
-    /**
-     * دسته‌بندی: هزینه
-     */
     const CATEGORY_EXPENSE = 'expense';
 
     /**
