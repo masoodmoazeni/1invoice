@@ -34,6 +34,8 @@ return new class extends Migration
 
             $table->index(['from_currency_id', 'to_currency_id']);
             $table->index(['effective_date', 'from_currency_id']);
+
+            $table->comment('ایجاد جدول exchange_rates برای مدیریت نرخ‌های ارز');
         });
     }
 

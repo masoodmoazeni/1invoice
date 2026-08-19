@@ -16,17 +16,12 @@ return new class extends Migration
     public function up()
     {
         Schema::create('dimensions', function (Blueprint $table) {
-            // شناسه اصلی (auto-increment)
             $table->id();
 
-            // ارتباط با شرکت (برای سیستم‌های چندشرکتی)
-            // در صورت حذف شرکت، تمام ابعاد مربوطه نیز حذف می‌شوند
             $table->unsignedBigInteger('company_id');
 
-            // کد شناسایی بعد (منحصر‌به‌فرد برای هر شرکت)
-            $table->string('code', 50);
+            $table->string('code', 50)->comment('کد شناسایی بعد (منحصر‌به‌فرد برای هر شرکت)');
             
-            // نام بعد
             $table->string('name', 100);
             
             // نوع بعد: دسته‌بندی ابعاد مالی
@@ -51,19 +46,18 @@ return new class extends Migration
                 'custom'
             ])->default('custom')->index();
 
-            // وضعیت فعال/غیرفعال
-            $table->boolean('is_active')->default(true)->index();
+            $table->boolean('is_active')->comment('وضعیت فعال/غیرفعال')->default(true)->index();
 
-            // زمان‌های ایجاد و بروزرسانی
             $table->timestamps();
+            $table->softDeletes();
 
-            // ایندکس ترکیبی برای جلوگیری از تکرار کد بعد در هر شرکت
             $table->unique(['company_id', 'code']);
 
-            // ایندکس‌های ترکیبی برای جستجوی سریع‌تر
             $table->index(['company_id', 'type']);
             $table->index(['company_id', 'is_active']);
             $table->index(['type', 'is_active']);
+
+            $this->comment('ایجاد جدول dimensions برای مدیریت ابعاد مالی (مراکز هزینه، پروژه‌ها، دپارتمان‌ها و ...)');
         });
     }
 

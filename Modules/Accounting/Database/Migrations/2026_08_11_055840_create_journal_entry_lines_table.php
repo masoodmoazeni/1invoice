@@ -17,19 +17,17 @@ return new class extends Migration
         Schema::create('journal_entry_lines', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('journal_entry_id')->comment('ارتباط با سند حسابداری - در صورت حذف سند، تمام ردیف‌های مربوطه نیز حذف می‌شوند');
+            $table->unsignedBigInteger('journal_entry_id')->nullable()->comment('ارتباط با سند حسابداری - در صورت حذف سند، تمام ردیف‌های مربوطه نیز حذف می‌شوند');
 
-            $table->unsignedInteger('line_no')->comment('شماره ردیف (برای ترتیب نمایش)')->default(0);
+            $table->unsignedInteger('line_no')->nullable()->comment('شماره ردیف (برای ترتیب نمایش)')->default(0);
 
-            $table->unsignedBigInteger('account_id')->comment('ارتباط با حساب مالی');
+            $table->unsignedBigInteger('account_id')->nullable()->comment('ارتباط با حساب مالی');
 
-            $table->unsignedBigInteger('partner_id')->comment('ارتباط با طرف حساب (مشتری/تامین‌کننده/کارمند و ...)');
+            $table->unsignedBigInteger('project_id')->nullable()->comment('ارتباط با پروژه');
 
-            $table->unsignedBigInteger('project_id')->comment('ارتباط با پروژه');
+            $table->unsignedBigInteger('department_id')->nullable()->comment('ارتباط با دپارتمان');
 
-            $table->unsignedBigInteger('department_id')->comment('ارتباط با دپارتمان');
-
-            $table->unsignedBigInteger('cost_center_id')->comment('ارتباط با مرکز هزینه');
+            $table->unsignedBigInteger('cost_center_id')->nullable()->comment('ارتباط با مرکز هزینه');
 
             $table->text('description')->comment('شرح ردیف')->nullable();
 

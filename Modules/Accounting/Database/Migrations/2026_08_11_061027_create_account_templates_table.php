@@ -21,20 +21,18 @@ return new class extends Migration
 
             $table->unsignedBigInteger('country_id');
 
-            // نام قالب (مثلاً "نمودار حساب‌های استاندارد ایران")
-            $table->string('name', 100);
+            $table->string('name', 100)->comment('نام قالب (مثلاً "نمودار حساب‌های استاندارد ایران")');
             
-            // نسخه قالب (برای مدیریت تغییرات و به‌روزرسانی‌ها)
-            $table->string('version', 20)->default('1.0.0');
+            $table->string('version', 20)->default('1.0.0')->comment('نسخه قالب (برای مدیریت تغییرات و به‌روزرسانی‌ها)');
 
-            // زمان‌های ایجاد و بروزرسانی
             $table->timestamps();
+            $table->softDeletes();
 
-            // ایندکس ترکیبی برای جلوگیری از تکرار نام قالب در هر کشور
             $table->unique(['country_id', 'name']);
 
-            // ایندکس ترکیبی برای جستجوی سریع‌تر
             $table->index(['country_id', 'version']);
+
+            $this->comment('ایجاد جدول account_templates برای مدیریت قالب‌های نمودار حساب‌ها');
         });
     }
 

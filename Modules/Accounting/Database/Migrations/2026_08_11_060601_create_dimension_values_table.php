@@ -16,32 +16,25 @@ return new class extends Migration
     public function up()
     {
         Schema::create('dimension_values', function (Blueprint $table) {
-            // شناسه اصلی (auto-increment)
             $table->id();
 
-            // ارتباط با بعد (هر مقدار متعلق به یک بعد است)
-            // در صورت حذف بعد، تمام مقادیر مربوطه نیز حذف می‌شوند
-            $table->unsignedBigInteger('dimension_id');
+            $table->unsignedBigInteger('dimension_id')->comment('ارتباط با بعد (هر مقدار متعلق به یک بعد است) - در صورت حذف بعد، تمام مقادیر مربوطه نیز حذف می‌شوند');
 
-            // کد شناسایی مقدار (منحصر‌به‌فرد برای هر بعد)
             $table->string('code', 50);
             
-            // نام مقدار
             $table->string('name', 100);
             
-            // مقدار والد (برای ساختار سلسله‌مراتبی)
-            // اگر null باشد، به معنای مقدار سطح بالا (ریشه) است
             $table->unsignedBigInteger('parent_id');
 
-            // زمان‌های ایجاد و بروزرسانی
             $table->timestamps();
+            $table->softDeletes();
 
-            // ایندکس ترکیبی برای جلوگیری از تکرار کد مقدار در هر بعد
             $table->unique(['dimension_id', 'code']);
 
-            // ایندکس‌های ترکیبی برای جستجوی سریع‌تر
             $table->index(['dimension_id', 'parent_id']);
             $table->index(['parent_id']);
+
+            $this->comment('ایجاد جدول dimension_values برای مدیریت مقادیر ابعاد مالی');
         });
     }
 

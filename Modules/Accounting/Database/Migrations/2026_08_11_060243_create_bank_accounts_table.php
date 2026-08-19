@@ -47,6 +47,8 @@ return new class extends Migration
             $table->index(['bank_name', 'branch_name']);
             $table->index(['iban']);
             $table->index(['swift']);
+
+            $table->comment('ایجاد جدول bank_accounts برای مدیریت حساب‌های بانکی');
         });
     }
 
