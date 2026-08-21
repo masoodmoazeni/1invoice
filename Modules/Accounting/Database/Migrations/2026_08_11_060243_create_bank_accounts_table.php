@@ -41,7 +41,7 @@ return new class extends Migration
             $table->unique(['company_id', 'account_number']);
 
             
-            $table->index(['company_id', 'partner_id']);
+            $table->index(['company_id']);
             $table->index(['company_id', 'currency_id']);
             $table->index(['company_id', 'is_default', 'is_active']);
             $table->index(['bank_name', 'branch_name']);

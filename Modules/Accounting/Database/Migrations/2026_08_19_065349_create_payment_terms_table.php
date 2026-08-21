@@ -21,11 +21,7 @@ return new class extends Migration
 
             // ارتباط با شرکت (سیستم چندشرکتی)
             // در صورت حذف شرکت، تمام شرایط پرداخت مربوطه نیز حذف می‌شوند
-            $table->foreignId('company_id')
-                  ->constrained('companies')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('company_id');
 
             // کد شناسایی شرط پرداخت (منحصر‌به‌فرد برای هر شرکت)
             $table->string('code', 50);

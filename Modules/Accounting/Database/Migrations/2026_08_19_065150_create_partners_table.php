@@ -19,11 +19,7 @@ return new class extends Migration
             $table->id();
 
             // ارتباط با شرکت (سیستم چندشرکتی)
-            $table->foreignId('company_id')
-                  ->constrained('companies')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('company_id');
 
             // کد شناسایی طرف حساب (منحصر‌به‌فرد برای هر شرکت)
             $table->string('code', 50);
@@ -54,12 +50,7 @@ return new class extends Migration
             $table->string('registration_number', 50)->nullable();
             
             // کشور
-            $table->foreignId('country_id')
-                  ->nullable()
-                  ->constrained('countries')
-                  ->onDelete('set null')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('country_id');
 
             // استان
             $table->string('state', 100)->nullable();
@@ -86,23 +77,13 @@ return new class extends Migration
             $table->string('website', 100)->nullable();
             
             // ارز پیش‌فرض
-            $table->foreignId('currency_id')
-                  ->nullable()
-                  ->constrained('currencies')
-                  ->onDelete('set null')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('currency_id');
 
             // سقف اعتباری
             $table->decimal('credit_limit', 15, 2)->default(0);
             
             // شرایط پرداخت پیش‌فرض
-            $table->foreignId('payment_term_id')
-                  ->nullable()
-                  ->constrained('payment_terms')
-                  ->onDelete('set null')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('payment_term_id');
 
             // وضعیت فعال/غیرفعال
             $table->boolean('is_active')->default(true)->index();

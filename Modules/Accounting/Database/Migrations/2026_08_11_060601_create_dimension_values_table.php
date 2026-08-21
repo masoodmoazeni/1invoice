@@ -34,7 +34,7 @@ return new class extends Migration
             $table->index(['dimension_id', 'parent_id']);
             $table->index(['parent_id']);
 
-            $this->comment('ایجاد جدول dimension_values برای مدیریت مقادیر ابعاد مالی');
+            $table->comment('ایجاد جدول dimension_values برای مدیریت مقادیر ابعاد مالی');
         });
     }
 

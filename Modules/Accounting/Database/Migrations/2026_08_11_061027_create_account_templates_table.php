@@ -32,7 +32,7 @@ return new class extends Migration
 
             $table->index(['country_id', 'version']);
 
-            $this->comment('ایجاد جدول account_templates برای مدیریت قالب‌های نمودار حساب‌ها');
+            $table->comment('ایجاد جدول account_templates برای مدیریت قالب‌های نمودار حساب‌ها');
         });
     }
 

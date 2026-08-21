@@ -57,7 +57,8 @@ return new class extends Migration
             $table->index(['company_id', 'is_active']);
             $table->index(['type', 'is_active']);
 
-            $this->comment('ایجاد جدول dimensions برای مدیریت ابعاد مالی (مراکز هزینه، پروژه‌ها، دپارتمان‌ها و ...)');
+            // اگر می‌خواهید روی خود جدول کامنت بگذارید:
+            // $table->comment('جدول dimensions برای مدیریت ابعاد مالی');
         });
     }
 

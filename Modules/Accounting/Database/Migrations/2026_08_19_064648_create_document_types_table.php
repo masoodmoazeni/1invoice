@@ -16,40 +16,22 @@ return new class extends Migration
     public function up()
     {
         Schema::create('document_types', function (Blueprint $table) {
-            // شناسه اصلی (auto-increment)
             $table->id();
 
-            // ارتباط با شرکت (سیستم چندشرکتی)
-            // در صورت حذف شرکت، تمام انواع اسناد مربوطه نیز حذف می‌شوند
-            $table->foreignId('company_id')
-                  ->constrained('companies')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('company_id');
 
-            // کد شناسایی نوع سند (منحصر‌به‌فرد برای هر شرکت)
-            $table->string('code', 50);
+            $table->string('code', 50)->comment('کد شناسایی نوع سند (منحصر‌به‌فرد برای هر شرکت)');
             
             // نام نوع سند
-            $table->string('name', 100);
+            $table->string('name', 100)->comment('نام نوع سند');
             
             // ارتباط با دفتر روزنامه
             // تعیین می‌کند که اسناد این نوع در کدام دفتر روزنامه ثبت شوند
-            $table->foreignId('journal_id')
-                  ->nullable()
-                  ->constrained('journals')
-                  ->onDelete('set null')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('journal_id');
 
             // ارتباط با شماره‌گذاری
             // تعیین می‌کند که اسناد این نوع از کدام دنباله شماره‌گذاری استفاده کنند
-            $table->foreignId('number_sequence_id')
-                  ->nullable()
-                  ->constrained('number_sequences')
-                  ->onDelete('set null')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('number_sequence_id');
 
             // وضعیت فعال/غیرفعال
             $table->boolean('is_active')->default(true)->index();
@@ -57,13 +39,8 @@ return new class extends Migration
             // زمان‌های ایجاد و بروزرسانی
             $table->timestamps();
 
-            // ایندکس ترکیبی برای جلوگیری از تکرار کد نوع سند در هر شرکت
             $table->unique(['company_id', 'code']);
 
-            // ایندکس‌های ترکیبی برای جستجوی سریع‌تر
-            $table->index(['company_id', 'is_active']);
-            $table->index(['company_id', 'journal_id']);
-            $table->index(['company_id', 'number_sequence_id']);
         });
     }
 

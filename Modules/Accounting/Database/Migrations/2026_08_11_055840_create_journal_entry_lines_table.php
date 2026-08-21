@@ -44,7 +44,6 @@ return new class extends Migration
 
             $table->index(['journal_entry_id', 'line_no']);
             $table->index(['account_id', 'debit', 'credit']);
-            $table->index(['partner_id']);
             $table->index(['project_id']);
             $table->index(['department_id']);
             $table->index(['cost_center_id']);

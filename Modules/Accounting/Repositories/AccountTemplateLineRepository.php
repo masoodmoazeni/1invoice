@@ -10,7 +10,7 @@ class AccountTemplateLineRepository extends BaseRepository
 {
     protected Model $model;
 
-    public function __construct(AccountTemplates $model)
+    public function __construct(AccountTemplateLines $model)
     {
         $this->model = $model;
     }

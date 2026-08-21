@@ -9,6 +9,7 @@ use Modules\Accounting\Http\Controllers\v1\LanguageController;
 use Modules\Accounting\Http\Controllers\v1\AccountController;
 use Modules\Accounting\Http\Controllers\v1\BankAccountController;
 use Modules\Accounting\Http\Controllers\v1\AccountTemplateController;
+use Modules\Accounting\Http\Controllers\v1\AccountTemplateLineController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -36,6 +37,14 @@ Route::prefix('v1')->group(function () {
         Route::get('/{id}', [AccountTemplateController::class, 'show']);
         Route::put('/{id}', [AccountTemplateController::class, 'update']);
         Route::delete('/{id}', [AccountTemplateController::class, 'destroy']);
+    });
+
+    Route::prefix('account-template-line')->group(function () {
+        Route::get('/', [AccountTemplateLineController::class, 'index']);
+        Route::post('/', [AccountTemplateLineController::class, 'create']);
+        Route::get('/{id}', [AccountTemplateLineController::class, 'show']);
+        Route::put('/{id}', [AccountTemplateLineController::class, 'update']);
+        Route::delete('/{id}', [AccountTemplateLineController::class, 'destroy']);
     });
 
     Route::prefix('bank-account')->group(function () {

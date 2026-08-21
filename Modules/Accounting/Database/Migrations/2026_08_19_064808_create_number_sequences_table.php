@@ -21,11 +21,7 @@ return new class extends Migration
 
             // ارتباط با شرکت (سیستم چندشرکتی)
             // در صورت حذف شرکت، تمام شماره‌گذاری‌های مربوطه نیز حذف می‌شوند
-            $table->foreignId('company_id')
-                  ->constrained('companies')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade')
-                  ->index();
+            $table->unsignedBigInteger('company_id');
 
             // ماژول یا بخش مربوطه (مثلاً sales, purchase, accounting, hr)
             $table->string('module', 50)->index();
