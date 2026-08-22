@@ -10,6 +10,10 @@ use Modules\Accounting\Http\Controllers\v1\AccountController;
 use Modules\Accounting\Http\Controllers\v1\BankAccountController;
 use Modules\Accounting\Http\Controllers\v1\AccountTemplateController;
 use Modules\Accounting\Http\Controllers\v1\AccountTemplateLineController;
+use Modules\Accounting\Http\Controllers\v1\BranchController;
+use Modules\Accounting\Http\Controllers\v1\CurrencyController;
+use Modules\Accounting\Http\Controllers\v1\DepartmentController;
+use Modules\Accounting\Http\Controllers\v1\DimensionController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -54,6 +58,14 @@ Route::prefix('v1')->group(function () {
         Route::put('/{id}', [BankAccountController::class, 'update']);
         Route::delete('/{id}', [BankAccountController::class, 'destroy']);
     });
+
+    Route::prefix('branch')->group(function () {
+        Route::get('/', [BranchController::class, 'index']);
+        Route::post('/', [BranchController::class, 'create']);
+        Route::get('/{id}', [BranchController::class, 'show']);
+        Route::put('/{id}', [BranchController::class, 'update']);
+        Route::delete('/{id}', [BranchController::class, 'destroy']);
+    });
     
     Route::prefix('company')->group(function () {
         Route::get('/', [CompanyController::class, 'index']);
@@ -69,6 +81,30 @@ Route::prefix('v1')->group(function () {
         Route::get('/{id}', [CountryController::class, 'show']);
         Route::put('/{id}', [CountryController::class, 'update']);
         Route::delete('/{id}', [CountryController::class, 'destroy']);
+    });
+
+    Route::prefix('currency')->group(function () {
+        Route::get('/', [CurrencyController::class, 'index']);
+        Route::post('/', [CurrencyController::class, 'create']);
+        Route::get('/{id}', [CurrencyController::class, 'show']);
+        Route::put('/{id}', [CurrencyController::class, 'update']);
+        Route::delete('/{id}', [CurrencyController::class, 'destroy']);
+    });
+
+    Route::prefix('department')->group(function () {
+        Route::get('/', [DepartmentController::class, 'index']);
+        Route::post('/', [DepartmentController::class, 'create']);
+        Route::get('/{id}', [DepartmentController::class, 'show']);
+        Route::put('/{id}', [DepartmentController::class, 'update']);
+        Route::delete('/{id}', [DepartmentController::class, 'destroy']);
+    });
+
+    Route::prefix('dimension')->group(function () {
+        Route::get('/', [DimensionController::class, 'index']);
+        Route::post('/', [DimensionController::class, 'create']);
+        Route::get('/{id}', [DimensionController::class, 'show']);
+        Route::put('/{id}', [DimensionController::class, 'update']);
+        Route::delete('/{id}', [DimensionController::class, 'destroy']);
     });
 
     Route::prefix('language')->group(function () {
