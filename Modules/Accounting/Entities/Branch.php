@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 
-class Branches extends Model
+class Branch extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -66,7 +66,7 @@ class Branches extends Model
     /**
      * رابطه belongsTo با مدل Company
      * هر شعبه متعلق به یک شرکت است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function company()
@@ -77,7 +77,7 @@ class Branches extends Model
     /**
      * رابطه belongsTo با مدل Country
      * هر شعبه در یک کشور قرار دارد
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function country()
@@ -88,7 +88,7 @@ class Branches extends Model
     /**
      * رابطه belongsTo برای مدیر شعبه
      * فرض بر این است که جدول users یا employees وجود دارد
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function manager()
@@ -98,7 +98,7 @@ class Branches extends Model
 
     /**
      * رابطه hasMany برای کارمندان شعبه (در صورت وجود)
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function employees()
@@ -108,7 +108,7 @@ class Branches extends Model
 
     /**
      * رابطه hasMany برای کاربران شعبه
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function users()
@@ -118,7 +118,7 @@ class Branches extends Model
 
     /**
      * رابطه hasMany برای تراکنش‌های مالی شعبه
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function transactions()
@@ -128,7 +128,7 @@ class Branches extends Model
 
     /**
      * رابطه hasMany برای فاکتورهای شعبه
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function invoices()
@@ -266,19 +266,19 @@ class Branches extends Model
     public function getFullAddressAttribute()
     {
         $parts = [];
-        
+
         if ($this->address) {
             $parts[] = $this->address;
         }
-        
+
         if ($this->city) {
             $parts[] = $this->city;
         }
-        
+
         if ($this->country) {
             $parts[] = $this->country->name;
         }
-        
+
         return implode('، ', $parts);
     }
 
@@ -289,15 +289,15 @@ class Branches extends Model
     public function getContactInfoAttribute()
     {
         $parts = [];
-        
+
         if ($this->phone) {
             $parts[] = 'تلفن: ' . $this->phone;
         }
-        
+
         if ($this->email) {
             $parts[] = 'ایمیل: ' . $this->email;
         }
-        
+
         return implode(' | ', $parts);
     }
 
@@ -310,11 +310,11 @@ class Branches extends Model
         if (!$this->is_active) {
             return 'غیرفعال';
         }
-        
+
         if ($this->is_default) {
             return 'فعال - پیش‌فرض';
         }
-        
+
         return 'فعال';
     }
 
@@ -327,11 +327,11 @@ class Branches extends Model
         if (!$this->is_active) {
             return 'danger';
         }
-        
+
         if ($this->is_default) {
             return 'success';
         }
-        
+
         return 'info';
     }
 
@@ -385,7 +385,7 @@ class Branches extends Model
             ->where('is_default', true)
             ->where('id', '!=', $this->id)
             ->update(['is_default' => false]);
-        
+
         // سپس این شعبه را پیش‌فرض می‌کنیم
         $this->is_default = true;
         return $this->save();
@@ -439,8 +439,8 @@ class Branches extends Model
         // که در صورت نیاز می‌توان اضافه کرد
         // به عنوان مثال با استفاده از فرمول هاورسین
         return self::selectRaw(
-            "*, (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * 
-            cos(radians(longitude) - radians(?)) + sin(radians(?)) * 
+            "*, (6371 * acos(cos(radians(?)) * cos(radians(latitude)) *
+            cos(radians(longitude) - radians(?)) + sin(radians(?)) *
             sin(radians(latitude)))) AS distance",
             [$latitude, $longitude, $latitude]
         )
@@ -460,11 +460,11 @@ class Branches extends Model
     public static function getList($companyId, $onlyActive = true)
     {
         $query = self::byCompany($companyId);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         return $query->orderBy('name')
                      ->pluck('name', 'id')
                      ->toArray();
@@ -479,18 +479,18 @@ class Branches extends Model
     public static function getListWithCode($companyId, $onlyActive = true)
     {
         $query = self::byCompany($companyId);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         $branches = $query->orderBy('name')->get();
         $list = [];
-        
+
         foreach ($branches as $branch) {
             $list[$branch->id] = $branch->full_name;
         }
-        
+
         return $list;
     }
 
@@ -542,7 +542,7 @@ class Branches extends Model
     public static function generateCode($name, $companyId)
     {
         $code = strtoupper(Str::slug($name, '_'));
-        
+
         // اگر کد تکراری باشد، شماره اضافه می‌شود
         $counter = 1;
         $originalCode = $code;
@@ -550,7 +550,7 @@ class Branches extends Model
             $code = $originalCode . '_' . $counter;
             $counter++;
         }
-        
+
         return $code;
     }
 
@@ -567,7 +567,7 @@ class Branches extends Model
         $default = self::byCompany($companyId)->default()->count();
         $hasManager = self::byCompany($companyId)->hasManager()->count();
         $withoutManager = $total - $hasManager;
-        
+
         return [
             'total' => $total,
             'active' => $active,
@@ -587,11 +587,11 @@ class Branches extends Model
     public static function getByCountry($countryId, $onlyActive = true)
     {
         $query = self::byCountry($countryId);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         return $query->orderBy('name')->get();
     }
 
@@ -604,11 +604,11 @@ class Branches extends Model
     public static function getByCity($city, $onlyActive = true)
     {
         $query = self::byCity($city);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         return $query->orderBy('name')->get();
     }
 }

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
-class JournalEntryLines extends Model
+class JournalEntryLine extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -98,7 +98,7 @@ class JournalEntryLines extends Model
     /**
      * رابطه belongsTo با مدل JournalEntry
      * هر ردیف متعلق به یک سند حسابداری است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function journalEntry()
@@ -109,7 +109,7 @@ class JournalEntryLines extends Model
     /**
      * رابطه belongsTo با مدل Account
      * هر ردیف متعلق به یک حساب مالی است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function account()
@@ -120,7 +120,7 @@ class JournalEntryLines extends Model
     /**
      * رابطه belongsTo با مدل Partner (طرف حساب)
      * هر ردیف می‌تواند به یک طرف حساب متصل باشد
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function partner()
@@ -131,7 +131,7 @@ class JournalEntryLines extends Model
     /**
      * رابطه belongsTo با مدل Project
      * هر ردیف می‌تواند به یک پروژه متصل باشد
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function project()
@@ -142,18 +142,18 @@ class JournalEntryLines extends Model
     /**
      * رابطه belongsTo با مدل Department
      * هر ردیف می‌تواند به یک دپارتمان متصل باشد
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function department()
     {
-        return $this->belongsTo(Departments::class, 'department_id');
+        return $this->belongsTo(Department::class, 'department_id');
     }
 
     /**
      * رابطه belongsTo با مدل CostCenter
      * هر ردیف می‌تواند به یک مرکز هزینه متصل باشد
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function costCenter()
@@ -164,7 +164,7 @@ class JournalEntryLines extends Model
     /**
      * رابطه belongsTo با مدل Currency
      * هر ردیف می‌تواند ارز متفاوتی داشته باشد
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function currency()
@@ -320,7 +320,7 @@ class JournalEntryLines extends Model
             'credit' => 'بستانکار',
             'none' => 'بدون مبلغ',
         ];
-        
+
         return $labels[$this->type] ?? 'نامشخص';
     }
 
@@ -335,7 +335,7 @@ class JournalEntryLines extends Model
             'credit' => 'text-success',
             'none' => 'text-muted',
         ];
-        
+
         return $classes[$this->type] ?? 'text-muted';
     }
 
@@ -363,11 +363,11 @@ class JournalEntryLines extends Model
         $parts[] = 'ردیف ' . $this->line_no;
         $parts[] = $this->account ? $this->account->account_name : 'حساب نامشخص';
         $parts[] = $this->formatted_amount;
-        
+
         if ($this->description) {
             $parts[] = $this->description;
         }
-        
+
         return implode(' - ', $parts);
     }
 
@@ -378,11 +378,11 @@ class JournalEntryLines extends Model
     public function getBaseAmountAttribute()
     {
         $amount = $this->debit > 0 ? $this->debit : $this->credit;
-        
+
         if ($this->exchange_rate && $this->exchange_rate != 1) {
             return $amount * $this->exchange_rate;
         }
-        
+
         return $amount;
     }
 
@@ -447,7 +447,7 @@ class JournalEntryLines extends Model
         $newLine->journal_entry_id = $newEntryId;
         $newLine->line_no = null; // شماره ردیف به‌طور خودکار تنظیم می‌شود
         $newLine->save();
-        
+
         return $newLine;
     }
 
@@ -507,7 +507,7 @@ class JournalEntryLines extends Model
     {
         $totalDebit = self::byEntry($journalEntryId)->sum('debit');
         $totalCredit = self::byEntry($journalEntryId)->sum('credit');
-        
+
         return [
             'debit' => $totalDebit,
             'credit' => $totalCredit,
@@ -549,10 +549,10 @@ class JournalEntryLines extends Model
                     $q->where('posting_date', '<=', $dateTo);
                 }
             });
-        
+
         $totalDebit = $query->sum('debit');
         $totalCredit = $query->sum('credit');
-        
+
         // دریافت مانده عادی حساب
         $account = Accounts::find($accountId);
         if ($account) {
@@ -562,7 +562,7 @@ class JournalEntryLines extends Model
                 return $totalCredit - $totalDebit;
             }
         }
-        
+
         return $totalDebit - $totalCredit;
     }
 
@@ -579,13 +579,13 @@ class JournalEntryLines extends Model
             ->whereHas('journalEntry', function ($q) {
                 $q->posted();
             });
-        
+
         if ($startDate && $endDate) {
             $query->whereHas('journalEntry', function ($q) use ($startDate, $endDate) {
                 $q->dateBetween($startDate, $endDate);
             });
         }
-        
+
         return $query->orderBy('created_at')->get();
     }
 
@@ -602,13 +602,13 @@ class JournalEntryLines extends Model
             ->whereHas('journalEntry', function ($q) {
                 $q->posted();
             });
-        
+
         if ($startDate && $endDate) {
             $query->whereHas('journalEntry', function ($q) use ($startDate, $endDate) {
                 $q->dateBetween($startDate, $endDate);
             });
         }
-        
+
         return $query->orderBy('created_at')->get();
     }
 
@@ -625,13 +625,13 @@ class JournalEntryLines extends Model
             ->whereHas('journalEntry', function ($q) {
                 $q->posted();
             });
-        
+
         if ($startDate && $endDate) {
             $query->whereHas('journalEntry', function ($q) use ($startDate, $endDate) {
                 $q->dateBetween($startDate, $endDate);
             });
         }
-        
+
         return $query->orderBy('created_at')->get();
     }
 
@@ -648,13 +648,13 @@ class JournalEntryLines extends Model
             ->whereHas('journalEntry', function ($q) {
                 $q->posted();
             });
-        
+
         if ($startDate && $endDate) {
             $query->whereHas('journalEntry', function ($q) use ($startDate, $endDate) {
                 $q->dateBetween($startDate, $endDate);
             });
         }
-        
+
         return $query->orderBy('created_at')->get();
     }
 
@@ -685,31 +685,31 @@ class JournalEntryLines extends Model
         $errors = [];
         $totalDebit = 0;
         $totalCredit = 0;
-        
+
         foreach ($lines as $index => $line) {
             // بررسی وجود حساب
             if (empty($line['account_id'])) {
                 $errors[] = "ردیف " . ($index + 1) . ": حساب مشخص نشده است.";
             }
-            
+
             // بررسی مبلغ
             if (empty($line['debit']) && empty($line['credit'])) {
                 $errors[] = "ردیف " . ($index + 1) . ": مبلغ بدهکار یا بستانکار وارد نشده است.";
             }
-            
+
             if (!empty($line['debit']) && !empty($line['credit'])) {
                 $errors[] = "ردیف " . ($index + 1) . ": یک ردیف نمی‌تواند هم بدهکار و هم بستانکار باشد.";
             }
-            
+
             $totalDebit += $line['debit'] ?? 0;
             $totalCredit += $line['credit'] ?? 0;
         }
-        
+
         // بررسی تراز بودن
         if ($totalDebit != $totalCredit) {
             $errors[] = "مجموع بدهکار ({$totalDebit}) و بستانکار ({$totalCredit}) برابر نیست.";
         }
-        
+
         return [
             'is_valid' => empty($errors),
             'errors' => $errors,
@@ -727,14 +727,14 @@ class JournalEntryLines extends Model
     public static function createLines($journalEntryId, array $lines)
     {
         $createdLines = collect();
-        
+
         foreach ($lines as $lineData) {
             $line = self::create(array_merge($lineData, [
                 'journal_entry_id' => $journalEntryId
             ]));
             $createdLines->push($line);
         }
-        
+
         return $createdLines;
     }
 
@@ -748,10 +748,10 @@ class JournalEntryLines extends Model
     {
         // حذف ردیف‌های قبلی
         self::byEntry($journalEntryId)->delete();
-        
+
         // ایجاد ردیف‌های جدید
         self::createLines($journalEntryId, $lines);
-        
+
         return true;
     }
 }

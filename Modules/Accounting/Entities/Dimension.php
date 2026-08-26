@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 
-class Dimensions extends Model
+class Dimension extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -51,42 +51,42 @@ class Dimensions extends Model
      * نوع: مرکز هزینه
      */
     const TYPE_COST_CENTER = 'cost_center';
-    
+
     /**
      * نوع: پروژه
      */
     const TYPE_PROJECT = 'project';
-    
+
     /**
      * نوع: دپارتمان
      */
     const TYPE_DEPARTMENT = 'department';
-    
+
     /**
      * نوع: مشتری
      */
     const TYPE_CUSTOMER = 'customer';
-    
+
     /**
      * نوع: تامین‌کننده
      */
     const TYPE_VENDOR = 'vendor';
-    
+
     /**
      * نوع: کارمند
      */
     const TYPE_EMPLOYEE = 'employee';
-    
+
     /**
      * نوع: محصول
      */
     const TYPE_PRODUCT = 'product';
-    
+
     /**
      * نوع: منطقه
      */
     const TYPE_REGION = 'region';
-    
+
     /**
      * نوع: سفارشی
      */
@@ -172,7 +172,7 @@ class Dimensions extends Model
     /**
      * رابطه belongsTo با مدل Company
      * هر بعد متعلق به یک شرکت است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function company()
@@ -183,7 +183,7 @@ class Dimensions extends Model
     /**
      * رابطه hasMany برای ارتباط با جدول‌های دیگر
      * هر بعد می‌تواند در ردیف‌های سند حسابداری استفاده شود
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function journalEntryLines()
@@ -195,7 +195,7 @@ class Dimensions extends Model
 
     /**
      * رابطه hasMany برای تراکنش‌ها
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function transactions()
@@ -220,7 +220,7 @@ class Dimensions extends Model
     {
         $totalDebit = $this->journalEntryLines()->sum('debit');
         $totalCredit = $this->journalEntryLines()->sum('credit');
-        
+
         return [
             'debit' => $totalDebit,
             'credit' => $totalCredit,
@@ -438,7 +438,7 @@ class Dimensions extends Model
             self::TYPE_REGION => 'bg-purple',
             self::TYPE_CUSTOM => 'bg-indigo',
         ];
-        
+
         return $classes[$this->type] ?? 'bg-secondary';
     }
 
@@ -492,17 +492,17 @@ class Dimensions extends Model
                       ->whereHas('journalEntry', function ($q) {
                           $q->posted();
                       });
-        
+
         if ($startDate && $endDate) {
             $query->whereHas('journalEntry', function ($q) use ($startDate, $endDate) {
                 $q->dateBetween($startDate, $endDate);
             });
         }
-        
+
         $totalDebit = $query->sum('debit');
         $totalCredit = $query->sum('credit');
         $count = $query->count();
-        
+
         return [
             'total_debit' => $totalDebit,
             'total_credit' => $totalCredit,
@@ -540,15 +540,15 @@ class Dimensions extends Model
     public static function getList($companyId, $onlyActive = true, $type = null)
     {
         $query = self::byCompany($companyId);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         if ($type) {
             $query->byType($type);
         }
-        
+
         return $query->orderBy('name')
                      ->pluck('name', 'id')
                      ->toArray();
@@ -564,22 +564,22 @@ class Dimensions extends Model
     public static function getListWithCode($companyId, $onlyActive = true, $type = null)
     {
         $query = self::byCompany($companyId);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         if ($type) {
             $query->byType($type);
         }
-        
+
         $dimensions = $query->orderBy('name')->get();
         $list = [];
-        
+
         foreach ($dimensions as $dimension) {
             $list[$dimension->id] = $dimension->full_name;
         }
-        
+
         return $list;
     }
 
@@ -593,11 +593,11 @@ class Dimensions extends Model
     public static function getByType($companyId, $type, $onlyActive = true)
     {
         $query = self::byCompany($companyId)->byType($type);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         return $query->orderBy('name')->get();
     }
 
@@ -624,7 +624,7 @@ class Dimensions extends Model
     //     $total = self::byCompany($companyId)->count();
     //     $active = self::byCompany($companyId)->active()->count();
     //     $inactive = $total - $active;
-        
+
     //     $statsByType = [];
     //     foreach (self::$types as $type) {
     //         $statsByType[$type] = [
@@ -634,10 +634,10 @@ class Dimensions extends Model
     //             'icon' => self::$typeIcons[$type],
     //         ];
     //     }
-        
+
     //     $hasTransactions = self::byCompany($companyId)->hasTransactions()->count();
     //     $withoutTransactions = $total - $hasTransactions;
-        
+
     //     return [
     //         'total' => $total,
     //         'active' => $active,
@@ -662,7 +662,7 @@ class Dimensions extends Model
             $exists = self::byCompany($companyId)
                 ->where('code', $data['code'])
                 ->exists();
-            
+
             if ($exists) {
                 throw new \Exception('کد بعد تکراری است.');
             }
@@ -692,10 +692,10 @@ class Dimensions extends Model
             self::TYPE_REGION => 'REG',
             self::TYPE_CUSTOM => 'CUS',
         ];
-        
+
         $prefix = $typePrefix[$type] ?? 'DIM';
         $code = $prefix . '_' . strtoupper(Str::slug($name, '_'));
-        
+
         // اگر کد تکراری باشد، شماره اضافه می‌شود
         $counter = 1;
         $originalCode = $code;
@@ -703,7 +703,7 @@ class Dimensions extends Model
             $code = $originalCode . '_' . $counter;
             $counter++;
         }
-        
+
         return $code;
     }
 
@@ -716,7 +716,7 @@ class Dimensions extends Model
     public static function getForReport($companyId, array $filters = [])
     {
         $query = self::byCompany($companyId)->with('company');
-        
+
         // فیلتر بر اساس وضعیت
         if (isset($filters['status'])) {
             if ($filters['status'] === 'active') {
@@ -725,17 +725,17 @@ class Dimensions extends Model
                 $query->inactive();
             }
         }
-        
+
         // فیلتر بر اساس نوع
         if (isset($filters['type']) && $filters['type']) {
             $query->byType($filters['type']);
         }
-        
+
         // فیلتر بر اساس جستجو
         if (isset($filters['search']) && $filters['search']) {
             $query->search($filters['search']);
         }
-        
+
         return $query->orderBy('type')
                      ->orderBy('name')
                      ->get();
@@ -765,7 +765,7 @@ class Dimensions extends Model
                 }
             }])
             ->get();
-        
+
         // اضافه کردن آمار به هر بعد
         foreach ($dimensions as $dimension) {
             $totalDebit = $dimension->journalEntryLines->sum('debit');
@@ -775,7 +775,7 @@ class Dimensions extends Model
             $dimension->balance = $totalDebit - $totalCredit;
             $dimension->entries_count = $dimension->journalEntryLines->count();
         }
-        
+
         return $dimensions;
     }
 }

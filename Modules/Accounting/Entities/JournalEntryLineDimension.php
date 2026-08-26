@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class JournalEntryLineDimensions extends Model
+class JournalEntryLineDimension extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -57,7 +57,7 @@ class JournalEntryLineDimensions extends Model
     /**
      * رابطه belongsTo با مدل JournalEntryLine
      * هر رکورد متعلق به یک ردیف سند است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function journalEntryLine()
@@ -68,7 +68,7 @@ class JournalEntryLineDimensions extends Model
     /**
      * رابطه belongsTo با مدل DimensionValue
      * هر رکورد متعلق به یک مقدار بعد است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function dimensionValue()
@@ -78,7 +78,7 @@ class JournalEntryLineDimensions extends Model
 
     /**
      * دریافت بعد از طریق مقدار بعد
-     * 
+     *
      * @return Dimensions|null
      */
     public function getDimensionAttribute()
@@ -88,7 +88,7 @@ class JournalEntryLineDimensions extends Model
 
     /**
      * دریافت نام بعد
-     * 
+     *
      * @return string|null
      */
     public function getDimensionNameAttribute()
@@ -98,7 +98,7 @@ class JournalEntryLineDimensions extends Model
 
     /**
      * دریافت نام مقدار بعد
-     * 
+     *
      * @return string|null
      */
     public function getDimensionValueNameAttribute()
@@ -108,18 +108,18 @@ class JournalEntryLineDimensions extends Model
 
     /**
      * دریافت نام کامل (بعد - مقدار)
-     * 
+     *
      * @return string
      */
     public function getFullNameAttribute()
     {
         $dimensionName = $this->dimension_name;
         $valueName = $this->dimension_value_name;
-        
+
         if ($dimensionName && $valueName) {
             return $dimensionName . ' - ' . $valueName;
         }
-        
+
         return 'نامشخص';
     }
 
@@ -278,10 +278,10 @@ class JournalEntryLineDimensions extends Model
     public static function createForLine($lineId, array $dimensionValueIds)
     {
         $created = collect();
-        
+
         // حذف ارتباطات قبلی (در صورت نیاز)
         // self::byLine($lineId)->delete();
-        
+
         foreach ($dimensionValueIds as $dimensionValueId) {
             // بررسی تکراری نبودن
             if (!self::byLine($lineId)->byDimensionValue($dimensionValueId)->exists()) {
@@ -292,7 +292,7 @@ class JournalEntryLineDimensions extends Model
                 $created->push($record);
             }
         }
-        
+
         return $created;
     }
 
@@ -306,7 +306,7 @@ class JournalEntryLineDimensions extends Model
     {
         // حذف ارتباطات قبلی
         self::byLine($lineId)->delete();
-        
+
         // ایجاد ارتباطات جدید
         return self::createForLine($lineId, $dimensionValueIds);
     }
@@ -319,15 +319,15 @@ class JournalEntryLineDimensions extends Model
     public static function getStatistics($dimensionId = null)
     {
         $query = self::query();
-        
+
         if ($dimensionId) {
             $query->byDimension($dimensionId);
         }
-        
+
         $total = $query->count();
         $uniqueLines = $query->distinct('journal_entry_line_id')->count('journal_entry_line_id');
         $uniqueValues = $query->distinct('dimension_value_id')->count('dimension_value_id');
-        
+
         // دریافت آمار بر اساس بعد
         $byDimension = self::with('dimensionValue.dimension')
             ->select('dimension_value_id')
@@ -343,7 +343,7 @@ class JournalEntryLineDimensions extends Model
                     'unique_values' => $items->count(),
                 ];
             });
-        
+
         return [
             'total_connections' => $total,
             'unique_lines' => $uniqueLines,
@@ -393,7 +393,7 @@ class JournalEntryLineDimensions extends Model
     {
         $sourceDimensions = self::byLine($sourceLineId)->get();
         $dimensionValueIds = $sourceDimensions->pluck('dimension_value_id')->toArray();
-        
+
         return self::createForLine($targetLineId, $dimensionValueIds);
     }
 }

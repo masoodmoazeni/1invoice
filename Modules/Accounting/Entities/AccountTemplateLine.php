@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 
-class AccountTemplateLines extends Model
+class AccountTemplateLine extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -87,7 +87,7 @@ class AccountTemplateLines extends Model
      * نوع: کل (گروهی)
      */
     const TYPE_HEADER = 'header';
-    
+
     /**
      * نوع: جزئی (قابل ثبت)
      */
@@ -117,7 +117,7 @@ class AccountTemplateLines extends Model
      * مانده عادی: بدهکار
      */
     const BALANCE_DEBIT = 'debit';
-    
+
     /**
      * مانده عادی: بستانکار
      */
@@ -157,7 +157,7 @@ class AccountTemplateLines extends Model
     /**
      * رابطه belongsTo با مدل AccountTemplate
      * هر ردیف متعلق به یک قالب است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function template()
@@ -168,7 +168,7 @@ class AccountTemplateLines extends Model
     /**
      * رابطه belongsTo برای والد (از طریق کد)
      * دریافت حساب بالادستی (سطح بالاتر)
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function parent()
@@ -180,7 +180,7 @@ class AccountTemplateLines extends Model
     /**
      * رابطه hasMany برای فرزندان
      * دریافت تمام حساب‌های زیرمجموعه
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function children()
@@ -191,72 +191,72 @@ class AccountTemplateLines extends Model
 
     /**
      * دریافت تمام فرزندان به صورت بازگشتی (تا هر سطح)
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getAllChildren()
     {
         $children = collect();
-        
+
         foreach ($this->children as $child) {
             $children->push($child);
             $children = $children->merge($child->getAllChildren());
         }
-        
+
         return $children;
     }
 
     /**
      * دریافت تمام والدین به صورت بازگشتی (تا ریشه)
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getAllParents()
     {
         $parents = collect();
-        
+
         if ($this->parent) {
             $parents->push($this->parent);
             $parents = $parents->merge($this->parent->getAllParents());
         }
-        
+
         return $parents;
     }
 
     /**
      * دریافت مسیر کامل حساب (از ریشه تا خودش)
-     * 
+     *
      * @return string
      */
     public function getFullPath()
     {
         $path = collect([$this->account_name]);
         $parent = $this->parent;
-        
+
         while ($parent) {
             $path->prepend($parent->account_name);
             $parent = $parent->parent;
         }
-        
+
         return $path->implode(' / ');
     }
 
     /**
      * دریافت سطح حساب در ساختار سلسله‌مراتبی
      * (سطح 0 برای ریشه، سطح 1 برای فرزند، و ...)
-     * 
+     *
      * @return int
      */
     public function getLevel()
     {
         $level = 0;
         $parent = $this->parent;
-        
+
         while ($parent) {
             $level++;
             $parent = $parent->parent;
         }
-        
+
         return $level;
     }
 
@@ -469,7 +469,7 @@ class AccountTemplateLines extends Model
             self::CATEGORY_REVENUE => 'info',
             self::CATEGORY_EXPENSE => 'danger',
         ];
-        
+
         return $classes[$this->category] ?? 'secondary';
     }
 
@@ -553,12 +553,12 @@ class AccountTemplateLines extends Model
     {
         $codes = collect([$this->account_code]);
         $parent = $this->parent;
-        
+
         while ($parent) {
             $codes->prepend($parent->account_code);
             $parent = $parent->parent;
         }
-        
+
         return $codes->implode('.');
     }
 
@@ -572,13 +572,13 @@ class AccountTemplateLines extends Model
             ->where('parent_code', $this->account_code)
             ->orderBy('account_code', 'desc')
             ->first();
-        
+
         if ($maxCode) {
             $lastPart = explode('.', $maxCode->account_code);
             $newNumber = (int) end($lastPart) + 1;
             return $this->account_code . '.' . $newNumber;
         }
-        
+
         return $this->account_code . '.1';
     }
 
@@ -643,7 +643,7 @@ class AccountTemplateLines extends Model
             self::flattenTree($tree, $list);
             return $list;
         }
-        
+
         return self::byTemplate($templateId)
             ->orderBy('account_code')
             ->pluck('account_name', 'id')
@@ -664,16 +664,16 @@ class AccountTemplateLines extends Model
             self::flattenTree($tree, $list, 0, true);
             return $list;
         }
-        
+
         $lines = self::byTemplate($templateId)
             ->orderBy('account_code')
             ->get();
-        
+
         $list = [];
         foreach ($lines as $line) {
             $list[$line->id] = $line->full_name;
         }
-        
+
         return $list;
     }
 
@@ -689,11 +689,11 @@ class AccountTemplateLines extends Model
             ->where('parent_code', $parentCode)
             ->orderBy('account_code')
             ->get();
-        
+
         foreach ($lines as $line) {
             $line->children = self::getTree($templateId, $line->account_code);
         }
-        
+
         return $lines;
     }
 
@@ -713,7 +713,7 @@ class AccountTemplateLines extends Model
             } else {
                 $list[$item->id] = $indent . $item->account_name;
             }
-            
+
             if ($item->children && $item->children->count() > 0) {
                 self::flattenTree($item->children, $list, $level + 1, $withCode);
             }
@@ -757,16 +757,16 @@ class AccountTemplateLines extends Model
         $root = self::byTemplate($templateId)->root()->count();
         $leaf = self::byTemplate($templateId)->leaf()->count();
         $hasChildren = self::byTemplate($templateId)->hasChildren()->count();
-        
+
         $headers = self::byTemplate($templateId)->headers()->count();
         $details = self::byTemplate($templateId)->details()->count();
-        
+
         $assets = self::byTemplate($templateId)->byCategory(self::CATEGORY_ASSET)->count();
         $liabilities = self::byTemplate($templateId)->byCategory(self::CATEGORY_LIABILITY)->count();
         $equity = self::byTemplate($templateId)->byCategory(self::CATEGORY_EQUITY)->count();
         $revenue = self::byTemplate($templateId)->byCategory(self::CATEGORY_REVENUE)->count();
         $expense = self::byTemplate($templateId)->byCategory(self::CATEGORY_EXPENSE)->count();
-        
+
         // محاسبه میانگین سطح
         $lines = self::byTemplate($templateId)->get();
         $totalLevel = 0;
@@ -774,7 +774,7 @@ class AccountTemplateLines extends Model
             $totalLevel += $line->getLevel();
         }
         $avgLevel = $total > 0 ? $totalLevel / $total : 0;
-        
+
         return [
             'total' => $total,
             'root' => $root,
@@ -807,7 +807,7 @@ class AccountTemplateLines extends Model
             $exists = self::byTemplate($templateId)
                 ->where('account_code', $data['account_code'])
                 ->exists();
-            
+
             if ($exists) {
                 throw new \Exception('کد حساب تکراری است.');
             }
@@ -818,11 +818,11 @@ class AccountTemplateLines extends Model
             $parent = self::byTemplate($templateId)
                 ->where('account_code', $data['parent_code'])
                 ->first();
-            
+
             if (!$parent) {
                 throw new \Exception('والد مشخص شده وجود ندارد.');
             }
-            
+
             // بررسی اینکه والد از نوع کل باشد
             if ($parent->type !== self::TYPE_HEADER) {
                 throw new \Exception('والد باید از نوع کل (گروهی) باشد.');
@@ -846,12 +846,12 @@ class AccountTemplateLines extends Model
     public static function createMultiple($templateId, array $lines)
     {
         $created = collect();
-        
+
         foreach ($lines as $lineData) {
             $line = self::createWithValidation($templateId, $lineData);
             $created->push($line);
         }
-        
+
         return $created;
     }
 
@@ -893,7 +893,7 @@ class AccountTemplateLines extends Model
         $sourceLines = self::byTemplate($sourceTemplateId)->get();
         $count = 0;
         $map = [];
-        
+
         foreach ($sourceLines as $sourceLine) {
             // ایجاد ردیف جدید در قالب هدف
             $newLine = self::create([
@@ -905,26 +905,26 @@ class AccountTemplateLines extends Model
                 'type' => $sourceLine->type,
                 'normal_balance' => $sourceLine->normal_balance,
             ]);
-            
+
             // ذخیره نگاشت کد قدیمی به جدید
             $map[$sourceLine->account_code] = $newLine->account_code;
             $count++;
         }
-        
+
         // به‌روزرسانی والدها
         foreach ($sourceLines as $sourceLine) {
             if ($sourceLine->parent_code && isset($map[$sourceLine->parent_code])) {
                 $newLine = self::where('template_id', $targetTemplateId)
                     ->where('account_code', $map[$sourceLine->account_code])
                     ->first();
-                
+
                 if ($newLine) {
                     $newLine->parent_code = $map[$sourceLine->parent_code];
                     $newLine->save();
                 }
             }
         }
-        
+
         return $count;
     }
 
@@ -937,40 +937,40 @@ class AccountTemplateLines extends Model
     {
         $errors = [];
         $lines = self::byTemplate($templateId)->get();
-        
+
         foreach ($lines as $line) {
             // بررسی وجود والد
             if ($line->parent_code) {
                 $parent = self::byTemplate($templateId)
                     ->where('account_code', $line->parent_code)
                     ->first();
-                
+
                 if (!$parent) {
                     $errors[] = "حساب {$line->account_code} دارای والد ناموجود است.";
                 }
-                
+
                 // بررسی اینکه والد از نوع کل باشد
                 if ($parent && $parent->type !== self::TYPE_HEADER) {
                     $errors[] = "والد حساب {$line->account_code} باید از نوع کل باشد.";
                 }
             }
-            
+
             // بررسی اینکه حساب‌های کل نباید قابل ثبت باشند
             if ($line->type === self::TYPE_HEADER) {
                 // بررسی اینکه آیا حساب‌های کل فرزند دارند
                 $hasChildren = self::byTemplate($templateId)
                     ->where('parent_code', $line->account_code)
                     ->exists();
-                
+
                 if (!$hasChildren) {
                     $errors[] = "حساب کل {$line->account_code} هیچ فرزندی ندارد.";
                 }
             }
         }
-        
+
         // بررسی وجود دور در ساختار
         // (برای ساده‌سازی، این بخش در اینجا پیاده‌سازی نشده است)
-        
+
         return [
             'is_valid' => empty($errors),
             'errors' => $errors,

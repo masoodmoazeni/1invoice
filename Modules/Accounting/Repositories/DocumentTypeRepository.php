@@ -4,13 +4,13 @@ namespace Modules\Accounting\Repositories;
 
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Model;
-use Modules\Accounting\Entities\DimensionValues;
+use Modules\Accounting\Entities\DocumentType;
 
-class DimensionValueRepository extends BaseRepository
+class DocumentTypeRepository extends BaseRepository
 {
     protected Model $model;
 
-    public function __construct(DimensionValues $model)
+    public function __construct(DocumentType $model)
     {
         $this->model = $model;
     }

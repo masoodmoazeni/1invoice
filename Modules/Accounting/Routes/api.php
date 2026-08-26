@@ -14,6 +14,7 @@ use Modules\Accounting\Http\Controllers\v1\BranchController;
 use Modules\Accounting\Http\Controllers\v1\CurrencyController;
 use Modules\Accounting\Http\Controllers\v1\DepartmentController;
 use Modules\Accounting\Http\Controllers\v1\DimensionController;
+use Modules\Accounting\Http\Controllers\v1\DocumentTypController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -105,6 +106,14 @@ Route::prefix('v1')->group(function () {
         Route::get('/{id}', [DimensionController::class, 'show']);
         Route::put('/{id}', [DimensionController::class, 'update']);
         Route::delete('/{id}', [DimensionController::class, 'destroy']);
+    });
+
+    Route::prefix('document-types')->group(function () {
+        Route::get('/', [DocumentTypController::class, 'index']);
+        Route::post('/', [DocumentTypController::class, 'create']);
+        Route::get('/{id}', [DocumentTypController::class, 'show']);
+        Route::put('/{id}', [DocumentTypController::class, 'update']);
+        Route::delete('/{id}', [DocumentTypController::class, 'destroy']);
     });
 
     Route::prefix('language')->group(function () {

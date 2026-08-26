@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 
-class DocumentTypes extends Model
+class DocumentType extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -118,7 +118,7 @@ class DocumentTypes extends Model
     /**
      * رابطه belongsTo با مدل Company
      * هر نوع سند متعلق به یک شرکت است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function company()
@@ -129,7 +129,7 @@ class DocumentTypes extends Model
     /**
      * رابطه belongsTo با مدل Journal
      * هر نوع سند به یک دفتر روزنامه متصل است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function journal()
@@ -140,7 +140,7 @@ class DocumentTypes extends Model
     /**
      * رابطه belongsTo با مدل NumberSequence
      * هر نوع سند به یک شماره‌گذاری متصل است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function numberSequence()
@@ -151,7 +151,7 @@ class DocumentTypes extends Model
     /**
      * رابطه hasMany برای اسناد حسابداری
      * تمام اسنادی که از این نوع هستند
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function journalEntries()
@@ -424,12 +424,12 @@ class DocumentTypes extends Model
 
         $year = now()->format('Y');
         $prefix = $this->code . '-' . $year . '-';
-        
+
         if ($lastEntry) {
             $lastNumber = (int) str_replace($prefix, '', $lastEntry->document_no);
             return $prefix . str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
         }
-        
+
         return $prefix . '00001';
     }
 
@@ -442,7 +442,7 @@ class DocumentTypes extends Model
         if ($this->number_sequence_id) {
             return $this->numberSequence->pattern;
         }
-        
+
         return self::$defaultNumberSequences[$this->code] ?? $this->code . '-{year}-{number}';
     }
 
@@ -472,11 +472,11 @@ class DocumentTypes extends Model
     public static function getList($companyId, $onlyActive = true)
     {
         $query = self::byCompany($companyId);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         return $query->orderBy('name')
                      ->pluck('name', 'id')
                      ->toArray();
@@ -491,18 +491,18 @@ class DocumentTypes extends Model
     public static function getListWithCode($companyId, $onlyActive = true)
     {
         $query = self::byCompany($companyId);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         $types = $query->orderBy('name')->get();
         $list = [];
-        
+
         foreach ($types as $type) {
             $list[$type->id] = $type->full_name;
         }
-        
+
         return $list;
     }
 
@@ -529,13 +529,13 @@ class DocumentTypes extends Model
         $total = self::byCompany($companyId)->count();
         $active = self::byCompany($companyId)->active()->count();
         $inactive = $total - $active;
-        
+
         $hasJournal = self::byCompany($companyId)->hasJournal()->count();
         $withoutJournal = $total - $hasJournal;
-        
+
         $hasSequence = self::byCompany($companyId)->hasNumberSequence()->count();
         $withoutSequence = $total - $hasSequence;
-        
+
         // دریافت تعداد اسناد ثبت شده برای هر نوع
         $typesWithCount = self::byCompany($companyId)
             ->withCount('journalEntries')
@@ -550,7 +550,7 @@ class DocumentTypes extends Model
                     'is_active' => $type->is_active,
                 ];
             });
-        
+
         return [
             'total' => $total,
             'active' => $active,
@@ -577,7 +577,7 @@ class DocumentTypes extends Model
             $exists = self::byCompany($companyId)
                 ->where('code', $data['code'])
                 ->exists();
-            
+
             if ($exists) {
                 throw new \Exception('کد نوع سند تکراری است.');
             }
@@ -588,7 +588,7 @@ class DocumentTypes extends Model
             $journal = Journals::byCompany($companyId)
                 ->where('id', $data['journal_id'])
                 ->exists();
-            
+
             if (!$journal) {
                 throw new \Exception('دفتر روزنامه مشخص شده وجود ندارد.');
             }
@@ -599,7 +599,7 @@ class DocumentTypes extends Model
             $sequence = NumberSequences::byCompany($companyId)
                 ->where('id', $data['number_sequence_id'])
                 ->exists();
-            
+
             if (!$sequence) {
                 throw new \Exception('شماره‌گذاری مشخص شده وجود ندارد.');
             }
@@ -618,7 +618,7 @@ class DocumentTypes extends Model
     public static function createDefaultTypes($companyId, $defaultJournalId = null, $defaultSequenceId = null)
     {
         $created = collect();
-        
+
         $defaultTypes = [
             ['code' => 'SINV', 'name' => 'فاکتور فروش', 'type' => self::TYPE_SALES_INVOICE],
             ['code' => 'PINV', 'name' => 'فاکتور خرید', 'type' => self::TYPE_PURCHASE_INVOICE],
@@ -631,7 +631,7 @@ class DocumentTypes extends Model
             ['code' => 'CLS', 'name' => 'سند اختتامیه', 'type' => self::TYPE_CLOSING],
             ['code' => 'OPB', 'name' => 'مانده افتتاحیه', 'type' => self::TYPE_OPENING_BALANCE],
         ];
-        
+
         foreach ($defaultTypes as $typeData) {
             try {
                 $type = self::createWithValidation($companyId, [
@@ -647,7 +647,7 @@ class DocumentTypes extends Model
                 continue;
             }
         }
-        
+
         return $created;
     }
 
@@ -661,11 +661,11 @@ class DocumentTypes extends Model
     public static function getByJournalId($companyId, $journalId, $onlyActive = true)
     {
         $query = self::byCompany($companyId)->byJournal($journalId);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         return $query->orderBy('name')->get();
     }
 
@@ -679,11 +679,11 @@ class DocumentTypes extends Model
     public static function getByNumberSequence($companyId, $sequenceId, $onlyActive = true)
     {
         $query = self::byCompany($companyId)->byNumberSequence($sequenceId);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         return $query->orderBy('name')->get();
     }
 
@@ -696,7 +696,7 @@ class DocumentTypes extends Model
     public static function getForReport($companyId, array $filters = [])
     {
         $query = self::byCompany($companyId)->with(['journal', 'numberSequence']);
-        
+
         // فیلتر بر اساس وضعیت
         if (isset($filters['status'])) {
             if ($filters['status'] === 'active') {
@@ -705,17 +705,17 @@ class DocumentTypes extends Model
                 $query->inactive();
             }
         }
-        
+
         // فیلتر بر اساس جستجو
         if (isset($filters['search']) && $filters['search']) {
             $query->search($filters['search']);
         }
-        
+
         // فیلتر بر اساس دفتر روزنامه
         if (isset($filters['journal_id']) && $filters['journal_id']) {
             $query->byJournal($filters['journal_id']);
         }
-        
+
         return $query->orderBy('code')->get();
     }
 

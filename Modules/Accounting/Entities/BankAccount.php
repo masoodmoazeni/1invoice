@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 
-class BankAccounts extends Model
+class BankAccount extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -70,7 +70,7 @@ class BankAccounts extends Model
     /**
      * رابطه belongsTo با مدل Company
      * هر حساب بانکی متعلق به یک شرکت است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function company()
@@ -81,7 +81,7 @@ class BankAccounts extends Model
     /**
      * رابطه belongsTo با مدل Partner (طرف حساب)
      * هر حساب بانکی می‌تواند به یک طرف حساب متصل باشد
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function partner()
@@ -92,7 +92,7 @@ class BankAccounts extends Model
     /**
      * رابطه belongsTo با مدل Currency
      * هر حساب بانکی دارای یک ارز است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function currency()
@@ -103,7 +103,7 @@ class BankAccounts extends Model
     /**
      * رابطه hasMany برای تراکنش‌های بانکی
      * تمام تراکنش‌هایی که به این حساب بانکی مرتبط هستند
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function bankTransactions()
@@ -113,7 +113,7 @@ class BankAccounts extends Model
 
     /**
      * رابطه hasMany برای تراکنش‌های حسابداری
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function transactions()
@@ -286,7 +286,7 @@ class BankAccounts extends Model
         if (!$this->iban) {
             return null;
         }
-        
+
         // IBAN را به گروه‌های ۴ رقمی تقسیم می‌کند
         return implode(' ', str_split($this->iban, 4));
     }
@@ -300,7 +300,7 @@ class BankAccounts extends Model
         if (!$this->swift) {
             return null;
         }
-        
+
         return strtoupper($this->swift);
     }
 
@@ -313,11 +313,11 @@ class BankAccounts extends Model
         if (!$this->is_active) {
             return 'غیرفعال';
         }
-        
+
         if ($this->is_default) {
             return 'فعال - پیش‌فرض';
         }
-        
+
         return 'فعال';
     }
 
@@ -330,11 +330,11 @@ class BankAccounts extends Model
         if (!$this->is_active) {
             return 'danger';
         }
-        
+
         if ($this->is_default) {
             return 'success';
         }
-        
+
         return 'info';
     }
 
@@ -346,23 +346,23 @@ class BankAccounts extends Model
     {
         $parts = [];
         $parts[] = "بانک: {$this->bank_name}";
-        
+
         if ($this->branch_name) {
             $parts[] = "شعبه: {$this->branch_name}";
         }
-        
+
         $parts[] = "شماره حساب: {$this->account_number}";
-        
+
         if ($this->iban) {
             $parts[] = "شبا: {$this->formatted_iban}";
         }
-        
+
         if ($this->swift) {
             $parts[] = "Swift: {$this->swift}";
         }
-        
+
         $parts[] = "ارز: " . ($this->currency ? $this->currency->code : 'نامشخص');
-        
+
         return implode(' | ', $parts);
     }
 
@@ -416,7 +416,7 @@ class BankAccounts extends Model
             ->where('is_default', true)
             ->where('id', '!=', $this->id)
             ->update(['is_default' => false]);
-        
+
         // سپس این حساب بانکی را پیش‌فرض می‌کنیم
         $this->is_default = true;
         return $this->save();
@@ -448,14 +448,14 @@ class BankAccounts extends Model
     public function getBalance($dateTo = null)
     {
         $query = $this->bankTransactions();
-        
+
         if ($dateTo) {
             $query->where('transaction_date', '<=', $dateTo);
         }
-        
+
         $totalDeposits = $query->where('type', 'deposit')->sum('amount');
         $totalWithdrawals = $query->where('type', 'withdrawal')->sum('amount');
-        
+
         return $totalDeposits - $totalWithdrawals;
     }
 
@@ -483,7 +483,7 @@ class BankAccounts extends Model
 
         // حذف فاصله‌ها
         $iban = strtoupper(str_replace(' ', '', $this->iban));
-        
+
         // بررسی طول IBAN (حداقل ۱۵ و حداکثر ۳۴ کاراکتر)
         if (strlen($iban) < 15 || strlen($iban) > 34) {
             return false;
@@ -517,7 +517,7 @@ class BankAccounts extends Model
 
         // Swift Code باید 8 یا 11 کاراکتر باشد
         $swift = strtoupper($this->swift);
-        
+
         if (strlen($swift) !== 8 && strlen($swift) !== 11) {
             return false;
         }
@@ -562,11 +562,11 @@ class BankAccounts extends Model
     public static function getList($companyId, $onlyActive = true)
     {
         $query = self::byCompany($companyId);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         return $query->orderBy('bank_name')
                      ->orderBy('account_number')
                      ->pluck('account_number', 'id')
@@ -582,20 +582,20 @@ class BankAccounts extends Model
     public static function getListWithFullName($companyId, $onlyActive = true)
     {
         $query = self::byCompany($companyId);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         $accounts = $query->orderBy('bank_name')
                           ->orderBy('account_number')
                           ->get();
-        
+
         $list = [];
         foreach ($accounts as $account) {
             $list[$account->id] = $account->full_name;
         }
-        
+
         return $list;
     }
 
@@ -644,11 +644,11 @@ class BankAccounts extends Model
     public static function getPartnerAccounts($partnerId, $onlyActive = true)
     {
         $query = self::where('partner_id', $partnerId);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         return $query->orderBy('bank_name')->get();
     }
 
@@ -665,7 +665,7 @@ class BankAccounts extends Model
         $default = self::byCompany($companyId)->default()->count();
         $withPartner = self::byCompany($companyId)->whereNotNull('partner_id')->count();
         $withoutPartner = $total - $withPartner;
-        
+
         // آماده‌سازی آمار بر اساس ارز
         $currencyStats = self::byCompany($companyId)
             ->active()
@@ -679,7 +679,7 @@ class BankAccounts extends Model
                 ];
             })
             ->toArray();
-        
+
         return [
             'total' => $total,
             'active' => $active,
@@ -704,7 +704,7 @@ class BankAccounts extends Model
         $exists = self::byCompany($companyId)
             ->where('account_number', $data['account_number'])
             ->exists();
-        
+
         if ($exists) {
             throw new \Exception('شماره حساب تکراری است.');
         }
@@ -735,14 +735,14 @@ class BankAccounts extends Model
     public static function updateWithValidation($id, array $data)
     {
         $account = self::findOrFail($id);
-        
+
         // بررسی شماره حساب تکراری (به جز خودش)
         if (isset($data['account_number'])) {
             $exists = self::byCompany($account->company_id)
                 ->where('account_number', $data['account_number'])
                 ->where('id', '!=', $id)
                 ->exists();
-            
+
             if ($exists) {
                 throw new \Exception('شماره حساب تکراری است.');
             }
@@ -753,7 +753,7 @@ class BankAccounts extends Model
             $ibanExists = self::where('iban', $data['iban'])
                 ->where('id', '!=', $id)
                 ->exists();
-            
+
             if ($ibanExists) {
                 throw new \Exception('شماره شبا تکراری است.');
             }
@@ -778,7 +778,7 @@ class BankAccounts extends Model
     public static function getForReport($companyId, array $filters = [])
     {
         $query = self::byCompany($companyId)->with(['currency', 'partner']);
-        
+
         // فیلتر بر اساس وضعیت
         if (isset($filters['status'])) {
             if ($filters['status'] === 'active') {
@@ -787,22 +787,22 @@ class BankAccounts extends Model
                 $query->inactive();
             }
         }
-        
+
         // فیلتر بر اساس ارز
         if (isset($filters['currency_id']) && $filters['currency_id']) {
             $query->byCurrency($filters['currency_id']);
         }
-        
+
         // فیلتر بر اساس طرف حساب
         if (isset($filters['partner_id']) && $filters['partner_id']) {
             $query->byPartner($filters['partner_id']);
         }
-        
+
         // فیلتر بر اساس بانک
         if (isset($filters['bank_name']) && $filters['bank_name']) {
             $query->byBankName($filters['bank_name']);
         }
-        
+
         return $query->orderBy('bank_name')
                      ->orderBy('account_number')
                      ->get();

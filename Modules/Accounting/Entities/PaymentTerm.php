@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class PaymentTerms extends Model
+class PaymentTerm extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -68,12 +68,12 @@ class PaymentTerms extends Model
      * نوع: نقدی (پرداخت فوری)
      */
     const IMMEDIATE = 'immediate';
-    
+
     /**
      * نوع: مدت‌دار (با سررسید مشخص)
      */
     const CREDIT = 'credit';
-    
+
     /**
      * نوع: چند قسطی
      */
@@ -105,7 +105,7 @@ class PaymentTerms extends Model
     /**
      * رابطه belongsTo با مدل Company
      * هر شرط پرداخت متعلق به یک شرکت است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function company()
@@ -116,7 +116,7 @@ class PaymentTerms extends Model
     /**
      * رابطه hasMany برای طرف‌های حساب
      * تمام طرف‌های حسابی که از این شرط پرداخت استفاده می‌کنند
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function partners()
@@ -127,7 +127,7 @@ class PaymentTerms extends Model
     /**
      * رابطه hasMany برای فاکتورها
      * تمام فاکتورهایی که از این شرط پرداخت استفاده می‌کنند
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function invoices()
@@ -341,11 +341,11 @@ class PaymentTerms extends Model
         if (!$this->is_active) {
             return 'غیرفعال';
         }
-        
+
         if ($this->is_default) {
             return 'فعال - پیش‌فرض';
         }
-        
+
         return 'فعال';
     }
 
@@ -358,11 +358,11 @@ class PaymentTerms extends Model
         if (!$this->is_active) {
             return 'danger';
         }
-        
+
         if ($this->is_default) {
             return 'success';
         }
-        
+
         return 'info';
     }
 
@@ -377,7 +377,7 @@ class PaymentTerms extends Model
             self::CREDIT => 'warning',
             self::INSTALLMENT => 'info',
         ];
-        
+
         return $classes[$this->type] ?? 'secondary';
     }
 
@@ -389,11 +389,11 @@ class PaymentTerms extends Model
     public function getDueDate($invoiceDate)
     {
         $date = \Carbon\Carbon::parse($invoiceDate);
-        
+
         if ($this->is_immediate) {
             return $date;
         }
-        
+
         return $date->addDays($this->due_days);
     }
 
@@ -456,7 +456,7 @@ class PaymentTerms extends Model
             ->where('is_default', true)
             ->where('id', '!=', $this->id)
             ->update(['is_default' => false]);
-        
+
         // سپس این شرط پرداخت را پیش‌فرض می‌کنیم
         $this->is_default = true;
         return $this->save();
@@ -498,11 +498,11 @@ class PaymentTerms extends Model
     public static function getList($companyId, $onlyActive = true)
     {
         $query = self::byCompany($companyId);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         return $query->orderBy('is_immediate', 'desc')
                      ->orderBy('due_days')
                      ->pluck('name', 'id')
@@ -518,20 +518,20 @@ class PaymentTerms extends Model
     public static function getListWithCode($companyId, $onlyActive = true)
     {
         $query = self::byCompany($companyId);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         $terms = $query->orderBy('is_immediate', 'desc')
                        ->orderBy('due_days')
                        ->get();
-        
+
         $list = [];
         foreach ($terms as $term) {
             $list[$term->id] = $term->full_name;
         }
-        
+
         return $list;
     }
 
@@ -544,25 +544,25 @@ class PaymentTerms extends Model
     public static function getGroupedList($companyId, $onlyActive = true)
     {
         $query = self::byCompany($companyId);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         $terms = $query->orderBy('is_immediate', 'desc')
                        ->orderBy('due_days')
                        ->get();
-        
+
         $grouped = [
             'immediate' => [],
             'credit' => [],
         ];
-        
+
         foreach ($terms as $term) {
             $key = $term->is_immediate ? 'immediate' : 'credit';
             $grouped[$key][$term->id] = $term->full_name;
         }
-        
+
         return $grouped;
     }
 
@@ -618,7 +618,7 @@ class PaymentTerms extends Model
         $default = self::byCompany($companyId)->default()->count();
         $immediate = self::byCompany($companyId)->immediate()->count();
         $notImmediate = $total - $immediate;
-        
+
         // دریافت شرایط پرداخت با تعداد طرف‌های حساب
         $popular = self::byCompany($companyId)
             ->active()
@@ -634,12 +634,12 @@ class PaymentTerms extends Model
                 ];
             })
             ->toArray();
-        
+
         // دریافت میانگین روزهای سررسید
         $avgDueDays = self::byCompany($companyId)
             ->where('is_immediate', false)
             ->avg('due_days');
-        
+
         return [
             'total' => $total,
             'active' => $active,
@@ -666,7 +666,7 @@ class PaymentTerms extends Model
             $exists = self::byCompany($companyId)
                 ->where('code', $data['code'])
                 ->exists();
-            
+
             if ($exists) {
                 throw new \Exception('کد شرط پرداخت تکراری است.');
             }
@@ -744,7 +744,7 @@ class PaymentTerms extends Model
         ];
 
         $created = collect();
-        
+
         foreach ($defaultTerms as $termData) {
             try {
                 $term = self::createWithValidation($companyId, $termData);
@@ -753,7 +753,7 @@ class PaymentTerms extends Model
                 continue;
             }
         }
-        
+
         return $created;
     }
 
@@ -766,13 +766,13 @@ class PaymentTerms extends Model
     public static function getForPartner($companyId, $partnerId)
     {
         $partner = Partners::find($partnerId);
-        
+
         if ($partner && $partner->payment_term_id) {
             return self::byCompany($companyId)
                 ->where('id', $partner->payment_term_id)
                 ->get();
         }
-        
+
         return self::byCompany($companyId)
             ->active()
             ->orderBy('is_default', 'desc')
@@ -790,11 +790,11 @@ class PaymentTerms extends Model
     public static function calculateDueDate($companyId, $termCode, $invoiceDate)
     {
         $term = self::getByCodeAndCompany($companyId, $termCode);
-        
+
         if (!$term) {
             return $invoiceDate;
         }
-        
+
         return $term->getDueDate($invoiceDate)->format('Y-m-d');
     }
 
@@ -807,7 +807,7 @@ class PaymentTerms extends Model
     public static function getForReport($companyId, array $filters = [])
     {
         $query = self::byCompany($companyId)->with(['company']);
-        
+
         // فیلتر بر اساس وضعیت
         if (isset($filters['status'])) {
             if ($filters['status'] === 'active') {
@@ -816,7 +816,7 @@ class PaymentTerms extends Model
                 $query->inactive();
             }
         }
-        
+
         // فیلتر بر اساس نوع
         if (isset($filters['type'])) {
             if ($filters['type'] === 'immediate') {
@@ -825,12 +825,12 @@ class PaymentTerms extends Model
                 $query->notImmediate();
             }
         }
-        
+
         // فیلتر بر اساس جستجو
         if (isset($filters['search']) && $filters['search']) {
             $query->search($filters['search']);
         }
-        
+
         // فیلتر بر اساس روزهای سررسید
         if (isset($filters['due_days_min']) && isset($filters['due_days_max'])) {
             $query->whereBetween('due_days', [$filters['due_days_min'], $filters['due_days_max']]);
@@ -839,7 +839,7 @@ class PaymentTerms extends Model
         } elseif (isset($filters['due_days_max'])) {
             $query->where('due_days', '<=', $filters['due_days_max']);
         }
-        
+
         return $query->orderBy('is_immediate', 'desc')
                      ->orderBy('due_days')
                      ->get();

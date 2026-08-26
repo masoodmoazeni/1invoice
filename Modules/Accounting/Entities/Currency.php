@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 
-class Currencies extends Model
+class Currency extends Model
 {
     use HasFactory, SoftDeletes;
 

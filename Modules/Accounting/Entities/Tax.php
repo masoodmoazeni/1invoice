@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Taxes extends Model
+class Tax extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -56,12 +56,12 @@ class Taxes extends Model
     protected $hidden = [];
 
     // ========== ثابت‌های مربوط به نوع مالیات ==========
-    
+
     /**
      * نوع مالیات: درصدی
      */
     const TAX_KIND_PERCENTAGE = 'percentage';
-    
+
     /**
      * نوع مالیات: مبلغ ثابت
      */
@@ -82,12 +82,12 @@ class Taxes extends Model
      * محاسبه قبل از اعمال تخفیف
      */
     const CALC_BEFORE_DISCOUNT = 'before_discount';
-    
+
     /**
      * محاسبه بعد از اعمال تخفیف
      */
     const CALC_AFTER_DISCOUNT = 'after_discount';
-    
+
     /**
      * محاسبه مستقل (بدون در نظر گرفتن تخفیف)
      */
@@ -117,7 +117,7 @@ class Taxes extends Model
     /**
      * رابطه belongsTo با مدل Company
      * هر مالیات متعلق به یک شرکت است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function company()
@@ -128,7 +128,7 @@ class Taxes extends Model
     /**
      * رابطه belongsTo با مدل Country
      * هر مالیات متعلق به یک کشور است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function country()
@@ -139,7 +139,7 @@ class Taxes extends Model
     /**
      * رابطه belongsTo با مدل Account (اختیاری)
      * هر مالیات می‌تواند به یک حساب مالیاتی متصل باشد
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function account()
@@ -301,11 +301,11 @@ class Taxes extends Model
         $parts[] = "نرخ: " . $this->rate . ($this->tax_kind === self::TAX_KIND_PERCENTAGE ? '%' : '');
         $parts[] = "محاسبه: " . $this->getCalculationMethodLabel();
         $parts[] = $this->is_inclusive ? 'مالیات درون‌زا' : 'مالیات برون‌زا';
-        
+
         if ($this->description) {
             $parts[] = $this->description;
         }
-        
+
         return implode(' - ', $parts);
     }
 
@@ -320,7 +320,7 @@ class Taxes extends Model
             self::CALC_AFTER_DISCOUNT => 'بعد از تخفیف',
             self::CALC_EXCLUSIVE => 'مستقل',
         ];
-        
+
         return $labels[$this->calculation_method] ?? $this->calculation_method;
     }
 
@@ -334,7 +334,7 @@ class Taxes extends Model
             self::TAX_KIND_PERCENTAGE => 'درصدی',
             self::TAX_KIND_FIXED => 'مبلغ ثابت',
         ];
-        
+
         return $labels[$this->tax_kind] ?? $this->tax_kind;
     }
 
@@ -362,24 +362,24 @@ class Taxes extends Model
     public function calculateTaxWithDiscount($amount, $discount = 0)
     {
         $baseAmount = $amount;
-        
+
         switch ($this->calculation_method) {
             case self::CALC_BEFORE_DISCOUNT:
                 // محاسبه قبل از تخفیف
                 $baseAmount = $amount;
                 break;
-                
+
             case self::CALC_AFTER_DISCOUNT:
                 // محاسبه بعد از تخفیف
                 $baseAmount = $amount - $discount;
                 break;
-                
+
             case self::CALC_EXCLUSIVE:
                 // محاسبه مستقل (بدون تغییر)
                 $baseAmount = $amount;
                 break;
         }
-        
+
         // اگر مالیات درون‌زا باشد، باید از مبلغ پایه کم شود
         if ($this->is_inclusive) {
             $taxRate = $this->rate / 100;
@@ -387,7 +387,7 @@ class Taxes extends Model
         } else {
             $taxAmount = $this->calculateTax($baseAmount);
         }
-        
+
         return $taxAmount;
     }
 
@@ -449,7 +449,7 @@ class Taxes extends Model
         self::where('company_id', $this->company_id)
             ->where('is_default', true)
             ->update(['is_default' => false]);
-        
+
         // سپس این مالیات را پیش‌فرض می‌کنیم
         $this->is_default = true;
         return $this->save();
@@ -533,10 +533,10 @@ class Taxes extends Model
         $taxes = self::active()
             ->byCompany($companyId)
             ->get();
-        
+
         $results = [];
         $totalTax = 0;
-        
+
         foreach ($taxes as $tax) {
             $taxAmount = $tax->calculateTaxWithDiscount($amount, $discount);
             $results[] = [
@@ -545,7 +545,7 @@ class Taxes extends Model
             ];
             $totalTax += $taxAmount;
         }
-        
+
         return [
             'taxes' => $results,
             'total_tax' => $totalTax,

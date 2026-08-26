@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class TaxGroups extends Model
+class TaxGroup extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -57,7 +57,7 @@ class TaxGroups extends Model
     /**
      * رابطه belongsTo با مدل Company
      * هر گروه مالیاتی متعلق به یک شرکت است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function company()
@@ -69,7 +69,7 @@ class TaxGroups extends Model
      * رابطه belongsToMany با مدل Taxes
      * هر گروه مالیاتی می‌تواند شامل چندین مالیات باشد
      * از جدول رابط tax_group_items برای اتصال استفاده می‌شود
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function taxes()
@@ -82,7 +82,7 @@ class TaxGroups extends Model
 
     /**
      * رابطه belongsToMany با مدل Taxes (فقط مالیات‌های فعال)
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function activeTaxes()
@@ -97,7 +97,7 @@ class TaxGroups extends Model
     /**
      * رابطه hasMany با مدل TaxGroupItems
      * برای دسترسی مستقیم به آیتم‌های گروه مالیاتی
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function groupItems()
@@ -289,7 +289,7 @@ class TaxGroups extends Model
     {
         $results = [];
         $totalTax = 0;
-        
+
         foreach ($this->activeTaxes as $tax) {
             $taxAmount = $tax->calculateTaxWithDiscount($amount, $discount);
             $results[] = [
@@ -303,7 +303,7 @@ class TaxGroups extends Model
             ];
             $totalTax += $taxAmount;
         }
-        
+
         return [
             'group_id' => $this->id,
             'group_name' => $this->name,
@@ -351,7 +351,7 @@ class TaxGroups extends Model
         $newGroup->code = $newCode;
         $newGroup->name = $newName;
         $newGroup->save();
-        
+
         // کپی کردن مالیات‌ها
         foreach ($this->taxes as $tax) {
             $newGroup->taxes()->attach($tax->id, [
@@ -359,7 +359,7 @@ class TaxGroups extends Model
                 'is_required' => $tax->pivot->is_required ?? true,
             ]);
         }
-        
+
         return $newGroup;
     }
 
@@ -431,9 +431,9 @@ class TaxGroups extends Model
             'name' => $name,
             'description' => $description,
         ]);
-        
+
         $group->addMultipleTaxes($taxIds);
-        
+
         return $group;
     }
 }

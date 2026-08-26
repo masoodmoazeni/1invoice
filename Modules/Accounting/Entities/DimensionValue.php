@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 
-class DimensionValues extends Model
+class DimensionValue extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -59,7 +59,7 @@ class DimensionValues extends Model
     /**
      * رابطه belongsTo با مدل Dimension
      * هر مقدار متعلق به یک بعد است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function dimension()
@@ -70,7 +70,7 @@ class DimensionValues extends Model
     /**
      * رابطه belongsTo برای مقدار والد
      * دریافت مقدار بالادستی (سطح بالاتر)
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function parent()
@@ -81,7 +81,7 @@ class DimensionValues extends Model
     /**
      * رابطه hasMany برای مقادیر فرزند
      * دریافت تمام مقادیر زیرمجموعه
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function children()
@@ -91,7 +91,7 @@ class DimensionValues extends Model
 
     /**
      * رابطه hasMany برای مقادیر فرزند فعال (با فیلتر از طریق بعد)
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function activeChildren()
@@ -104,7 +104,7 @@ class DimensionValues extends Model
 
     /**
      * رابطه hasMany برای ارتباط با ردیف‌های سند حسابداری
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function journalEntryLines()
@@ -116,7 +116,7 @@ class DimensionValues extends Model
 
     /**
      * رابطه hasMany برای تراکنش‌ها
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function transactions()
@@ -126,72 +126,72 @@ class DimensionValues extends Model
 
     /**
      * دریافت تمام مقادیر فرزند به صورت بازگشتی (تا هر سطح)
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getAllChildren()
     {
         $children = collect();
-        
+
         foreach ($this->children as $child) {
             $children->push($child);
             $children = $children->merge($child->getAllChildren());
         }
-        
+
         return $children;
     }
 
     /**
      * دریافت تمام مقادیر والد به صورت بازگشتی (تا ریشه)
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getAllParents()
     {
         $parents = collect();
-        
+
         if ($this->parent) {
             $parents->push($this->parent);
             $parents = $parents->merge($this->parent->getAllParents());
         }
-        
+
         return $parents;
     }
 
     /**
      * دریافت مسیر کامل مقدار (از ریشه تا خودش)
-     * 
+     *
      * @return string
      */
     public function getFullPath()
     {
         $path = collect([$this->name]);
         $parent = $this->parent;
-        
+
         while ($parent) {
             $path->prepend($parent->name);
             $parent = $parent->parent;
         }
-        
+
         return $path->implode(' / ');
     }
 
     /**
      * دریافت سطح مقدار در ساختار سلسله‌مراتبی
      * (سطح 0 برای ریشه، سطح 1 برای فرزند، و ...)
-     * 
+     *
      * @return int
      */
     public function getLevel()
     {
         $level = 0;
         $parent = $this->parent;
-        
+
         while ($parent) {
             $level++;
             $parent = $parent->parent;
         }
-        
+
         return $level;
     }
 
@@ -212,7 +212,7 @@ class DimensionValues extends Model
     {
         $totalDebit = $this->journalEntryLines()->sum('debit');
         $totalCredit = $this->journalEntryLines()->sum('credit');
-        
+
         return [
             'debit' => $totalDebit,
             'credit' => $totalCredit,
@@ -345,12 +345,12 @@ class DimensionValues extends Model
     {
         $codes = collect([$this->code]);
         $parent = $this->parent;
-        
+
         while ($parent) {
             $codes->prepend($parent->code);
             $parent = $parent->parent;
         }
-        
+
         return $codes->implode('.');
     }
 
@@ -399,13 +399,13 @@ class DimensionValues extends Model
         $maxCode = self::where('parent_id', $this->id)
             ->orderBy('code', 'desc')
             ->first();
-        
+
         if ($maxCode) {
             $lastPart = explode('.', $maxCode->code);
             $newNumber = (int) end($lastPart) + 1;
             return $this->code . '.' . $newNumber;
         }
-        
+
         return $this->code . '.1';
     }
 
@@ -419,11 +419,11 @@ class DimensionValues extends Model
         $values = self::where('parent_id', $parentId)
             ->orderBy('name')
             ->get();
-        
+
         foreach ($values as $value) {
             $value->children = self::getTree($value->id);
         }
-        
+
         return $values;
     }
 
@@ -439,13 +439,13 @@ class DimensionValues extends Model
         $values = self::where('parent_id', $parentId)
             ->orderBy('name')
             ->get();
-        
+
         foreach ($values as $value) {
             $value->level = $level;
             $result->push($value);
             $result = $result->merge(self::getFlatTree($value->id, $level + 1));
         }
-        
+
         return $result;
     }
 
@@ -461,17 +461,17 @@ class DimensionValues extends Model
                       ->whereHas('journalEntry', function ($q) {
                           $q->posted();
                       });
-        
+
         if ($startDate && $endDate) {
             $query->whereHas('journalEntry', function ($q) use ($startDate, $endDate) {
                 $q->dateBetween($startDate, $endDate);
             });
         }
-        
+
         $totalDebit = $query->sum('debit');
         $totalCredit = $query->sum('credit');
         $count = $query->count();
-        
+
         return [
             'total_debit' => $totalDebit,
             'total_credit' => $totalCredit,
@@ -504,7 +504,7 @@ class DimensionValues extends Model
             }
             return $list;
         }
-        
+
         return self::byDimension($dimensionId)
             ->orderBy('name')
             ->pluck('name', 'id')
@@ -530,16 +530,16 @@ class DimensionValues extends Model
             }
             return $list;
         }
-        
+
         $values = self::byDimension($dimensionId)
             ->orderBy('name')
             ->get();
-        
+
         $list = [];
         foreach ($values as $value) {
             $list[$value->id] = $value->full_name;
         }
-        
+
         return $list;
     }
 
@@ -582,7 +582,7 @@ class DimensionValues extends Model
         $hasChildren = self::byDimension($dimensionId)->hasChildren()->count();
         $hasTransactions = self::byDimension($dimensionId)->hasTransactions()->count();
         $withoutTransactions = $total - $hasTransactions;
-        
+
         // محاسبه میانگین سطح
         $values = self::byDimension($dimensionId)->get();
         $totalLevel = 0;
@@ -590,7 +590,7 @@ class DimensionValues extends Model
             $totalLevel += $value->getLevel();
         }
         $avgLevel = $total > 0 ? $totalLevel / $total : 0;
-        
+
         return [
             'total' => $total,
             'root' => $root,
@@ -616,7 +616,7 @@ class DimensionValues extends Model
             $exists = self::byDimension($dimensionId)
                 ->where('code', $data['code'])
                 ->exists();
-            
+
             if ($exists) {
                 throw new \Exception('کد مقدار تکراری است.');
             }
@@ -628,7 +628,7 @@ class DimensionValues extends Model
             if (!$parent) {
                 throw new \Exception('والد مشخص شده وجود ندارد.');
             }
-            
+
             // بررسی اینکه والد در همان بعد باشد
             if ($parent->dimension_id != $dimensionId) {
                 throw new \Exception('والد باید در همان بعد باشد.');
@@ -655,9 +655,9 @@ class DimensionValues extends Model
                 $prefix = $parent->code . '.';
             }
         }
-        
+
         $code = $prefix . strtoupper(Str::slug($name, '_'));
-        
+
         // اگر کد تکراری باشد، شماره اضافه می‌شود
         $counter = 1;
         $originalCode = $code;
@@ -665,7 +665,7 @@ class DimensionValues extends Model
             $code = $originalCode . '_' . $counter;
             $counter++;
         }
-        
+
         return $code;
     }
 
@@ -692,7 +692,7 @@ class DimensionValues extends Model
                 }
             }])
             ->get();
-        
+
         // اضافه کردن آمار به هر مقدار
         foreach ($values as $value) {
             $totalDebit = $value->journalEntryLines->sum('debit');
@@ -702,7 +702,7 @@ class DimensionValues extends Model
             $value->balance = $totalDebit - $totalCredit;
             $value->entries_count = $value->journalEntryLines->count();
         }
-        
+
         return $values;
     }
 
@@ -717,7 +717,7 @@ class DimensionValues extends Model
         $sourceValues = self::byDimension($sourceDimensionId)->get();
         $count = 0;
         $map = [];
-        
+
         foreach ($sourceValues as $sourceValue) {
             // ایجاد مقدار جدید در بعد هدف
             $newValue = self::create([
@@ -726,12 +726,12 @@ class DimensionValues extends Model
                 'name' => $sourceValue->name,
                 'parent_id' => null, // ابتدا والد را null می‌گذاریم
             ]);
-            
+
             // ذخیره نگاشت شناسه قدیمی به جدید
             $map[$sourceValue->id] = $newValue->id;
             $count++;
         }
-        
+
         // به‌روزرسانی والدها
         foreach ($sourceValues as $sourceValue) {
             if ($sourceValue->parent_id && isset($map[$sourceValue->parent_id])) {
@@ -742,7 +742,7 @@ class DimensionValues extends Model
                 }
             }
         }
-        
+
         return $count;
     }
 }

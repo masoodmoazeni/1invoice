@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 
-class Companies extends Model
+class Company extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -164,7 +164,7 @@ class Companies extends Model
         if ($this->logo) {
             return asset('storage/' . $this->logo);
         }
-        
+
         return null;
     }
 

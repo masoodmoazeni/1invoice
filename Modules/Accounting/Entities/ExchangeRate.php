@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
-class ExchangeRates extends Model
+class ExchangeRate extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -82,7 +82,7 @@ class ExchangeRates extends Model
 
     /**
      * رابطه belongsTo برای ارز مبدا
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function fromCurrency()
@@ -92,7 +92,7 @@ class ExchangeRates extends Model
 
     /**
      * رابطه belongsTo برای ارز مقصد
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function toCurrency()

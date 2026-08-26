@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 
-class AccountTemplates extends Model
+class AccountTemplate extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -58,7 +58,7 @@ class AccountTemplates extends Model
     /**
      * رابطه belongsTo با مدل Country
      * هر قالب متعلق به یک کشور است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function country()
@@ -69,7 +69,7 @@ class AccountTemplates extends Model
     /**
      * رابطه hasMany برای آیتم‌های قالب
      * هر قالب شامل چندین حساب است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function items()
@@ -113,11 +113,11 @@ class AccountTemplates extends Model
     {
         $categories = ['asset', 'liability', 'equity', 'revenue', 'expense'];
         $counts = [];
-        
+
         foreach ($categories as $category) {
             $counts[$category] = $this->items()->where('account_category', $category)->count();
         }
-        
+
         return $counts;
     }
 
@@ -248,11 +248,11 @@ class AccountTemplates extends Model
             ->orderBy('sort_order')
             ->orderBy('account_code')
             ->get();
-        
+
         foreach ($items as $item) {
             $item->children = $this->getTree($item->account_code);
         }
-        
+
         return $items;
     }
 
@@ -270,13 +270,13 @@ class AccountTemplates extends Model
             ->orderBy('sort_order')
             ->orderBy('account_code')
             ->get();
-        
+
         foreach ($items as $item) {
             $item->level = $level;
             $result->push($item);
             $result = $result->merge($this->getFlatTree($item->account_code, $level + 1));
         }
-        
+
         return $result;
     }
 
@@ -287,7 +287,7 @@ class AccountTemplates extends Model
     public function getReportInfo()
     {
         $categoryCounts = $this->getCategoryCounts();
-        
+
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -314,14 +314,14 @@ class AccountTemplates extends Model
         $newTemplate->version = $newVersion;
         $newTemplate->name = $newName ?? $this->name . ' (نسخه ' . $newVersion . ')';
         $newTemplate->save();
-        
+
         // کپی کردن آیتم‌ها
         foreach ($this->items as $item) {
             $newItem = $item->replicate();
             $newItem->account_template_id = $newTemplate->id;
             $newItem->save();
         }
-        
+
         return $newTemplate;
     }
 
@@ -334,26 +334,26 @@ class AccountTemplates extends Model
     {
         $count = 0;
         $map = []; // برای نگاشت کدهای والد
-        
+
         // دریافت آیتم‌های قالب به ترتیب
         $items = $this->items()->orderBy('level')->orderBy('account_code')->get();
-        
+
         foreach ($items as $item) {
             // بررسی وجود حساب با کد مشابه
             $existingAccount = Accounts::byCompany($companyId)
                 ->where('account_code', $item->account_code)
                 ->first();
-            
+
             if ($existingAccount) {
                 continue; // حساب وجود دارد
             }
-            
+
             // پیدا کردن والد
             $parentId = null;
             if ($item->parent_code && isset($map[$item->parent_code])) {
                 $parentId = $map[$item->parent_code];
             }
-            
+
             // ایجاد حساب
             $account = Accounts::create([
                 'company_id' => $companyId,
@@ -369,11 +369,11 @@ class AccountTemplates extends Model
                 'level' => $item->level,
                 'sort_order' => $item->sort_order,
             ]);
-            
+
             $map[$item->account_code] = $account->id;
             $count++;
         }
-        
+
         return $count;
     }
 
@@ -385,17 +385,17 @@ class AccountTemplates extends Model
     public function getDifferences($templateId)
     {
         $otherTemplate = self::find($templateId);
-        
+
         if (!$otherTemplate) {
             return ['error' => 'قالب مورد نظر یافت نشد.'];
         }
-        
+
         $thisItems = $this->items()->pluck('account_code')->toArray();
         $otherItems = $otherTemplate->items()->pluck('account_code')->toArray();
-        
+
         $onlyInThis = array_diff($thisItems, $otherItems);
         $onlyInOther = array_diff($otherItems, $thisItems);
-        
+
         return [
             'template1' => [
                 'id' => $this->id,
@@ -438,12 +438,12 @@ class AccountTemplates extends Model
         $templates = self::byCountry($countryId)
             ->orderBy('name')
             ->get();
-        
+
         $list = [];
         foreach ($templates as $template) {
             $list[$template->id] = $template->full_name;
         }
-        
+
         return $list;
     }
 
@@ -469,15 +469,15 @@ class AccountTemplates extends Model
     public static function getStatistics($countryId = null)
     {
         $query = self::query();
-        
+
         if ($countryId) {
             $query->byCountry($countryId);
         }
-        
+
         $total = $query->count();
         $withItems = $query->has('items')->count();
         $withoutItems = $total - $withItems;
-        
+
         // دریافت تعداد قالب‌ها بر اساس کشور
         $byCountry = self::with('country')
             ->select('country_id')
@@ -490,7 +490,7 @@ class AccountTemplates extends Model
                     'count' => $item->count,
                 ];
             });
-        
+
         return [
             'total_templates' => $total,
             'with_items' => $withItems,
@@ -512,12 +512,12 @@ class AccountTemplates extends Model
         $template = self::create(array_merge($templateData, [
             'country_id' => $countryId,
         ]));
-        
+
         // ایجاد آیتم‌ها
         foreach ($itemsData as $itemData) {
             $template->items()->create($itemData);
         }
-        
+
         return $template;
     }
 
@@ -543,23 +543,23 @@ class AccountTemplates extends Model
     {
         $content = file_get_contents($jsonPath);
         $data = json_decode($content, true);
-        
+
         if (!$data) {
             throw new \Exception('فایل JSON معتبر نیست.');
         }
-        
+
         // ایجاد قالب
         $template = self::create([
             'country_id' => $countryId,
             'name' => $data['name'],
             'version' => $data['version'],
         ]);
-        
+
         // ایجاد آیتم‌ها
         foreach ($data['items'] as $itemData) {
             $template->items()->create($itemData);
         }
-        
+
         return $template;
     }
 
@@ -572,11 +572,11 @@ class AccountTemplates extends Model
     public static function exportToJson($templateId, $filePath)
     {
         $template = self::with('items')->find($templateId);
-        
+
         if (!$template) {
             return false;
         }
-        
+
         $data = [
             'name' => $template->name,
             'version' => $template->version,
@@ -584,7 +584,7 @@ class AccountTemplates extends Model
             'items' => $template->items->toArray(),
             'exported_at' => now()->toDateTimeString(),
         ];
-        
+
         return file_put_contents($filePath, json_encode($data, JSON_PRETTY_PRINT)) !== false;
     }
 }

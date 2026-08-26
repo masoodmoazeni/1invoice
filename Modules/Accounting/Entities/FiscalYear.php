@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
-class FiscalYears extends Model
+class FiscalYear extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -71,17 +71,17 @@ class FiscalYears extends Model
      * وضعیت: باز (قابل استفاده)
      */
     const STATUS_OPEN = 'open';
-    
+
     /**
      * وضعیت: بسته شده
      */
     const STATUS_CLOSED = 'closed';
-    
+
     /**
      * وضعیت: در انتظار
      */
     const STATUS_PENDING = 'pending';
-    
+
     /**
      * وضعیت: قفل شده
      */
@@ -134,7 +134,7 @@ class FiscalYears extends Model
     /**
      * رابطه belongsTo با مدل Company
      * هر سال مالی متعلق به یک شرکت است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function company()
@@ -145,7 +145,7 @@ class FiscalYears extends Model
     /**
      * رابطه hasMany برای تراکنش‌های مالی
      * تمام تراکنش‌هایی که در این سال مالی ثبت شده‌اند
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function transactions()
@@ -156,7 +156,7 @@ class FiscalYears extends Model
     /**
      * رابطه hasMany برای فاکتورها
      * تمام فاکتورهایی که در این سال مالی ثبت شده‌اند
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function invoices()
@@ -166,7 +166,7 @@ class FiscalYears extends Model
 
     /**
      * رابطه hasMany برای بودجه‌ها
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function budgets()
@@ -370,7 +370,7 @@ class FiscalYears extends Model
             self::STATUS_PENDING => 'warning',
             self::STATUS_LOCKED => 'danger',
         ];
-        
+
         return $classes[$this->status] ?? 'info';
     }
 
@@ -386,7 +386,7 @@ class FiscalYears extends Model
             self::STATUS_PENDING => '#ffc107',
             self::STATUS_LOCKED => '#dc3545',
         ];
-        
+
         return $colors[$this->status] ?? '#17a2b8';
     }
 
@@ -398,11 +398,11 @@ class FiscalYears extends Model
     {
         $end = Carbon::parse($this->end_date);
         $today = Carbon::today();
-        
+
         if ($today->gt($end)) {
             return 0;
         }
-        
+
         return $today->diffInDays($end);
     }
 
@@ -415,18 +415,18 @@ class FiscalYears extends Model
         $start = Carbon::parse($this->start_date);
         $end = Carbon::parse($this->end_date);
         $today = Carbon::today();
-        
+
         if ($today->lt($start)) {
             return 0;
         }
-        
+
         if ($today->gt($end)) {
             return 100;
         }
-        
+
         $totalDays = $start->diffInDays($end);
         $passedDays = $start->diffInDays($today);
-        
+
         return round(($passedDays / $totalDays) * 100, 2);
     }
 
@@ -507,7 +507,7 @@ class FiscalYears extends Model
         $date = Carbon::parse($date);
         $start = Carbon::parse($this->start_date);
         $end = Carbon::parse($this->end_date);
-        
+
         return $date->between($start, $end);
     }
 
@@ -532,7 +532,7 @@ class FiscalYears extends Model
         if ($this->status !== self::STATUS_PENDING) {
             return false;
         }
-        
+
         $this->status = self::STATUS_OPEN;
         return $this->save();
     }
@@ -546,7 +546,7 @@ class FiscalYears extends Model
         if (!in_array($this->status, [self::STATUS_OPEN, self::STATUS_PENDING])) {
             return false;
         }
-        
+
         $this->status = self::STATUS_CLOSED;
         return $this->save();
     }
@@ -561,7 +561,7 @@ class FiscalYears extends Model
         if (!in_array($this->status, [self::STATUS_OPEN, self::STATUS_PENDING])) {
             return false;
         }
-        
+
         $this->status = self::STATUS_LOCKED;
         $this->lock_date = $lockDate ? Carbon::parse($lockDate) : Carbon::now();
         return $this->save();
@@ -579,7 +579,7 @@ class FiscalYears extends Model
             ->where('is_default', true)
             ->where('id', '!=', $this->id)
             ->update(['is_default' => false]);
-        
+
         // سپس این سال مالی را پیش‌فرض می‌کنیم
         $this->is_default = true;
         return $this->save();
@@ -617,11 +617,11 @@ class FiscalYears extends Model
     public function getTransactionsByType($type = null)
     {
         $query = $this->transactions();
-        
+
         if ($type) {
             $query->where('type', $type);
         }
-        
+
         return $query->get();
     }
 
@@ -672,11 +672,11 @@ class FiscalYears extends Model
     public static function getList($companyId, $onlyActive = false)
     {
         $query = self::byCompany($companyId);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         return $query->orderBy('start_date', 'desc')
                      ->pluck('name', 'id')
                      ->toArray();
@@ -691,18 +691,18 @@ class FiscalYears extends Model
     public static function getListWithFullName($companyId, $onlyActive = false)
     {
         $query = self::byCompany($companyId);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         $years = $query->orderBy('start_date', 'desc')->get();
         $list = [];
-        
+
         foreach ($years as $year) {
             $list[$year->id] = $year->full_name;
         }
-        
+
         return $list;
     }
 
@@ -757,7 +757,7 @@ class FiscalYears extends Model
         $locked = self::byCompany($companyId)->locked()->count();
         $default = self::byCompany($companyId)->default()->count();
         $current = self::byCompany($companyId)->current()->count();
-        
+
         return [
             'total' => $total,
             'open' => $open,
@@ -788,16 +788,16 @@ class FiscalYears extends Model
                             ->where('end_date', '>=', $data['end_date']);
                       });
             })->exists();
-        
+
         if ($overlap) {
             throw new \Exception('تاریخ‌های سال مالی با سال مالی دیگری تداخل دارد.');
         }
-        
+
         // اگر پیش‌فرض است، سایر سال‌های مالی را غیرپیش‌فرض کن
         if (isset($data['is_default']) && $data['is_default']) {
             self::byCompany($companyId)->update(['is_default' => false]);
         }
-        
+
         return self::create(array_merge($data, ['company_id' => $companyId]));
     }
 

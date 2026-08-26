@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
-class NumberSequences extends Model
+class NumberSequence extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -96,17 +96,17 @@ class NumberSequences extends Model
      * نوع ریست: روزانه
      */
     const RESET_DAILY = 'daily';
-    
+
     /**
      * نوع ریست: ماهانه
      */
     const RESET_MONTHLY = 'monthly';
-    
+
     /**
      * نوع ریست: سالانه
      */
     const RESET_YEARLY = 'yearly';
-    
+
     /**
      * نوع ریست: هرگز (همیشگی)
      */
@@ -150,7 +150,7 @@ class NumberSequences extends Model
     /**
      * رابطه belongsTo با مدل Company
      * هر شماره‌گذاری متعلق به یک شرکت است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function company()
@@ -161,7 +161,7 @@ class NumberSequences extends Model
     /**
      * رابطه hasMany برای انواع اسناد
      * هر شماره‌گذاری می‌تواند برای چندین نوع سند استفاده شود
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function documentTypes()
@@ -309,7 +309,7 @@ class NumberSequences extends Model
             self::RESET_YEARLY => 'warning',
             self::RESET_NEVER => 'success',
         ];
-        
+
         return $classes[$this->reset_type] ?? 'secondary';
     }
 
@@ -320,7 +320,7 @@ class NumberSequences extends Model
     public function getResetKey()
     {
         $now = Carbon::now();
-        
+
         switch ($this->reset_type) {
             case self::RESET_DAILY:
                 return $now->format('Y-m-d');
@@ -343,7 +343,7 @@ class NumberSequences extends Model
         $number = str_pad('{number}', $this->padding, '0', STR_PAD_LEFT);
         $prefix = $this->prefix ?? '';
         $suffix = $this->suffix ?? '';
-        
+
         return $prefix . $number . $suffix;
     }
 
@@ -496,11 +496,11 @@ class NumberSequences extends Model
             ->where('module', $module)
             ->where('prefix', $prefix)
             ->where('suffix', $suffix);
-        
+
         if ($exceptId) {
             $query->where('id', '!=', $exceptId);
         }
-        
+
         return $query->exists();
     }
 
@@ -515,11 +515,11 @@ class NumberSequences extends Model
     public static function getList($companyId, $module = null)
     {
         $query = self::byCompany($companyId);
-        
+
         if ($module) {
             $query->byModule($module);
         }
-        
+
         return $query->orderBy('module')
                      ->orderBy('prefix')
                      ->get()
@@ -541,15 +541,15 @@ class NumberSequences extends Model
     {
         $query = self::byCompany($companyId)
             ->where('module', $module);
-        
+
         if ($prefix !== null) {
             $query->where('prefix', $prefix);
         }
-        
+
         if ($suffix !== null) {
             $query->where('suffix', $suffix);
         }
-        
+
         return $query->first();
     }
 
@@ -592,7 +592,7 @@ class NumberSequences extends Model
     public static function getStatistics($companyId)
     {
         $total = self::byCompany($companyId)->count();
-        
+
         $byModule = self::byCompany($companyId)
             ->select('module')
             ->selectRaw('COUNT(*) as count')
@@ -606,7 +606,7 @@ class NumberSequences extends Model
                 ]];
             })
             ->toArray();
-        
+
         $byResetType = self::byCompany($companyId)
             ->select('reset_type')
             ->selectRaw('COUNT(*) as count')
@@ -620,10 +620,10 @@ class NumberSequences extends Model
                 ]];
             })
             ->toArray();
-        
+
         $hasDocuments = self::byCompany($companyId)->hasDocuments()->count();
         $withoutDocuments = $total - $hasDocuments;
-        
+
         return [
             'total' => $total,
             'has_documents' => $hasDocuments,
@@ -649,7 +649,7 @@ class NumberSequences extends Model
             $data['prefix'] ?? null,
             $data['suffix'] ?? null
         );
-        
+
         if ($exists) {
             throw new \Exception('شماره‌گذاری با این مشخصات قبلاً ثبت شده است.');
         }
@@ -710,7 +710,7 @@ class NumberSequences extends Model
         ];
 
         $created = collect();
-        
+
         foreach ($defaults as $data) {
             try {
                 $sequence = self::createWithValidation($companyId, $data);
@@ -719,7 +719,7 @@ class NumberSequences extends Model
                 continue;
             }
         }
-        
+
         return $created;
     }
 
@@ -760,22 +760,22 @@ class NumberSequences extends Model
     public static function getForReport($companyId, array $filters = [])
     {
         $query = self::byCompany($companyId);
-        
+
         // فیلتر بر اساس ماژول
         if (isset($filters['module']) && $filters['module']) {
             $query->byModule($filters['module']);
         }
-        
+
         // فیلتر بر اساس نوع ریست
         if (isset($filters['reset_type']) && $filters['reset_type']) {
             $query->byResetType($filters['reset_type']);
         }
-        
+
         // فیلتر بر اساس جستجو
         if (isset($filters['search']) && $filters['search']) {
             $query->search($filters['search']);
         }
-        
+
         return $query->orderBy('module')
                      ->orderBy('prefix')
                      ->get();

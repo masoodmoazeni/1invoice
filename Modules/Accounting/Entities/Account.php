@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Accounts extends Model
+class Account extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -74,22 +74,22 @@ class Accounts extends Model
      * دسته‌بندی: دارایی
      */
     const CATEGORY_ASSET = 'asset';
-    
+
     /**
      * دسته‌بندی: بدهی
      */
     const CATEGORY_LIABILITY = 'liability';
-    
+
     /**
      * دسته‌بندی: سرمایه
      */
     const CATEGORY_EQUITY = 'equity';
-    
+
     /**
      * دسته‌بندی: درآمد
      */
     const CATEGORY_REVENUE = 'revenue';
-    
+
     /**
      * دسته‌بندی: هزینه
      */
@@ -125,7 +125,7 @@ class Accounts extends Model
      * نوع: کل (گروهی)
      */
     const TYPE_HEADER = 'header';
-    
+
     /**
      * نوع: جزئی (قابل ثبت)
      */
@@ -155,7 +155,7 @@ class Accounts extends Model
      * مانده عادی: بدهکار
      */
     const BALANCE_DEBIT = 'debit';
-    
+
     /**
      * مانده عادی: بستانکار
      */
@@ -195,7 +195,7 @@ class Accounts extends Model
     /**
      * رابطه belongsTo با مدل Company
      * هر حساب متعلق به یک شرکت است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function company()
@@ -205,7 +205,7 @@ class Accounts extends Model
 
     /**
      * رابطه belongsTo برای حساب والد
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function parent()
@@ -215,7 +215,7 @@ class Accounts extends Model
 
     /**
      * رابطه hasMany برای حساب‌های فرزند
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function children()
@@ -225,7 +225,7 @@ class Accounts extends Model
 
     /**
      * رابطه hasMany برای حساب‌های فرزند فعال
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function activeChildren()
@@ -236,7 +236,7 @@ class Accounts extends Model
 
     /**
      * رابطه belongsTo با مدل Currency
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function currency()
@@ -246,7 +246,7 @@ class Accounts extends Model
 
     /**
      * رابطه hasMany برای تراکنش‌های بدهکار
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function debitTransactions()
@@ -256,7 +256,7 @@ class Accounts extends Model
 
     /**
      * رابطه hasMany برای تراکنش‌های بستانکار
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function creditTransactions()
@@ -266,7 +266,7 @@ class Accounts extends Model
 
     /**
      * دریافت تمام تراکنش‌های حساب (بدهکار و بستانکار)
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getAllTransactions()
@@ -524,12 +524,12 @@ class Accounts extends Model
     {
         $path = collect([$this->account_name]);
         $parent = $this->parent;
-        
+
         while ($parent) {
             $path->prepend($parent->account_name);
             $parent = $parent->parent;
         }
-        
+
         return $path->implode(' / ');
     }
 
@@ -540,12 +540,12 @@ class Accounts extends Model
     public function getAllChildren()
     {
         $children = collect();
-        
+
         foreach ($this->children as $child) {
             $children->push($child);
             $children = $children->merge($child->getAllChildren());
         }
-        
+
         return $children;
     }
 
@@ -556,12 +556,12 @@ class Accounts extends Model
     public function getAllParents()
     {
         $parents = collect();
-        
+
         if ($this->parent) {
             $parents->push($this->parent);
             $parents = $parents->merge($this->parent->getAllParents());
         }
-        
+
         return $parents;
     }
 
@@ -629,11 +629,11 @@ class Accounts extends Model
     {
         $this->is_active = false;
         $this->save();
-        
+
         foreach ($this->children as $child) {
             $child->deactivateWithChildren();
         }
-        
+
         return true;
     }
 
@@ -654,7 +654,7 @@ class Accounts extends Model
         }
 
         $transactions = $query->get();
-        
+
         $totalDebit = $transactions->sum('debit_amount');
         $totalCredit = $transactions->sum('credit_amount');
 
@@ -673,11 +673,11 @@ class Accounts extends Model
     public function getBalanceWithChildren($dateTo = null)
     {
         $balance = $this->getBalance($dateTo);
-        
+
         foreach ($this->children as $child) {
             $balance += $child->getBalanceWithChildren($dateTo);
         }
-        
+
         return $balance;
     }
 
@@ -689,11 +689,11 @@ class Accounts extends Model
     public function getTotalDebit($dateTo = null)
     {
         $query = $this->debitTransactions();
-        
+
         if ($dateTo) {
             $query->where('created_at', '<=', $dateTo);
         }
-        
+
         return $query->sum('amount');
     }
 
@@ -705,11 +705,11 @@ class Accounts extends Model
     public function getTotalCredit($dateTo = null)
     {
         $query = $this->creditTransactions();
-        
+
         if ($dateTo) {
             $query->where('created_at', '<=', $dateTo);
         }
-        
+
         return $query->sum('amount');
     }
 
@@ -721,12 +721,12 @@ class Accounts extends Model
     {
         $codes = collect([$this->account_code]);
         $parent = $this->parent;
-        
+
         while ($parent) {
             $codes->prepend($parent->account_code);
             $parent = $parent->parent;
         }
-        
+
         return $codes->implode('.');
     }
 
@@ -739,13 +739,13 @@ class Accounts extends Model
         $maxCode = self::where('parent_id', $this->id)
             ->orderBy('account_code', 'desc')
             ->first();
-        
+
         if ($maxCode) {
             $lastPart = explode('.', $maxCode->account_code);
             $newNumber = (int) end($lastPart) + 1;
             return $this->account_code . '.' . $newNumber;
         }
-        
+
         return $this->account_code . '.1';
     }
 
@@ -757,11 +757,11 @@ class Accounts extends Model
     {
         $this->level = $this->getLevel();
         $this->save();
-        
+
         foreach ($this->children as $child) {
             $child->updateLevel();
         }
-        
+
         return true;
     }
 
@@ -773,12 +773,12 @@ class Accounts extends Model
     {
         $level = 0;
         $parent = $this->parent;
-        
+
         while ($parent) {
             $level++;
             $parent = $parent->parent;
         }
-        
+
         return $level;
     }
 
@@ -806,15 +806,15 @@ class Accounts extends Model
     public static function getTree($companyId, $onlyActive = true)
     {
         $query = self::byCompany($companyId);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         $accounts = $query->orderBy('sort_order')
                          ->orderBy('account_code')
                          ->get();
-        
+
         return self::buildTree($accounts);
     }
 
@@ -827,7 +827,7 @@ class Accounts extends Model
     public static function buildTree($accounts, $parentId = null)
     {
         $result = [];
-        
+
         foreach ($accounts as $account) {
             if ($account->parent_id === $parentId) {
                 $children = self::buildTree($accounts, $account->id);
@@ -837,7 +837,7 @@ class Accounts extends Model
                 $result[] = $account;
             }
         }
-        
+
         return $result;
     }
 
@@ -850,18 +850,18 @@ class Accounts extends Model
     public static function getList($companyId, $onlyPostable = false)
     {
         $query = self::byCompany($companyId)->active();
-        
+
         if ($onlyPostable) {
             $query->details()->allowPosting();
         }
-        
+
         $accounts = $query->orderBy('account_code')->get();
         $list = [];
-        
+
         foreach ($accounts as $account) {
             $list[$account->id] = $account->account_code . ' - ' . $account->account_name;
         }
-        
+
         return $list;
     }
 
@@ -874,20 +874,20 @@ class Accounts extends Model
     public static function getIndentedList($companyId, $onlyPostable = false)
     {
         $query = self::byCompany($companyId)->active();
-        
+
         if ($onlyPostable) {
             $query->details()->allowPosting();
         }
-        
+
         $accounts = $query->orderBy('sort_order')
                          ->orderBy('account_code')
                          ->get();
-        
+
         $tree = self::buildTree($accounts);
         $list = [];
-        
+
         self::flattenTree($tree, $list);
-        
+
         return $list;
     }
 
@@ -903,7 +903,7 @@ class Accounts extends Model
         foreach ($tree as $account) {
             $prefix = str_repeat('— ', $level);
             $list[$account->id] = $prefix . $account->account_code . ' - ' . $account->account_name;
-            
+
             if (isset($account->children) && count($account->children) > 0) {
                 self::flattenTree($account->children, $list, $level + 1);
             }
@@ -924,13 +924,13 @@ class Accounts extends Model
         $details = self::byCompany($companyId)->details()->count();
         $system = self::byCompany($companyId)->system()->count();
         $postable = self::byCompany($companyId)->details()->allowPosting()->count();
-        
+
         $assets = self::byCompany($companyId)->byCategory(self::CATEGORY_ASSET)->count();
         $liabilities = self::byCompany($companyId)->byCategory(self::CATEGORY_LIABILITY)->count();
         $equity = self::byCompany($companyId)->byCategory(self::CATEGORY_EQUITY)->count();
         $revenue = self::byCompany($companyId)->byCategory(self::CATEGORY_REVENUE)->count();
         $expense = self::byCompany($companyId)->byCategory(self::CATEGORY_EXPENSE)->count();
-        
+
         return [
             'total' => $total,
             'active' => $active,
@@ -961,11 +961,11 @@ class Accounts extends Model
         $query = self::byCompany($companyId)
             ->byCategory($category)
             ->active();
-        
+
         if ($onlyPostable) {
             $query->details()->allowPosting();
         }
-        
+
         return $query->orderBy('account_code')->get();
     }
 

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Journals extends Model
+class Journal extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -53,42 +53,42 @@ class Journals extends Model
      * نوع: عمومی
      */
     const TYPE_GENERAL = 'general';
-    
+
     /**
      * نوع: فروش
      */
     const TYPE_SALES = 'sales';
-    
+
     /**
      * نوع: خرید
      */
     const TYPE_PURCHASE = 'purchase';
-    
+
     /**
      * نوع: نقدی
      */
     const TYPE_CASH = 'cash';
-    
+
     /**
      * نوع: بانکی
      */
     const TYPE_BANK = 'bank';
-    
+
     /**
      * نوع: حقوق و دستمزد
      */
     const TYPE_SALARY = 'salary';
-    
+
     /**
      * نوع: انبار
      */
     const TYPE_INVENTORY = 'inventory';
-    
+
     /**
      * نوع: تعدیلات
      */
     const TYPE_ADJUSTMENT = 'adjustment';
-    
+
     /**
      * نوع: اختتامیه
      */
@@ -174,7 +174,7 @@ class Journals extends Model
     /**
      * رابطه belongsTo با مدل Company
      * هر دفتر روزنامه متعلق به یک شرکت است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function company()
@@ -185,7 +185,7 @@ class Journals extends Model
     /**
      * رابطه hasMany برای سندهای حسابداری
      * تمام سندهایی که در این دفتر روزنامه ثبت شده‌اند
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function journalEntries()
@@ -195,7 +195,7 @@ class Journals extends Model
 
     /**
      * رابطه hasMany برای سندهای ثبت نهایی شده
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function postedEntries()
@@ -230,7 +230,7 @@ class Journals extends Model
     {
         $totalDebit = $this->journalEntries()->sum('total_debit');
         $totalCredit = $this->journalEntries()->sum('total_credit');
-        
+
         return [
             'debit' => $totalDebit,
             'credit' => $totalCredit,
@@ -480,7 +480,7 @@ class Journals extends Model
             ->where('is_default', true)
             ->where('id', '!=', $this->id)
             ->update(['is_default' => false]);
-        
+
         // سپس این دفتر روزنامه را پیش‌فرض می‌کنیم
         $this->is_default = true;
         return $this->save();
@@ -519,12 +519,12 @@ class Journals extends Model
             ->byJournal($this->id)
             ->orderBy('document_no', 'desc')
             ->first();
-        
+
         if ($lastEntry) {
             $lastNumber = (int) $lastEntry->document_no;
             return str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
         }
-        
+
         return '00001';
     }
 
@@ -537,7 +537,7 @@ class Journals extends Model
     {
         $query = $this->journalEntries()
                       ->byFiscalYear($fiscalYearId);
-        
+
         $total = $query->count();
         $draft = $query->draft()->count();
         $pending = $query->pending()->count();
@@ -545,10 +545,10 @@ class Journals extends Model
         $posted = $query->posted()->count();
         $rejected = $query->rejected()->count();
         $voided = $query->voided()->count();
-        
+
         $totalDebit = $query->sum('total_debit');
         $totalCredit = $query->sum('total_credit');
-        
+
         return [
             'total' => $total,
             'draft' => $draft,
@@ -587,11 +587,11 @@ class Journals extends Model
     public static function getList($companyId, $onlyActive = true)
     {
         $query = self::byCompany($companyId);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         return $query->orderBy('name')
                      ->pluck('name', 'id')
                      ->toArray();
@@ -606,18 +606,18 @@ class Journals extends Model
     public static function getListWithCode($companyId, $onlyActive = true)
     {
         $query = self::byCompany($companyId);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         $journals = $query->orderBy('name')->get();
         $list = [];
-        
+
         foreach ($journals as $journal) {
             $list[$journal->id] = $journal->full_name;
         }
-        
+
         return $list;
     }
 
@@ -657,11 +657,11 @@ class Journals extends Model
     public static function getByType($companyId, $type, $onlyActive = true)
     {
         $query = self::byCompany($companyId)->byType($type);
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         return $query->orderBy('name')->get();
     }
 
@@ -676,13 +676,13 @@ class Journals extends Model
     //     $active = self::byCompany($companyId)->active()->count();
     //     $inactive = $total - $active;
     //     $default = self::byCompany($companyId)->default()->count();
-        
+
     //     $general = self::byCompany($companyId)->general()->count();
     //     $sales = self::byCompany($companyId)->sales()->count();
     //     $purchase = self::byCompany($companyId)->purchase()->count();
     //     $cash = self::byCompany($companyId)->cash()->count();
     //     $bank = self::byCompany($companyId)->bank()->count();
-        
+
     //     return [
     //         'total' => $total,
     //         'active' => $active,
@@ -707,7 +707,7 @@ class Journals extends Model
     public static function generateCode($name, $companyId)
     {
         $code = strtoupper(Str::slug($name, '_'));
-        
+
         // اگر کد تکراری باشد، شماره اضافه می‌شود
         $counter = 1;
         $originalCode = $code;
@@ -715,7 +715,7 @@ class Journals extends Model
             $code = $originalCode . '_' . $counter;
             $counter++;
         }
-        
+
         return $code;
     }
 
@@ -733,7 +733,7 @@ class Journals extends Model
             $exists = self::byCompany($companyId)
                 ->where('code', $data['code'])
                 ->exists();
-            
+
             if ($exists) {
                 throw new \Exception('کد دفتر روزنامه تکراری است.');
             }

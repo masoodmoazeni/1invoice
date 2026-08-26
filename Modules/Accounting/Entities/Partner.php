@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Partners extends Model
+class Partner extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -79,27 +79,27 @@ class Partners extends Model
      * نوع: مشتری
      */
     const TYPE_CUSTOMER = 'customer';
-    
+
     /**
      * نوع: تامین‌کننده
      */
     const TYPE_VENDOR = 'vendor';
-    
+
     /**
      * نوع: کارمند
      */
     const TYPE_EMPLOYEE = 'employee';
-    
+
     /**
      * نوع: بانک
      */
     const TYPE_BANK = 'bank';
-    
+
     /**
      * نوع: سازمان دولتی
      */
     const TYPE_GOVERNMENT = 'government';
-    
+
     /**
      * نوع: سایر
      */
@@ -173,7 +173,7 @@ class Partners extends Model
     /**
      * رابطه belongsTo با مدل Company
      * هر طرف حساب متعلق به یک شرکت است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function company()
@@ -251,27 +251,27 @@ class Partners extends Model
     public function getFullAddressAttribute()
     {
         $parts = [];
-        
+
         if ($this->address) {
             $parts[] = $this->address;
         }
-        
+
         if ($this->city) {
             $parts[] = $this->city;
         }
-        
+
         if ($this->state) {
             $parts[] = $this->state;
         }
-        
+
         if ($this->country) {
             $parts[] = $this->country->name;
         }
-        
+
         if ($this->postal_code) {
             $parts[] = 'کد پستی: ' . $this->postal_code;
         }
-        
+
         return implode('، ', $parts);
     }
 
@@ -282,23 +282,23 @@ class Partners extends Model
     public function getContactInfoAttribute()
     {
         $parts = [];
-        
+
         if ($this->phone) {
             $parts[] = 'تلفن: ' . $this->phone;
         }
-        
+
         if ($this->mobile) {
             $parts[] = 'موبایل: ' . $this->mobile;
         }
-        
+
         if ($this->email) {
             $parts[] = 'ایمیل: ' . $this->email;
         }
-        
+
         if ($this->website) {
             $parts[] = 'وب‌سایت: ' . $this->website;
         }
-        
+
         return implode(' | ', $parts);
     }
 
@@ -361,7 +361,7 @@ class Partners extends Model
             self::TYPE_GOVERNMENT => 'bg-danger',
             self::TYPE_OTHER => 'bg-secondary',
         ];
-        
+
         return $classes[$this->partner_type] ?? 'bg-secondary';
     }
 
@@ -632,7 +632,7 @@ class Partners extends Model
     {
         $totalDebit = $this->transactions()->where('type', 'debit')->sum('amount');
         $totalCredit = $this->transactions()->where('type', 'credit')->sum('amount');
-        
+
         return $totalDebit - $totalCredit;
     }
 
@@ -672,12 +672,12 @@ class Partners extends Model
     public static function getForReport($companyId, array $filters = [])
     {
         $query = self::byCompany($companyId)->with(['country', 'currency', 'paymentTerm']);
-        
+
         // فیلتر بر اساس نوع
         if (isset($filters['type']) && $filters['type']) {
             $query->byType($filters['type']);
         }
-        
+
         // فیلتر بر اساس وضعیت
         if (isset($filters['status'])) {
             if ($filters['status'] === 'active') {
@@ -686,17 +686,17 @@ class Partners extends Model
                 $query->inactive();
             }
         }
-        
+
         // فیلتر بر اساس جستجو
         if (isset($filters['search']) && $filters['search']) {
             $query->search($filters['search']);
         }
-        
+
         // فیلتر بر اساس شهر
         if (isset($filters['city']) && $filters['city']) {
             $query->byCity($filters['city']);
         }
-        
+
         return $query->orderBy('name')->get();
     }
 
@@ -712,15 +712,15 @@ class Partners extends Model
     public static function getList($companyId, $type = null, $onlyActive = true)
     {
         $query = self::byCompany($companyId);
-        
+
         if ($type) {
             $query->byType($type);
         }
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         return $query->orderBy('name')
                      ->pluck('name', 'id')
                      ->toArray();
@@ -736,22 +736,22 @@ class Partners extends Model
     public static function getListWithCode($companyId, $type = null, $onlyActive = true)
     {
         $query = self::byCompany($companyId);
-        
+
         if ($type) {
             $query->byType($type);
         }
-        
+
         if ($onlyActive) {
             $query->active();
         }
-        
+
         $partners = $query->orderBy('name')->get();
         $list = [];
-        
+
         foreach ($partners as $partner) {
             $list[$partner->id] = $partner->full_name;
         }
-        
+
         return $list;
     }
 
@@ -791,7 +791,7 @@ class Partners extends Model
         $total = self::byCompany($companyId)->count();
         $active = self::byCompany($companyId)->active()->count();
         $inactive = $total - $active;
-        
+
         $byType = [];
         foreach (self::$types as $type) {
             $byType[$type] = [
@@ -801,11 +801,11 @@ class Partners extends Model
                 'icon' => self::$typeIcons[$type],
             ];
         }
-        
+
         $hasCreditLimit = self::byCompany($companyId)->hasCreditLimit()->count();
         $hasTransactions = self::byCompany($companyId)->hasTransactions()->count();
         $withoutTransactions = $total - $hasTransactions;
-        
+
         return [
             'total' => $total,
             'active' => $active,
@@ -831,7 +831,7 @@ class Partners extends Model
             $exists = self::byCompany($companyId)
                 ->where('code', $data['code'])
                 ->exists();
-            
+
             if ($exists) {
                 throw new \Exception('کد طرف حساب تکراری است.');
             }
@@ -842,7 +842,7 @@ class Partners extends Model
             $exists = self::byCompany($companyId)
                 ->where('email', $data['email'])
                 ->exists();
-            
+
             if ($exists) {
                 throw new \Exception('ایمیل تکراری است.');
             }
@@ -872,20 +872,20 @@ class Partners extends Model
             self::TYPE_GOVERNMENT => 'GOV',
             self::TYPE_OTHER => 'OTH',
         ];
-        
+
         $prefix = $prefix[$type] ?? 'PRT';
-        
+
         $lastPartner = self::byCompany($companyId)
             ->where('code', 'LIKE', $prefix . '%')
             ->orderBy('code', 'desc')
             ->first();
-        
+
         if ($lastPartner) {
             $lastNumber = (int) substr($lastPartner->code, strlen($prefix));
             $newNumber = str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
             return $prefix . $newNumber;
         }
-        
+
         return $prefix . '00001';
     }
 
@@ -933,38 +933,38 @@ class Partners extends Model
         $created = 0;
         $errors = [];
         $handle = fopen($filePath, 'r');
-        
+
         if (!$handle) {
             throw new \Exception('Unable to open file.');
         }
-        
+
         $header = fgetcsv($handle);
         if (!$header) {
             fclose($handle);
             throw new \Exception('Invalid CSV file.');
         }
-        
+
         while (($row = fgetcsv($handle)) !== false) {
             try {
                 $data = [];
                 foreach ($mapping as $dbField => $csvIndex) {
                     $data[$dbField] = $row[$csvIndex] ?? null;
                 }
-                
+
                 // تنظیم مقادیر پیش‌فرض
                 $data['company_id'] = $companyId;
                 $data['code'] = $data['code'] ?? self::generateCode($data['partner_type'] ?? 'other', $companyId);
                 $data['is_active'] = $data['is_active'] ?? true;
-                
+
                 self::createWithValidation($companyId, $data);
                 $created++;
             } catch (\Exception $e) {
                 $errors[] = 'Row ' . ($created + count($errors) + 1) . ': ' . $e->getMessage();
             }
         }
-        
+
         fclose($handle);
-        
+
         return [
             'created' => $created,
             'errors' => $errors,
@@ -980,16 +980,16 @@ class Partners extends Model
     public static function exportToCsv($companyId, array $filters = [])
     {
         $partners = self::getForReport($companyId, $filters);
-        
+
         $filename = 'partners_' . date('Y-m-d_His') . '.csv';
         $handle = fopen($filename, 'w');
-        
+
         // هدر
         fputcsv($handle, [
-            'کد', 'نام', 'نام حقوقی', 'نوع', 'ایمیل', 'تلفن', 'موبایل', 
+            'کد', 'نام', 'نام حقوقی', 'نوع', 'ایمیل', 'تلفن', 'موبایل',
             'شهر', 'کشور', 'سقف اعتباری', 'وضعیت'
         ]);
-        
+
         // داده‌ها
         foreach ($partners as $partner) {
             fputcsv($handle, [
@@ -1006,9 +1006,9 @@ class Partners extends Model
                 $partner->status_text,
             ]);
         }
-        
+
         fclose($handle);
-        
+
         return $filename;
     }
 }

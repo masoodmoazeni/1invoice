@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
-class Files extends Model
+class File extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -73,7 +73,7 @@ class Files extends Model
         'image/svg+xml' => 'SVG Image',
         'image/webp' => 'WebP Image',
         'image/bmp' => 'BMP Image',
-        
+
         // اسناد
         'application/pdf' => 'PDF Document',
         'application/msword' => 'Word Document',
@@ -82,20 +82,20 @@ class Files extends Model
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'Excel Spreadsheet (XLSX)',
         'application/vnd.ms-powerpoint' => 'PowerPoint Presentation',
         'application/vnd.openxmlformats-officedocument.presentationml.presentation' => 'PowerPoint Presentation (PPTX)',
-        
+
         // متنی
         'text/plain' => 'Text File',
         'text/html' => 'HTML File',
         'text/csv' => 'CSV File',
         'text/xml' => 'XML File',
         'text/json' => 'JSON File',
-        
+
         // فشرده
         'application/zip' => 'ZIP Archive',
         'application/x-rar-compressed' => 'RAR Archive',
         'application/x-tar' => 'TAR Archive',
         'application/gzip' => 'GZIP Archive',
-        
+
         // صوتی/ویدیویی
         'audio/mpeg' => 'MP3 Audio',
         'audio/wav' => 'WAV Audio',
@@ -120,7 +120,7 @@ class Files extends Model
     /**
      * رابطه polymorphic برای اتصال به سایر مدل‌ها
      * می‌تواند برای هر مدلی که فایل دارد استفاده شود
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
     public function fileable()
@@ -128,7 +128,7 @@ class Files extends Model
         return $this->morphTo();
     }
 
-    
+
 
     // ========== سکوپ‌های پرکاربرد (Scopes) ==========
 
@@ -203,11 +203,11 @@ class Files extends Model
     public function scopeBySize($query, $minSize, $maxSize = null)
     {
         $query->where('size', '>=', $minSize);
-        
+
         if ($maxSize !== null) {
             $query->where('size', '<=', $maxSize);
         }
-        
+
         return $query;
     }
 
@@ -408,7 +408,7 @@ class Files extends Model
         if ($this->exists()) {
             return Storage::disk($this->disk)->download($this->path, $this->file_name);
         }
-        
+
         abort(404, 'File not found.');
     }
 
@@ -421,7 +421,7 @@ class Files extends Model
         if ($this->exists()) {
             Storage::disk($this->disk)->delete($this->path);
         }
-        
+
         return $this->delete();
     }
 
@@ -471,7 +471,7 @@ class Files extends Model
     {
         // محاسبه هش فایل
         $hash = hash_file('sha256', $file->getRealPath());
-        
+
         // بررسی وجود فایل تکراری
         $existing = self::where('hash', $hash)->first();
         if ($existing) {
@@ -480,7 +480,7 @@ class Files extends Model
 
         // ذخیره فایل
         $storedPath = $file->store($path, $disk);
-        
+
         // ایجاد رکورد در دیتابیس
         return self::create([
             'disk' => $disk,
@@ -504,7 +504,7 @@ class Files extends Model
     {
         // محاسبه هش محتوا
         $hash = hash('sha256', $content);
-        
+
         // بررسی وجود فایل تکراری
         $existing = self::where('hash', $hash)->first();
         if ($existing) {
@@ -514,7 +514,7 @@ class Files extends Model
         // ذخیره فایل
         $storedPath = $path . '/' . $filename;
         Storage::disk($disk)->put($storedPath, $content);
-        
+
         // ایجاد رکورد در دیتابیس
         return self::create([
             'disk' => $disk,
@@ -571,7 +571,7 @@ class Files extends Model
         if ($relation) {
             return $model->{$relation}()->save($this);
         }
-        
+
         $this->fileable_type = get_class($model);
         $this->fileable_id = $model->id;
         return $this->save();
@@ -586,7 +586,7 @@ class Files extends Model
         $total = self::count();
         $totalSize = self::sum('size');
         $averageSize = $total > 0 ? $totalSize / $total : 0;
-        
+
         $byDisk = self::select('disk')
             ->selectRaw('COUNT(*) as count')
             ->selectRaw('SUM(size) as total_size')
@@ -600,7 +600,7 @@ class Files extends Model
                 ]];
             })
             ->toArray();
-        
+
         $byMime = self::select('mime')
             ->selectRaw('COUNT(*) as count')
             ->selectRaw('SUM(size) as total_size')
@@ -619,12 +619,12 @@ class Files extends Model
                 ]];
             })
             ->toArray();
-        
+
         $images = self::images()->count();
         $documents = self::documents()->count();
         $large = self::large()->count();
         $small = self::small()->count();
-        
+
         return [
             'total_files' => $total,
             'total_size' => $totalSize,
@@ -647,18 +647,18 @@ class Files extends Model
     public static function cleanupOldFiles($days = 30)
     {
         $date = Carbon::now()->subDays($days);
-        
+
         $files = self::where('uploaded_at', '<', $date)
             ->whereDoesntHave('fileable')
             ->get();
-        
+
         $count = 0;
         foreach ($files as $file) {
             if ($file->deleteFile()) {
                 $count++;
             }
         }
-        
+
         return $count;
     }
 

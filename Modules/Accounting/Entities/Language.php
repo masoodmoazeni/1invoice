@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Languages extends Model
+class Language extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -232,7 +232,7 @@ class Languages extends Model
         if (!in_array($direction, self::$directions)) {
             return false;
         }
-        
+
         $this->direction = $direction;
         return $this->save();
     }

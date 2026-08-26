@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class TimeZones extends Model
+class TimeZone extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -58,7 +58,7 @@ class TimeZones extends Model
     /**
      * رابطه belongsTo با مدل Countries
      * هر منطقه زمانی متعلق به یک کشور است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function country()
@@ -133,7 +133,7 @@ class TimeZones extends Model
     /**
      * تنظیم کردن این منطقه زمانی به‌عنوان پیش‌فرض برای کشور خود
      * و غیرفعال کردن پیش‌فرض سایر منطقه‌های زمانی همان کشور
-     * 
+     *
      * @return bool
      */
     public function setAsDefault()
@@ -141,7 +141,7 @@ class TimeZones extends Model
         // ابتدا تمام منطقه‌های زمانی این کشور را غیرپیش‌فرض می‌کنیم
         self::where('country_id', $this->country_id)
             ->update(['is_default' => false]);
-        
+
         // سپس این منطقه زمانی را پیش‌فرض می‌کنیم
         $this->is_default = true;
         return $this->save();
@@ -157,7 +157,7 @@ class TimeZones extends Model
         $parts = explode(':', $this->utc_offset);
         $hours = (int) $parts[0];
         $minutes = isset($parts[1]) ? (int) $parts[1] / 60 : 0;
-        
+
         return $hours + $minutes;
     }
 }

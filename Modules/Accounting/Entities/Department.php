@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 
-class Departments extends Model
+class Department extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -60,7 +60,7 @@ class Departments extends Model
     /**
      * رابطه belongsTo با مدل Company
      * هر دپارتمان متعلق به یک شرکت است
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function company()
@@ -71,7 +71,7 @@ class Departments extends Model
     /**
      * رابطه belongsTo برای دپارتمان والد
      * دریافت دپارتمان بالادستی (سطح بالاتر)
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function parent()
@@ -82,7 +82,7 @@ class Departments extends Model
     /**
      * رابطه hasMany برای دپارتمان‌های فرزند
      * دریافت تمام دپارتمان‌های زیرمجموعه
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function children()
@@ -92,7 +92,7 @@ class Departments extends Model
 
     /**
      * رابطه hasMany برای دپارتمان‌های فرزند فعال
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function activeChildren()
@@ -104,7 +104,7 @@ class Departments extends Model
     /**
      * رابطه belongsTo برای مدیر دپارتمان
      * فرض بر این است که جدول users یا employees وجود دارد
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function manager()
@@ -114,7 +114,7 @@ class Departments extends Model
 
     /**
      * رابطه hasMany برای کارمندان دپارتمان (در صورت وجود)
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function employees()
@@ -124,72 +124,72 @@ class Departments extends Model
 
     /**
      * دریافت تمام دپارتمان‌های فرزند به صورت بازگشتی (تا هر سطح)
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getAllChildren()
     {
         $children = collect();
-        
+
         foreach ($this->children as $child) {
             $children->push($child);
             $children = $children->merge($child->getAllChildren());
         }
-        
+
         return $children;
     }
 
     /**
      * دریافت تمام دپارتمان‌های والد به صورت بازگشتی (تا ریشه)
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getAllParents()
     {
         $parents = collect();
-        
+
         if ($this->parent) {
             $parents->push($this->parent);
             $parents = $parents->merge($this->parent->getAllParents());
         }
-        
+
         return $parents;
     }
 
     /**
      * دریافت مسیر کامل دپارتمان (از ریشه تا خودش)
-     * 
+     *
      * @return string
      */
     public function getFullPath()
     {
         $path = collect([$this->name]);
         $parent = $this->parent;
-        
+
         while ($parent) {
             $path->prepend($parent->name);
             $parent = $parent->parent;
         }
-        
+
         return $path->implode(' / ');
     }
 
     /**
      * دریافت سطح دپارتمان در ساختار سلسله‌مراتبی
      * (سطح 0 برای ریشه، سطح 1 برای فرزند، و ...)
-     * 
+     *
      * @return int
      */
     public function getLevel()
     {
         $level = 0;
         $parent = $this->parent;
-        
+
         while ($parent) {
             $level++;
             $parent = $parent->parent;
         }
-        
+
         return $level;
     }
 
@@ -257,7 +257,7 @@ class Departments extends Model
         if ($level === 0) {
             return $query->whereNull('parent_id');
         }
-        
+
         // برای سطوح بالاتر نیاز به کوئری‌های پیچیده‌تر یا استفاده از nested set
         return $query->whereHas('parent', function ($q) use ($level) {
             $q->where('level', $level - 1);
@@ -335,11 +335,11 @@ class Departments extends Model
     public function getTotalEmployeesCount()
     {
         $count = $this->employees()->count();
-        
+
         foreach ($this->children as $child) {
             $count += $child->getTotalEmployeesCount();
         }
-        
+
         return $count;
     }
 
@@ -398,11 +398,11 @@ class Departments extends Model
     {
         $this->is_active = false;
         $this->save();
-        
+
         foreach ($this->children as $child) {
             $child->deactivateWithChildren();
         }
-        
+
         return true;
     }
 
@@ -414,12 +414,12 @@ class Departments extends Model
     {
         $path = [$this->id];
         $parent = $this->parent;
-        
+
         while ($parent) {
             $path[] = $parent->id;
             $parent = $parent->parent;
         }
-        
+
         return array_reverse($path);
     }
 
@@ -434,11 +434,11 @@ class Departments extends Model
             ->where('parent_id', $parentId)
             ->orderBy('name')
             ->get();
-        
+
         foreach ($departments as $department) {
             $department->children = self::getTree($department->id);
         }
-        
+
         return $departments;
     }
 
@@ -455,13 +455,13 @@ class Departments extends Model
             ->where('parent_id', $parentId)
             ->orderBy('name')
             ->get();
-        
+
         foreach ($departments as $department) {
             $department->level = $level;
             $result->push($department);
             $result = $result->merge(self::getFlatTree($department->id, $level + 1));
         }
-        
+
         return $result;
     }
 
@@ -484,7 +484,7 @@ class Departments extends Model
             }
             return $list;
         }
-        
+
         return self::active()
             ->byCompany($companyId)
             ->orderBy('name')
@@ -540,7 +540,7 @@ class Departments extends Model
     public static function generateCode($name)
     {
         $code = strtoupper(Str::slug($name, '_'));
-        
+
         // اگر کد تکراری باشد، شماره اضافه می‌شود
         $counter = 1;
         $originalCode = $code;
@@ -548,7 +548,7 @@ class Departments extends Model
             $code = $originalCode . '_' . $counter;
             $counter++;
         }
-        
+
         return $code;
     }
 }
