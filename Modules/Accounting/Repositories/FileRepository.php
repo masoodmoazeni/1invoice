@@ -4,13 +4,13 @@ namespace Modules\Accounting\Repositories;
 
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Model;
-use Modules\Accounting\Entities\ExchangeRate;
+use Modules\Accounting\Entities\File;
 
-class ExchangeRateRepository extends BaseRepository
+class FileRepository extends BaseRepository
 {
     protected Model $model;
 
-    public function __construct(ExchangeRate $model)
+    public function __construct(File $model)
     {
         $this->model = $model;
     }

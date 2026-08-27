@@ -6,7 +6,7 @@ namespace Modules\Accounting\Services;
 use App\Services\BaseService;
 use Modules\Accounting\Repositories\DocumentTypeRepository;
 
-class DocumentTypService extends BaseService
+class DocumentTypeService extends BaseService
 {
     public function __construct(DocumentTypeRepository $documentType)
     {

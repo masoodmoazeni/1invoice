@@ -38,8 +38,8 @@ class TimezoneController extends BaseController
     {
         try {
             $perPage = $request->get('per_page', 15);
-            $filters = $request->only(['search', 'country_id', 'is_default', 'sort_by', 'sort_order']);
-            
+            $filters = $request->only(['search', 'country_id', 'is_default']);
+
             $filters = array_filter($filters, function ($value) {
                 return $value !== null && $value !== '';
             });
@@ -91,7 +91,7 @@ class TimezoneController extends BaseController
     {
         try {
             $timezone = $this->timezoneService->findById($id);
-            
+
             if (!$timezone) {
                 return $this->errorResponse('منطقه زمانی مورد نظر یافت نشد', 404);
             }
@@ -229,7 +229,7 @@ class TimezoneController extends BaseController
     {
         try {
             $timezone = $this->timezoneService->getDefaultByCountryId($countryId);
-            
+
             if (!$timezone) {
                 return $this->errorResponse('منطقه زمانی پیش‌فرض برای این کشور یافت نشد', 404);
             }

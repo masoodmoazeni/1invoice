@@ -15,7 +15,7 @@ class TimeZone extends Model
      * نام جدول در دیتابیس
      * @var string
      */
-    protected $table = 'time_zones';
+    protected $table = 'timezones';
 
     /**
      * فیلدهایی که امکان Mass Assignment دارند

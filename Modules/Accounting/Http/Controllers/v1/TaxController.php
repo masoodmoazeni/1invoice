@@ -2,21 +2,18 @@
 
 namespace Modules\Accounting\Http\Controllers\v1;
 
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
-use App\Http\Controllers\BaseController;
-use Illuminate\Support\Facades\Log;
-use Modules\Accounting\Services\NumberSequenceService;
+use Illuminate\Routing\Controller;
+use Modules\Accounting\Services\TaxService;
 
-use Modules\Accounting\Http\Requests\NumberSequence\NumberSequenceRequest;
-use Modules\Accounting\Http\Requests\NumberSequence\NumberSequenceUpdateRequest;
-
-class NumberSequenceController extends BaseController
+class TaxController extends Controller
 {
-    protected $numberSequenceService;
+    protected $taxService;
 
-    public function __construct(NumberSequenceService $numberSequenceService)
+    public function __construct(TaxService $taxService)
     {
-        $this->numberSequenceService = $numberSequenceService;
+        $this->taxService = $taxService;
     }
     /**
      * Display a listing of the resource.

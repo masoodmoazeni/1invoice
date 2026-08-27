@@ -14,7 +14,12 @@ use Modules\Accounting\Http\Controllers\v1\BranchController;
 use Modules\Accounting\Http\Controllers\v1\CurrencyController;
 use Modules\Accounting\Http\Controllers\v1\DepartmentController;
 use Modules\Accounting\Http\Controllers\v1\DimensionController;
-use Modules\Accounting\Http\Controllers\v1\DocumentTypController;
+use Modules\Accounting\Http\Controllers\v1\DocumentTypeController;
+use Modules\Accounting\Http\Controllers\v1\TimezoneController;
+use Modules\Accounting\Http\Controllers\v1\JournalController;
+use Modules\Accounting\Http\Controllers\v1\JournalEntryController;
+use Modules\Accounting\Http\Controllers\v1\DimensionValueController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -27,7 +32,7 @@ use Modules\Accounting\Http\Controllers\v1\DocumentTypController;
 */
 
 Route::prefix('v1')->group(function () {
-    
+
     Route::prefix('account')->group(function () {
         Route::get('/', [AccountController::class, 'index']);
         Route::post('/', [AccountController::class, 'create']);
@@ -67,7 +72,7 @@ Route::prefix('v1')->group(function () {
         Route::put('/{id}', [BranchController::class, 'update']);
         Route::delete('/{id}', [BranchController::class, 'destroy']);
     });
-    
+
     Route::prefix('company')->group(function () {
         Route::get('/', [CompanyController::class, 'index']);
         Route::post('/', [CompanyController::class, 'create']);
@@ -108,12 +113,36 @@ Route::prefix('v1')->group(function () {
         Route::delete('/{id}', [DimensionController::class, 'destroy']);
     });
 
+    Route::prefix('dimension-value')->group(function () {
+        Route::get('/', [DimensionValueController::class, 'index']);
+        Route::post('/', [DimensionValueController::class, 'create']);
+        Route::get('/{id}', [DimensionValueController::class, 'show']);
+        Route::put('/{id}', [DimensionValueController::class, 'update']);
+        Route::delete('/{id}', [DimensionValueController::class, 'destroy']);
+    });
+
     Route::prefix('document-types')->group(function () {
-        Route::get('/', [DocumentTypController::class, 'index']);
-        Route::post('/', [DocumentTypController::class, 'create']);
-        Route::get('/{id}', [DocumentTypController::class, 'show']);
-        Route::put('/{id}', [DocumentTypController::class, 'update']);
-        Route::delete('/{id}', [DocumentTypController::class, 'destroy']);
+        Route::get('/', [DocumentTypeController::class, 'index']);
+        Route::post('/', [DocumentTypeController::class, 'create']);
+        Route::get('/{id}', [DocumentTypeController::class, 'show']);
+        Route::put('/{id}', [DocumentTypeController::class, 'update']);
+        Route::delete('/{id}', [DocumentTypeController::class, 'destroy']);
+    });
+
+    Route::prefix('journal')->group(function () {
+        Route::get('/', [JournalController::class, 'index']);
+        Route::post('/', [JournalController::class, 'create']);
+        Route::get('/{id}', [JournalController::class, 'show']);
+        Route::put('/{id}', [JournalController::class, 'update']);
+        Route::delete('/{id}', [JournalController::class, 'destroy']);
+    });
+
+    Route::prefix('journal-entry')->group(function () {
+        Route::get('/', [JournalEntryController::class, 'index']);
+        Route::post('/', [JournalEntryController::class, 'create']);
+        Route::get('/{id}', [JournalEntryController::class, 'show']);
+        Route::put('/{id}', [JournalEntryController::class, 'update']);
+        Route::delete('/{id}', [JournalEntryController::class, 'destroy']);
     });
 
     Route::prefix('language')->group(function () {
@@ -122,6 +151,15 @@ Route::prefix('v1')->group(function () {
         Route::get('/{id}', [LanguageController::class, 'show']);
         Route::put('/{id}', [LanguageController::class, 'update']);
         Route::delete('/{id}', [LanguageController::class, 'destroy']);
+    });
+
+
+    Route::prefix('timezone')->group(function () {
+        Route::get('/', [TimezoneController::class, 'index']);
+        Route::post('/', [TimezoneController::class, 'create']);
+        Route::get('/{id}', [TimezoneController::class, 'show']);
+        Route::put('/{id}', [TimezoneController::class, 'update']);
+        Route::delete('/{id}', [TimezoneController::class, 'destroy']);
     });
 
 });

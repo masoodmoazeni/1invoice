@@ -4,13 +4,13 @@ namespace Modules\Accounting\Repositories;
 
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Model;
-use Modules\Accounting\Entities\Journals;
+use Modules\Accounting\Entities\Journal;
 
 class JournalRepository extends BaseRepository
 {
     protected Model $model;
 
-    public function __construct(Journals $model)
+    public function __construct(Journal $model)
     {
         $this->model = $model;
     }

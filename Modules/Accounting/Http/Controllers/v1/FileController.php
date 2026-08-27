@@ -2,21 +2,18 @@
 
 namespace Modules\Accounting\Http\Controllers\v1;
 
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
-use App\Http\Controllers\BaseController;
-use Illuminate\Support\Facades\Log;
-use Modules\Accounting\Services\NumberSequenceService;
+use Illuminate\Routing\Controller;
+use Modules\Accounting\Services\FileService;
 
-use Modules\Accounting\Http\Requests\NumberSequence\NumberSequenceRequest;
-use Modules\Accounting\Http\Requests\NumberSequence\NumberSequenceUpdateRequest;
-
-class NumberSequenceController extends BaseController
+class FileController extends Controller
 {
-    protected $numberSequenceService;
+    protected $fileRateService;
 
-    public function __construct(NumberSequenceService $numberSequenceService)
+    public function __construct(FileService $fileRateService)
     {
-        $this->numberSequenceService = $numberSequenceService;
+        $this->fileRateService = $fileRateService;
     }
     /**
      * Display a listing of the resource.

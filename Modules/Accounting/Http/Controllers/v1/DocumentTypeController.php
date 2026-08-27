@@ -5,16 +5,16 @@ namespace Modules\Accounting\Http\Controllers\v1;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController;
 use Illuminate\Support\Facades\Log;
-use Modules\Accounting\Services\DocumentTypService;
+use Modules\Accounting\Services\DocumentTypeService;
 
-use Modules\Accounting\Http\Requests\DocumentTyp\DocumentTypRequest;
-use Modules\Accounting\Http\Requests\DocumentTyp\DocumentTypUpdateRequest;
+//use Modules\Accounting\Http\Requests\DocumentType\DocumentTypeRequest;
+//use Modules\Accounting\Http\Requests\DocumentType\DocumentTypeUpdateRequest;
 
-class DocumentTypController extends BaseController
+class DocumentTypeController extends BaseController
 {
     protected $documentTypService;
 
-    public function __construct(DocumentTypService $documentTypService)
+    public function __construct(DocumentTypeService $documentTypService)
     {
         $this->documentTypService = $documentTypService;
     }
@@ -181,7 +181,7 @@ class DocumentTypController extends BaseController
     {
         try {
             $documentType = $this->documentTypService->find($id);
-            
+
             if (!$documentType) {
                 return $this->errorResponse('نوع سند مورد نظر یافت نشد', 404);
             }
@@ -322,7 +322,7 @@ class DocumentTypController extends BaseController
         try {
             $onlyActive = $request->get('only_active', true);
             $documentTypes = $this->documentTypService->getByCompany($company_id, $onlyActive);
-            
+
             if ($documentTypes->isEmpty()) {
                 return $this->errorResponse('هیچ نوع سندی برای این شرکت یافت نشد', 404);
             }
@@ -379,13 +379,13 @@ class DocumentTypController extends BaseController
         try {
             $companyId = $request->get('company_id');
             $onlyActive = $request->get('only_active', true);
-            
+
             if (!$companyId) {
                 return $this->errorResponse('شناسه شرکت الزامی است', 422);
             }
 
             $documentTypes = $this->documentTypService->getByJournal($companyId, $journal_id, $onlyActive);
-            
+
             if ($documentTypes->isEmpty()) {
                 return $this->errorResponse('هیچ نوع سندی برای این دفتر روزنامه یافت نشد', 404);
             }
@@ -442,13 +442,13 @@ class DocumentTypController extends BaseController
         try {
             $companyId = $request->get('company_id');
             $onlyActive = $request->get('only_active', true);
-            
+
             if (!$companyId) {
                 return $this->errorResponse('شناسه شرکت الزامی است', 422);
             }
 
             $documentTypes = $this->documentTypService->getByNumberSequence($companyId, $sequence_id, $onlyActive);
-            
+
             if ($documentTypes->isEmpty()) {
                 return $this->errorResponse('هیچ نوع سندی برای این شماره‌گذاری یافت نشد', 404);
             }
@@ -560,7 +560,7 @@ class DocumentTypController extends BaseController
     {
         try {
             $companyId = $request->get('company_id');
-            
+
             if (!$companyId) {
                 return $this->errorResponse('شناسه شرکت الزامی است', 422);
             }
@@ -615,7 +615,7 @@ class DocumentTypController extends BaseController
             $companyId = $request->get('company_id');
             $onlyActive = $request->get('only_active', true);
             $withCode = $request->get('with_code', false);
-            
+
             if (!$companyId) {
                 return $this->errorResponse('شناسه شرکت الزامی است', 422);
             }
@@ -662,7 +662,7 @@ class DocumentTypController extends BaseController
             $companyId = $request->get('company_id');
             $defaultJournalId = $request->get('default_journal_id', null);
             $defaultSequenceId = $request->get('default_sequence_id', null);
-            
+
             if (!$companyId) {
                 return $this->errorResponse('شناسه شرکت الزامی است', 422);
             }
@@ -702,7 +702,7 @@ class DocumentTypController extends BaseController
         try {
             $companyId = $request->get('company_id');
             $onlyActive = $request->get('only_active', true);
-            
+
             if (!$companyId) {
                 return $this->errorResponse('شناسه شرکت الزامی است', 422);
             }
@@ -749,7 +749,7 @@ class DocumentTypController extends BaseController
             $companyId = $request->get('company_id');
             $oldJournalId = $request->get('old_journal_id');
             $newJournalId = $request->get('new_journal_id');
-            
+
             if (!$companyId || !$oldJournalId || !$newJournalId) {
                 return $this->errorResponse('همه فیلدهای الزامی باید پر شوند', 422);
             }
@@ -796,7 +796,7 @@ class DocumentTypController extends BaseController
             $companyId = $request->get('company_id');
             $oldSequenceId = $request->get('old_sequence_id');
             $newSequenceId = $request->get('new_sequence_id');
-            
+
             if (!$companyId || !$oldSequenceId || !$newSequenceId) {
                 return $this->errorResponse('همه فیلدهای الزامی باید پر شوند', 422);
             }
@@ -850,7 +850,7 @@ class DocumentTypController extends BaseController
         try {
             $companyId = $request->get('company_id');
             $filters = [];
-            
+
             if (!$companyId) {
                 return $this->errorResponse('شناسه شرکت الزامی است', 422);
             }

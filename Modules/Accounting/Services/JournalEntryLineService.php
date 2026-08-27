@@ -8,9 +8,9 @@ use Modules\Accounting\Repositories\JournalEntryLineRepository;
 
 class JournalEntryLineService extends BaseService
 {
-    public function __construct(JournalEntryLineRepository $journalentryline)
+    public function __construct(JournalEntryLineRepository $journalEntryline)
     {
-        parent::__construct($journalentryline);
-        $this->journalentryline = $journalentryline;
+        parent::__construct($journalEntryline);
+        $this->journalEntryline = $journalEntryline;
     }
 }
