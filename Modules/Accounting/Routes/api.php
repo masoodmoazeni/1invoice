@@ -19,6 +19,16 @@ use Modules\Accounting\Http\Controllers\v1\TimezoneController;
 use Modules\Accounting\Http\Controllers\v1\JournalController;
 use Modules\Accounting\Http\Controllers\v1\JournalEntryController;
 use Modules\Accounting\Http\Controllers\v1\DimensionValueController;
+use Modules\Accounting\Http\Controllers\v1\TaxGroupController;
+use Modules\Accounting\Http\Controllers\v1\PaymentTermController;
+use Modules\Accounting\Http\Controllers\v1\TaxController;
+use Modules\Accounting\Http\Controllers\v1\PartnerController;
+use Modules\Accounting\Http\Controllers\v1\NumberSequenceController;
+use Modules\Accounting\Http\Controllers\v1\JournalEntryLineDimensionController;
+use Modules\Accounting\Http\Controllers\v1\JournalEntryLineController;
+use Modules\Accounting\Http\Controllers\v1\FiscalYearController;
+use Modules\Accounting\Http\Controllers\v1\FileController;
+use Modules\Accounting\Http\Controllers\v1\ExchangeRateController;
 
 /*
 |--------------------------------------------------------------------------
@@ -129,6 +139,31 @@ Route::prefix('v1')->group(function () {
         Route::delete('/{id}', [DocumentTypeController::class, 'destroy']);
     });
 
+    Route::prefix('exchange-rate')->group(function () {
+        Route::get('/', [ExchangeRateController::class, 'index']);
+        Route::post('/', [ExchangeRateController::class, 'create']);
+        Route::get('/{id}', [ExchangeRateController::class, 'show']);
+        Route::put('/{id}', [ExchangeRateController::class, 'update']);
+        Route::delete('/{id}', [ExchangeRateController::class, 'destroy']);
+    });
+
+    Route::prefix('file')->group(function () {
+        Route::get('/', [FileController::class, 'index']);
+        Route::post('/', [FileController::class, 'create']);
+        Route::get('/{id}', [FileController::class, 'show']);
+        Route::put('/{id}', [FileController::class, 'update']);
+        Route::delete('/{id}', [FileController::class, 'destroy']);
+    });
+
+    Route::prefix('fiscal-year')->group(function () {
+        Route::get('/', [FiscalYearController::class, 'index']);
+        Route::post('/', [FiscalYearController::class, 'create']);
+        Route::get('/{id}', [FiscalYearController::class, 'show']);
+        Route::put('/{id}', [FiscalYearController::class, 'update']);
+        Route::delete('/{id}', [FiscalYearController::class, 'destroy']);
+    });
+
+    
     Route::prefix('journal')->group(function () {
         Route::get('/', [JournalController::class, 'index']);
         Route::post('/', [JournalController::class, 'create']);
@@ -145,6 +180,24 @@ Route::prefix('v1')->group(function () {
         Route::delete('/{id}', [JournalEntryController::class, 'destroy']);
     });
 
+    Route::prefix('journal-entry-line')->group(function () {
+        Route::get('/', [JournalEntryLineController::class, 'index']);
+        Route::post('/', [JournalEntryLineController::class, 'create']);
+        Route::get('/{id}', [JournalEntryLineController::class, 'show']);
+        Route::put('/{id}', [JournalEntryLineController::class, 'update']);
+        Route::delete('/{id}', [JournalEntryLineController::class, 'destroy']);
+    });
+
+    Route::prefix('journal-entry-line-dimension')->group(function () {
+        Route::get('/', [JournalEntryLineDimensionController::class, 'index']);
+        Route::post('/', [JournalEntryLineDimensionController::class, 'create']);
+        Route::get('/{id}', [JournalEntryLineDimensionController::class, 'show']);
+        Route::put('/{id}', [JournalEntryLineDimensionController::class, 'update']);
+        Route::delete('/{id}', [JournalEntryLineDimensionController::class, 'destroy']);
+    });
+
+
+    
     Route::prefix('language')->group(function () {
         Route::get('/', [LanguageController::class, 'index']);
         Route::post('/', [LanguageController::class, 'create']);
@@ -153,6 +206,45 @@ Route::prefix('v1')->group(function () {
         Route::delete('/{id}', [LanguageController::class, 'destroy']);
     });
 
+    Route::prefix('number-sequence')->group(function () {
+        Route::get('/', [NumberSequenceController::class, 'index']);
+        Route::post('/', [NumberSequenceController::class, 'create']);
+        Route::get('/{id}', [NumberSequenceController::class, 'show']);
+        Route::put('/{id}', [NumberSequenceController::class, 'update']);
+        Route::delete('/{id}', [NumberSequenceController::class, 'destroy']);
+    });
+
+    Route::prefix('payment-term')->group(function () {
+        Route::get('/', [PaymentTermController::class, 'index']);
+        Route::post('/', [PaymentTermController::class, 'create']);
+        Route::get('/{id}', [PaymentTermController::class, 'show']);
+        Route::put('/{id}', [PaymentTermController::class, 'update']);
+        Route::delete('/{id}', [PaymentTermController::class, 'destroy']);
+    });
+
+    Route::prefix('partner')->group(function () {
+        Route::get('/', [PartnerController::class, 'index']);
+        Route::post('/', [PartnerController::class, 'create']);
+        Route::get('/{id}', [PartnerController::class, 'show']);
+        Route::put('/{id}', [PartnerController::class, 'update']);
+        Route::delete('/{id}', [PartnerController::class, 'destroy']);
+    });
+
+    Route::prefix('tax')->group(function () {
+        Route::get('/', [TaxController::class, 'index']);
+        Route::post('/', [TaxController::class, 'create']);
+        Route::get('/{id}', [TaxController::class, 'show']);
+        Route::put('/{id}', [TaxController::class, 'update']);
+        Route::delete('/{id}', [TaxController::class, 'destroy']);
+    });
+
+    Route::prefix('tax-group')->group(function () {
+        Route::get('/', [TaxGroupController::class, 'index']);
+        Route::post('/', [TaxGroupController::class, 'create']);
+        Route::get('/{id}', [TaxGroupController::class, 'show']);
+        Route::put('/{id}', [TaxGroupController::class, 'update']);
+        Route::delete('/{id}', [TaxGroupController::class, 'destroy']);
+    });
 
     Route::prefix('timezone')->group(function () {
         Route::get('/', [TimezoneController::class, 'index']);

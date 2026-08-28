@@ -38,6 +38,7 @@ return new class extends Migration
 
             // زمان‌های ایجاد و بروزرسانی
             $table->timestamps();
+            $table->softDeletes();
 
             $table->unique(['company_id', 'code']);
 

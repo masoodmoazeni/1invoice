@@ -88,10 +88,7 @@ return new class extends Migration
             // وضعیت فعال/غیرفعال
             $table->boolean('is_active')->default(true)->index();
 
-            // زمان‌های ایجاد و بروزرسانی
             $table->timestamps();
-            
-            // حذف نرم (soft delete)
             $table->softDeletes();
 
             // ایندکس ترکیبی برای جلوگیری از تکرار کد طرف حساب در هر شرکت

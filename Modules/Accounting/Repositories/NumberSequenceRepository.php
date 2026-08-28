@@ -4,13 +4,13 @@ namespace Modules\Accounting\Repositories;
 
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Model;
-use Modules\Accounting\Entities\Tax;
+use Modules\Accounting\Entities\NumberSequence;
 
-class TaxRepository extends BaseRepository
+class NumberSequenceRepository extends BaseRepository
 {
     protected Model $model;
 
-    public function __construct(Tax $model)
+    public function __construct(NumberSequence $model)
     {
         $this->model = $model;
     }

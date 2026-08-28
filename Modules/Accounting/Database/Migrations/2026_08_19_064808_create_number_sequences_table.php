@@ -49,6 +49,7 @@ return new class extends Migration
 
             // زمان‌های ایجاد و بروزرسانی
             $table->timestamps();
+            $table->softDeletes();
 
             // ایندکس ترکیبی برای جلوگیری از تکرار شماره‌گذاری در هر ماژول و شرکت
             $table->unique(['company_id', 'module', 'prefix', 'suffix']);

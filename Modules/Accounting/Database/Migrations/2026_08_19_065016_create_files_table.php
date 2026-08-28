@@ -34,12 +34,8 @@ return new class extends Migration
             // نوع MIME فایل
             $table->string('mime', 100)->nullable();
 
-            // زمان آپلود فایل
-            $table->timestamp('uploaded_at')->nullable();
-
-            // زمان‌های ایجاد و بروزرسانی
             $table->timestamps();
-
+            $table->softDeletes();
             // ایندکس‌های ترکیبی برای جستجوی سریع‌تر
             $table->index(['disk', 'path']);
             $table->index(['mime']);
