@@ -17,11 +17,12 @@ var KTSignupFreeTrial = function() {
 				fields: {					 
 					'email': {
                         validators: {
+                            regexp: {
+                                regexp: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                message: 'The value is not a valid email address',
+                            },
 							notEmpty: {
 								message: 'Email address is required'
-							},
-                            emailAddress: {
-								message: 'The value is not a valid email address'
 							}
 						}
 					},
@@ -110,7 +111,12 @@ var KTSignupFreeTrial = function() {
                             if (result.isConfirmed) { 
                                 form.reset();  // reset form                    
                                 passwordMeter.reset();  // reset password meter
-                                //form.submit();
+
+                                //form.submit(); // submit form
+                                var redirectUrl = form.getAttribute('data-kt-redirect-url');
+                                if (redirectUrl) {
+                                    location.href = redirectUrl;
+                                }
                             }
                         });
                     }, 1500);   						
@@ -138,7 +144,7 @@ var KTSignupFreeTrial = function() {
 
     // Password input validation
     var validatePassword = function() {
-        return  (passwordMeter.getScore() === 100);
+        return  (passwordMeter.getScore() > 50);
     }
 
     // Public functions

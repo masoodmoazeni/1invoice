@@ -137,6 +137,11 @@ var KTAccountSettingsProfileDetails = function () {
     return {
         init: function () {
             form = document.getElementById('kt_account_profile_details_form');
+            
+            if (!form) {
+                return;
+            }
+
             submitButton = form.querySelector('#kt_account_profile_details_submit');
 
             initValidation();

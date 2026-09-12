@@ -2,20 +2,33 @@
 
 // Class definition
 var KTAccountSettingsSigninMethods = function () {
+    var signInForm;
+    var signInMainEl;
+    var signInEditEl;
+    var passwordMainEl;
+    var passwordEditEl;
+    var signInChangeEmail;
+    var signInCancelEmail;
+    var passwordChange;
+    var passwordCancel;
+
+    var toggleChangeEmail = function () {
+        signInMainEl.classList.toggle('d-none');
+        signInChangeEmail.classList.toggle('d-none');
+        signInEditEl.classList.toggle('d-none');
+    }
+
+    var toggleChangePassword = function () {
+        passwordMainEl.classList.toggle('d-none');
+        passwordChange.classList.toggle('d-none');
+        passwordEditEl.classList.toggle('d-none');
+    }
+
     // Private functions
-    var initSettings = function () {
-
-        // UI elements
-        var signInMainEl = document.getElementById('kt_signin_email');
-        var signInEditEl = document.getElementById('kt_signin_email_edit');
-        var passwordMainEl = document.getElementById('kt_signin_password');
-        var passwordEditEl = document.getElementById('kt_signin_password_edit');
-
-        // button elements
-        var signInChangeEmail = document.getElementById('kt_signin_email_button');
-        var signInCancelEmail = document.getElementById('kt_signin_cancel');
-        var passwordChange = document.getElementById('kt_signin_password_button');
-        var passwordCancel = document.getElementById('kt_password_cancel');
+    var initSettings = function () {  
+        if (!signInMainEl) {
+            return;
+        }        
 
         // toggle UI
         signInChangeEmail.querySelector('button').addEventListener('click', function () {
@@ -33,25 +46,14 @@ var KTAccountSettingsSigninMethods = function () {
         passwordCancel.addEventListener('click', function () {
             toggleChangePassword();
         });
-
-        var toggleChangeEmail = function () {
-            signInMainEl.classList.toggle('d-none');
-            signInChangeEmail.classList.toggle('d-none');
-            signInEditEl.classList.toggle('d-none');
-        }
-
-        var toggleChangePassword = function () {
-            passwordMainEl.classList.toggle('d-none');
-            passwordChange.classList.toggle('d-none');
-            passwordEditEl.classList.toggle('d-none');
-        }
     }
 
     var handleChangeEmail = function (e) {
-        var validation;
+        var validation;        
 
-        // form elements
-        var signInForm = document.getElementById('kt_signin_change_email');
+        if (!signInForm) {
+            return;
+        }
 
         validation = FormValidation.formValidation(
             signInForm,
@@ -100,6 +102,10 @@ var KTAccountSettingsSigninMethods = function () {
                         customClass: {
                             confirmButton: "btn font-weight-bold btn-light-primary"
                         }
+                    }).then(function(){
+                        signInForm.reset();
+                        validation.resetForm(); // Reset formvalidation --- more info: https://formvalidation.io/guide/api/reset-form/
+                        toggleChangeEmail();
                     });
                 } else {
                     swal.fire({
@@ -121,6 +127,10 @@ var KTAccountSettingsSigninMethods = function () {
 
         // form elements
         var passwordForm = document.getElementById('kt_signin_change_password');
+
+        if (!passwordForm) {
+            return;
+        }
 
         validation = FormValidation.formValidation(
             passwordForm,
@@ -180,6 +190,10 @@ var KTAccountSettingsSigninMethods = function () {
                         customClass: {
                             confirmButton: "btn font-weight-bold btn-light-primary"
                         }
+                    }).then(function(){
+                        passwordForm.reset();
+                        validation.resetForm(); // Reset formvalidation --- more info: https://formvalidation.io/guide/api/reset-form/
+                        toggleChangePassword();
                     });
                 } else {
                     swal.fire({
@@ -199,6 +213,16 @@ var KTAccountSettingsSigninMethods = function () {
     // Public methods
     return {
         init: function () {
+            signInForm = document.getElementById('kt_signin_change_email');
+            signInMainEl = document.getElementById('kt_signin_email');
+            signInEditEl = document.getElementById('kt_signin_email_edit');
+            passwordMainEl = document.getElementById('kt_signin_password');
+            passwordEditEl = document.getElementById('kt_signin_password_edit');
+            signInChangeEmail = document.getElementById('kt_signin_email_button');
+            signInCancelEmail = document.getElementById('kt_signin_cancel');
+            passwordChange = document.getElementById('kt_signin_password_button');
+            passwordCancel = document.getElementById('kt_password_cancel');
+
             initSettings();
             handleChangeEmail();
             handleChangePassword();

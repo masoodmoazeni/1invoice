@@ -97,6 +97,11 @@ var KTAccountSettingsDeactivateAccount = function () {
     return {
         init: function () {
             form = document.querySelector('#kt_account_deactivate_form');
+
+            if (!form) {
+                return;
+            }
+            
             submitButton = document.querySelector('#kt_account_deactivate_account_submit');
 
             initValidation();

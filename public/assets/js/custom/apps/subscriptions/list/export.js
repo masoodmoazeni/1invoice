@@ -40,14 +40,6 @@ var KTSubscriptionsExport = function () {
         submitButton.addEventListener('click', function (e) {
             e.preventDefault();
 
-            const dateEls = form.querySelectorAll("input");
-
-            // Disable form on submit click
-            dateEls.forEach(dateEl => {
-                dateEl.disabled = true;
-            });
-
-
             // Validate form before submit
             if (validator) {
                 validator.validate().then(function (status) {
@@ -76,11 +68,6 @@ var KTSubscriptionsExport = function () {
 
                                     // Enable submit button after loading
                                     submitButton.disabled = false;
-
-                                    // Enable datepicker after loading
-                                    dateEls.forEach(dateEl => {
-                                        dateEl.disabled = false;
-                                    });
                                 }
                             });
 
@@ -95,11 +82,6 @@ var KTSubscriptionsExport = function () {
                             customClass: {
                                 confirmButton: "btn btn-primary"
                             }
-                        }).then(function(){
-                            // Enable datepicker after loading
-                            dateEls.forEach(dateEl => {
-                                dateEl.disabled = false;
-                            });           
                         });
                     }
                 });
@@ -109,14 +91,6 @@ var KTSubscriptionsExport = function () {
         cancelButton.addEventListener('click', function (e) {
             e.preventDefault();
 
-            const dateEls = form.querySelectorAll("input");
-
-            // Disable form on submit click
-            dateEls.forEach(dateEl => {
-                dateEl.disabled = true;
-            });
-
-
             Swal.fire({
                 text: "Are you sure you would like to cancel?",
                 icon: "warning",
@@ -131,12 +105,7 @@ var KTSubscriptionsExport = function () {
             }).then(function (result) {
                 if (result.value) {
                     form.reset(); // Reset form	
-                    modal.hide(); // Hide modal	
-                    
-                    // Enable datepicker after loading
-                    dateEls.forEach(dateEl => {
-                        dateEl.disabled = false;
-                    });        			
+                    modal.hide(); // Hide modal	      			
                 } else if (result.dismiss === 'cancel') {
                     Swal.fire({
                         text: "Your form has not been cancelled!.",
@@ -146,11 +115,6 @@ var KTSubscriptionsExport = function () {
                         customClass: {
                             confirmButton: "btn btn-primary",
                         }
-                    }).then(function(){
-                        // Enable datepicker after loading
-                        dateEls.forEach(dateEl => {
-                            dateEl.disabled = false;
-                        });           
                     });
                 }
             });
@@ -159,14 +123,6 @@ var KTSubscriptionsExport = function () {
         closeButton.addEventListener('click', function (e) {
             e.preventDefault();
 
-            const dateEls = form.querySelectorAll("input");
-
-            // Disable form on submit click
-            dateEls.forEach(dateEl => {
-                dateEl.disabled = true;
-            });
-
-
             Swal.fire({
                 text: "Are you sure you would like to cancel?",
                 icon: "warning",
@@ -181,12 +137,7 @@ var KTSubscriptionsExport = function () {
             }).then(function (result) {
                 if (result.value) {
                     form.reset(); // Reset form	
-                    modal.hide(); // Hide modal		
-                    
-                    // Enable datepicker after loading
-                    dateEls.forEach(dateEl => {
-                        dateEl.disabled = false;
-                    });        
+                    modal.hide(); // Hide modal		      
                 } else if (result.dismiss === 'cancel') {
                     Swal.fire({
                         text: "Your form has not been cancelled!.",
@@ -196,11 +147,6 @@ var KTSubscriptionsExport = function () {
                         customClass: {
                             confirmButton: "btn btn-primary",
                         }
-                    }).then(function(){
-                        // Enable datepicker after loading
-                        dateEls.forEach(dateEl => {
-                            dateEl.disabled = false;
-                        });           
                     });
                 }
             });

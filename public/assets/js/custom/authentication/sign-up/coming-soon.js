@@ -15,6 +15,10 @@ var KTSignupComingSoon = function() {
     var handleForm = function(e) {
         var validation;		 
 
+        if( !form ) {
+            return;
+        }        
+
         // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
         validator = FormValidation.formValidation(
 			form,
@@ -22,11 +26,12 @@ var KTSignupComingSoon = function() {
 				fields: {					
 					'email': {
                         validators: {
+                            regexp: {
+                                regexp: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                message: 'The value is not a valid email address',
+                            },
 							notEmpty: {
 								message: 'Email address is required'
-							},
-                            emailAddress: {
-								message: 'The value is not a valid email address'
 							}
 						}
 					} 
@@ -64,7 +69,7 @@ var KTSignupComingSoon = function() {
 
                         // Show message popup. For more info check the plugin's official documentation: https://sweetalert2.github.io/
                         Swal.fire({
-                            text: "You have successfully subscribed !",
+                            text: "We have received your request. You will be notified once we go live.",
                             icon: "success",
                             buttonsStyling: false,
                             confirmButtonText: "Ok, got it!",
@@ -75,6 +80,12 @@ var KTSignupComingSoon = function() {
                             if (result.isConfirmed) { 
                                 form.querySelector('[name="email"]').value= "";                            
                                 //form.submit();
+
+                                //form.submit(); // submit form
+                                var redirectUrl = form.getAttribute('data-kt-redirect-url');
+                                if (redirectUrl) {
+                                    location.href = redirectUrl;
+                                }
                             }
                         });
                     }, 2000);   						
@@ -113,10 +124,10 @@ var KTSignupComingSoon = function() {
             var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
             // Display the result
-            counterDays.innerHTML = days;
-            counterHours.innerHTML = hours;
-            counterMinutes.innerHTML = minutes;
-            counterSeconds.innerHTML = seconds;
+            if(counterDays) counterDays.innerHTML = days; 
+            if(counterHours) counterHours.innerHTML = hours;
+            if(counterMinutes) counterMinutes.innerHTML = minutes;
+            if(counterSeconds) counterSeconds.innerHTML = seconds;
         };
 
         // Update the count down every 1 second
@@ -132,13 +143,17 @@ var KTSignupComingSoon = function() {
         init: function() {
             form = document.querySelector('#kt_coming_soon_form');
             submitButton = document.querySelector('#kt_coming_soon_submit');
-            counterDays = document.querySelector('#kt_coming_soon_counter_days');
-            counterHours = document.querySelector('#kt_coming_soon_counter_hours');
-            counterMinutes = document.querySelector('#kt_coming_soon_counter_minutes');
-            counterSeconds = document.querySelector('#kt_coming_soon_counter_seconds');
-
+           
             handleForm();
-            initCounter();
+
+            counterDays = document.querySelector('#kt_coming_soon_counter_days');
+            if (counterDays) {                
+                counterHours = document.querySelector('#kt_coming_soon_counter_hours');
+                counterMinutes = document.querySelector('#kt_coming_soon_counter_minutes');
+                counterSeconds = document.querySelector('#kt_coming_soon_counter_seconds');
+                
+                initCounter();
+            }
         }
     };
 }();
