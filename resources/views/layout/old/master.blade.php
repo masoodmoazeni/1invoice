@@ -41,12 +41,12 @@
     <!--begin::Page-->
     <div class="page d-flex flex-row flex-column-fluid">
         <!--begin::Aside-->
-        @include('layouts.old.leftPanel')
+        @include('layout.old.leftPanel')
         <!--end::Aside-->
         <!--begin::Wrapper-->
         <div class="wrapper d-flex flex-column flex-row-fluid" id="kt_wrapper">
             <!--begin::Header-->
-            @include('layouts.old.topPanel')
+            @include('layout.old.topPanel')
             <!--end::Header-->
             <!--begin::Content-->
             <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
@@ -56,7 +56,7 @@
             </div>
             <!--end::Content-->
             <!--begin::Footer-->
-            @include('layouts.old.footerPanel')
+            @include('layout.old.footerPanel')
             <!--end::Footer-->
         </div>
         <!--end::Wrapper-->

@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use Modules\Accounting\Http\Controllers\CountryController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,5 +14,7 @@
 */
 
 Route::prefix('accounting')->group(function() {
+    Route::resource('country', CountryController::class);
     Route::get('/', 'AccountingController@index');
 });
+

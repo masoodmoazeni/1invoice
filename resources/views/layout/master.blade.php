@@ -3,33 +3,39 @@
 {{--<html lang="en">--}}
 <!--begin::Head-->
 <head>
-    <base href="./" />
+    <base href="./"/>
     <title>Metronic - The World's #1 Selling Tailwind CSS & Bootstrap Admin Template by KeenThemes</title>
-    <meta charset="utf-8" />
-    <meta name="description" content="The most advanced Tailwind CSS & Bootstrap 5 Admin Theme with 40 unique prebuilt layouts on Themeforest trusted by 100,000 beginners and professionals. Multi-demo, Dark Mode, RTL support and complete React, Angular, Vue, Asp.Net Core, Rails, Spring, Blazor, Django, Express.js, Node.js, Flask, Symfony & Laravel versions. Grab your copy now and get life-time updates for free." />
-    <meta name="keywords" content="tailwind, tailwindcss, metronic, bootstrap, bootstrap 5, angular, VueJs, React, Asp.Net Core, Rails, Spring, Blazor, Django, Express.js, Node.js, Flask, Symfony & Laravel starter kits, admin themes, web design, figma, web development, free templates, free admin themes, bootstrap theme, bootstrap template, bootstrap dashboard, bootstrap dak mode, bootstrap button, bootstrap datepicker, bootstrap timepicker, fullcalendar, datatables, flaticon" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:type" content="article" />
-    <meta property="og:title" content="Metronic - The World's #1 Selling Tailwind CSS & Bootstrap Admin Template by KeenThemes" />
-    <meta property="og:url" content="https://keenthemes.com/metronic" />
-    <meta property="og:site_name" content="Metronic by Keenthemes" />
-    <link rel="canonical" href="http://preview.keenthemes.com/index.html" />
-    <link rel="shortcut icon" href="assets/media/logos/favicon.ico" />
+    <meta charset="utf-8"/>
+    <meta name="description"
+          content="The most advanced Tailwind CSS & Bootstrap 5 Admin Theme with 40 unique prebuilt layouts on Themeforest trusted by 100,000 beginners and professionals. Multi-demo, Dark Mode, RTL support and complete React, Angular, Vue, Asp.Net Core, Rails, Spring, Blazor, Django, Express.js, Node.js, Flask, Symfony & Laravel versions. Grab your copy now and get life-time updates for free."/>
+    <meta name="keywords"
+          content="tailwind, tailwindcss, metronic, bootstrap, bootstrap 5, angular, VueJs, React, Asp.Net Core, Rails, Spring, Blazor, Django, Express.js, Node.js, Flask, Symfony & Laravel starter kits, admin themes, web design, figma, web development, free templates, free admin themes, bootstrap theme, bootstrap template, bootstrap dashboard, bootstrap dak mode, bootstrap button, bootstrap datepicker, bootstrap timepicker, fullcalendar, datatables, flaticon"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta property="og:locale" content="en_US"/>
+    <meta property="og:type" content="article"/>
+    <meta property="og:title"
+          content="Metronic - The World's #1 Selling Tailwind CSS & Bootstrap Admin Template by KeenThemes"/>
+    <meta property="og:url" content="https://keenthemes.com/metronic"/>
+    <meta property="og:site_name" content="Metronic by Keenthemes"/>
+    <link rel="canonical" href="http://preview.keenthemes.com/index.html"/>
+    <link rel="shortcut icon" href="assets/media/logos/favicon.ico"/>
     <!--begin::Fonts(mandatory for all pages)-->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700"/>
     <!--end::Fonts-->
 
     <!--begin::Global Stylesheets Bundle(mandatory for all pages)-->
-    <link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
-    <link href="assets/css/style.bundle.rtl.css" rel="stylesheet" type="text/css" />
-{{--    <link href="assets/css/style.bundle.css" rel="stylesheet" type="text/css" />--}}
+    <link href="{{ asset('assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/css/style.bundle.rtl.css') }}" rel="stylesheet" type="text/css"/>
+    {{--    <link href="assets/css/style.bundle.css" rel="stylesheet" type="text/css" />--}}
     <!--end::Global Stylesheets Bundle-->
     <script>// Frame-busting to prevent site from being loaded within a frame without permission (click-jacking) if (window.top != window.self) { window.top.location.replace(window.self.location.href); }</script>
 </head>
 <!--end::Head-->
 <!--begin::Body-->
-<body id="kt_app_body" data-kt-app-layout="dark-sidebar" data-kt-app-header-fixed="true" data-kt-app-sidebar-enabled="true" data-kt-app-sidebar-fixed="true" data-kt-app-sidebar-hoverable="true" data-kt-app-sidebar-push-header="true" data-kt-app-sidebar-push-toolbar="true" data-kt-app-sidebar-push-footer="true" data-kt-app-toolbar-enabled="true" class="app-default">
+<body id="kt_app_body" data-kt-app-layout="dark-sidebar" data-kt-app-header-fixed="true"
+      data-kt-app-sidebar-enabled="true" data-kt-app-sidebar-fixed="true" data-kt-app-sidebar-hoverable="true"
+      data-kt-app-sidebar-push-header="true" data-kt-app-sidebar-push-toolbar="true"
+      data-kt-app-sidebar-push-footer="true" data-kt-app-toolbar-enabled="true" class="app-default">
 <!--begin::Theme mode setup on page load-->
 
 <!--end::Theme mode setup on page load-->
@@ -38,15 +44,15 @@
     <!--begin::Page-->
     <div class="app-page flex-column flex-column-fluid" id="kt_app_page">
         <!--begin::Header-->
-        @include('layouts.topmenu');
+        @include('layout.topmenu');
         <!--end::Header-->
         <!--begin::Wrapper-->
         <div class="app-wrapper flex-column flex-row-fluid" id="kt_app_wrapper">
             <!--begin::Sidebar-->
-            @include('layouts.sidebar');
+            @include('layout.sidebar');
             <!--end::Sidebar-->
             <!--begin::Main-->
-            @include('layouts.mainbar')
+            @yield('content')
             <!--end:::Main-->
         </div>
         <!--end::Wrapper-->
@@ -87,15 +93,20 @@
                 <div class="mb-13 text-center">
                     <h1 class="mb-3">Upgrade a Plan</h1>
                     <div class="text-muted fw-semibold fs-5">If you need more info, please check
-                        <a href="#" class="link-primary fw-bold">Pricing Guidelines</a>.</div>
+                        <a href="#" class="link-primary fw-bold">Pricing Guidelines</a>.
+                    </div>
                 </div>
                 <!--end::Heading-->
                 <!--begin::Plans-->
                 <div class="d-flex flex-column">
                     <!--begin::Nav group-->
                     <div class="nav-group nav-group-outline mx-auto" data-kt-buttons="true">
-                        <button class="btn btn-color-gray-500 btn-active btn-active-secondary px-6 py-3 me-2 active" data-kt-plan="month">Monthly</button>
-                        <button class="btn btn-color-gray-500 btn-active btn-active-secondary px-6 py-3" data-kt-plan="annual">Annual</button>
+                        <button class="btn btn-color-gray-500 btn-active btn-active-secondary px-6 py-3 me-2 active"
+                                data-kt-plan="month">Monthly
+                        </button>
+                        <button class="btn btn-color-gray-500 btn-active btn-active-secondary px-6 py-3"
+                                data-kt-plan="annual">Annual
+                        </button>
                     </div>
                     <!--end::Nav group-->
                     <!--begin::Row-->
@@ -105,12 +116,14 @@
                             <!--begin::Tabs-->
                             <div class="nav flex-column">
                                 <!--begin::Tab link-->
-                                <label class="nav-link btn btn-outline btn-outline-dashed btn-color-dark btn-active btn-active-primary d-flex flex-stack text-start p-6 active mb-6" data-bs-toggle="tab" data-bs-target="#kt_upgrade_plan_startup">
+                                <label class="nav-link btn btn-outline btn-outline-dashed btn-color-dark btn-active btn-active-primary d-flex flex-stack text-start p-6 active mb-6"
+                                       data-bs-toggle="tab" data-bs-target="#kt_upgrade_plan_startup">
                                     <!--end::Description-->
                                     <div class="d-flex align-items-center me-2">
                                         <!--begin::Radio-->
                                         <div class="form-check form-check-custom form-check-solid form-check-success flex-shrink-0 me-6">
-                                            <input class="form-check-input" type="radio" name="plan" checked="checked" value="startup" />
+                                            <input class="form-check-input" type="radio" name="plan" checked="checked"
+                                                   value="startup"/>
                                         </div>
                                         <!--end::Radio-->
                                         <!--begin::Info-->
@@ -124,7 +137,8 @@
                                     <!--begin::Price-->
                                     <div class="ms-5">
                                         <span class="mb-2">$</span>
-                                        <span class="fs-3x fw-bold" data-kt-plan-price-month="39" data-kt-plan-price-annual="399">39</span>
+                                        <span class="fs-3x fw-bold" data-kt-plan-price-month="39"
+                                              data-kt-plan-price-annual="399">39</span>
                                         <span class="fs-7 opacity-50">/
 												<span data-kt-element="period">Mon</span></span>
                                     </div>
@@ -132,12 +146,13 @@
                                 </label>
                                 <!--end::Tab link-->
                                 <!--begin::Tab link-->
-                                <label class="nav-link btn btn-outline btn-outline-dashed btn-color-dark btn-active btn-active-primary d-flex flex-stack text-start p-6 mb-6" data-bs-toggle="tab" data-bs-target="#kt_upgrade_plan_advanced">
+                                <label class="nav-link btn btn-outline btn-outline-dashed btn-color-dark btn-active btn-active-primary d-flex flex-stack text-start p-6 mb-6"
+                                       data-bs-toggle="tab" data-bs-target="#kt_upgrade_plan_advanced">
                                     <!--end::Description-->
                                     <div class="d-flex align-items-center me-2">
                                         <!--begin::Radio-->
                                         <div class="form-check form-check-custom form-check-solid form-check-success flex-shrink-0 me-6">
-                                            <input class="form-check-input" type="radio" name="plan" value="advanced" />
+                                            <input class="form-check-input" type="radio" name="plan" value="advanced"/>
                                         </div>
                                         <!--end::Radio-->
                                         <!--begin::Info-->
@@ -151,7 +166,8 @@
                                     <!--begin::Price-->
                                     <div class="ms-5">
                                         <span class="mb-2">$</span>
-                                        <span class="fs-3x fw-bold" data-kt-plan-price-month="339" data-kt-plan-price-annual="3399">339</span>
+                                        <span class="fs-3x fw-bold" data-kt-plan-price-month="339"
+                                              data-kt-plan-price-annual="3399">339</span>
                                         <span class="fs-7 opacity-50">/
 												<span data-kt-element="period">Mon</span></span>
                                     </div>
@@ -159,18 +175,21 @@
                                 </label>
                                 <!--end::Tab link-->
                                 <!--begin::Tab link-->
-                                <label class="nav-link btn btn-outline btn-outline-dashed btn-color-dark btn-active btn-active-primary d-flex flex-stack text-start p-6 mb-6" data-bs-toggle="tab" data-bs-target="#kt_upgrade_plan_enterprise">
+                                <label class="nav-link btn btn-outline btn-outline-dashed btn-color-dark btn-active btn-active-primary d-flex flex-stack text-start p-6 mb-6"
+                                       data-bs-toggle="tab" data-bs-target="#kt_upgrade_plan_enterprise">
                                     <!--end::Description-->
                                     <div class="d-flex align-items-center me-2">
                                         <!--begin::Radio-->
                                         <div class="form-check form-check-custom form-check-solid form-check-success flex-shrink-0 me-6">
-                                            <input class="form-check-input" type="radio" name="plan" value="enterprise" />
+                                            <input class="form-check-input" type="radio" name="plan"
+                                                   value="enterprise"/>
                                         </div>
                                         <!--end::Radio-->
                                         <!--begin::Info-->
                                         <div class="flex-grow-1">
                                             <div class="d-flex align-items-center fs-2 fw-bold flex-wrap">Enterprise
-                                                <span class="badge badge-light-success ms-2 py-2 px-3 fs-7">Popular</span></div>
+                                                <span class="badge badge-light-success ms-2 py-2 px-3 fs-7">Popular</span>
+                                            </div>
                                             <div class="fw-semibold opacity-75">Best value for 1000+ team</div>
                                         </div>
                                         <!--end::Info-->
@@ -179,7 +198,8 @@
                                     <!--begin::Price-->
                                     <div class="ms-5">
                                         <span class="mb-2">$</span>
-                                        <span class="fs-3x fw-bold" data-kt-plan-price-month="999" data-kt-plan-price-annual="9999">999</span>
+                                        <span class="fs-3x fw-bold" data-kt-plan-price-month="999"
+                                              data-kt-plan-price-annual="9999">999</span>
                                         <span class="fs-7 opacity-50">/
 												<span data-kt-element="period">Mon</span></span>
                                     </div>
@@ -187,12 +207,13 @@
                                 </label>
                                 <!--end::Tab link-->
                                 <!--begin::Tab link-->
-                                <label class="nav-link btn btn-outline btn-outline-dashed btn-color-dark btn-active btn-active-primary d-flex flex-stack text-start p-6 mb-6" data-bs-toggle="tab" data-bs-target="#kt_upgrade_plan_custom">
+                                <label class="nav-link btn btn-outline btn-outline-dashed btn-color-dark btn-active btn-active-primary d-flex flex-stack text-start p-6 mb-6"
+                                       data-bs-toggle="tab" data-bs-target="#kt_upgrade_plan_custom">
                                     <!--end::Description-->
                                     <div class="d-flex align-items-center me-2">
                                         <!--begin::Radio-->
                                         <div class="form-check form-check-custom form-check-solid form-check-success flex-shrink-0 me-6">
-                                            <input class="form-check-input" type="radio" name="plan" value="custom" />
+                                            <input class="form-check-input" type="radio" name="plan" value="custom"/>
                                         </div>
                                         <!--end::Radio-->
                                         <!--begin::Info-->
@@ -223,7 +244,8 @@
                                     <!--begin::Heading-->
                                     <div class="pb-5">
                                         <h2 class="fw-bold text-gray-900">What’s in Startup Plan?</h2>
-                                        <div class="text-muted fw-semibold">Optimal for 10+ team size and new startup</div>
+                                        <div class="text-muted fw-semibold">Optimal for 10+ team size and new startup
+                                        </div>
                                     </div>
                                     <!--end::Heading-->
                                     <!--begin::Body-->
@@ -300,7 +322,9 @@
                                     <!--begin::Heading-->
                                     <div class="pb-5">
                                         <h2 class="fw-bold text-gray-900">What’s in Startup Plan?</h2>
-                                        <div class="text-muted fw-semibold">Optimal for 100+ team size and grown company</div>
+                                        <div class="text-muted fw-semibold">Optimal for 100+ team size and grown
+                                            company
+                                        </div>
                                     </div>
                                     <!--end::Heading-->
                                     <!--begin::Body-->
@@ -580,7 +604,8 @@
             <!--begin::Modal body-->
             <div class="modal-body py-lg-10 px-lg-10">
                 <!--begin::Stepper-->
-                <div class="stepper stepper-pills stepper-column d-flex flex-column flex-xl-row flex-row-fluid" id="kt_modal_create_app_stepper">
+                <div class="stepper stepper-pills stepper-column d-flex flex-column flex-xl-row flex-row-fluid"
+                     id="kt_modal_create_app_stepper">
                     <!--begin::Aside-->
                     <div class="d-flex justify-content-center justify-content-xl-start flex-row-auto w-100 w-xl-300px">
                         <!--begin::Nav-->
@@ -713,7 +738,8 @@
                                         <!--begin::Label-->
                                         <label class="d-flex align-items-center fs-5 fw-semibold mb-2">
                                             <span class="required">App Name</span>
-                                            <span class="ms-1" data-bs-toggle="tooltip" title="Specify your unique app name">
+                                            <span class="ms-1" data-bs-toggle="tooltip"
+                                                  title="Specify your unique app name">
 														<i class="ki-duotone ki-information-5 text-gray-500 fs-6">
 															<span class="path1"></span>
 															<span class="path2"></span>
@@ -723,7 +749,8 @@
                                         </label>
                                         <!--end::Label-->
                                         <!--begin::Input-->
-                                        <input type="text" class="form-control form-control-lg form-control-solid" name="name" placeholder="" value="" />
+                                        <input type="text" class="form-control form-control-lg form-control-solid"
+                                               name="name" placeholder="" value=""/>
                                         <!--end::Input-->
                                     </div>
                                     <!--end::Input group-->
@@ -732,7 +759,8 @@
                                         <!--begin::Label-->
                                         <label class="d-flex align-items-center fs-5 fw-semibold mb-4">
                                             <span class="required">Category</span>
-                                            <span class="ms-1" data-bs-toggle="tooltip" title="Select your app category">
+                                            <span class="ms-1" data-bs-toggle="tooltip"
+                                                  title="Select your app category">
 														<i class="ki-duotone ki-information-5 text-gray-500 fs-6">
 															<span class="path1"></span>
 															<span class="path2"></span>
@@ -767,7 +795,8 @@
                                                 <!--end:Label-->
                                                 <!--begin:Input-->
                                                 <span class="form-check form-check-custom form-check-solid">
-															<input class="form-check-input" type="radio" name="category" value="1" />
+															<input class="form-check-input" type="radio" name="category"
+                                                                   value="1"/>
 														</span>
                                                 <!--end:Input-->
                                             </label>
@@ -798,7 +827,8 @@
                                                 <!--end:Label-->
                                                 <!--begin:Input-->
                                                 <span class="form-check form-check-custom form-check-solid">
-															<input class="form-check-input" type="radio" name="category" value="2" />
+															<input class="form-check-input" type="radio" name="category"
+                                                                   value="2"/>
 														</span>
                                                 <!--end:Input-->
                                             </label>
@@ -828,7 +858,8 @@
                                                 <!--end:Label-->
                                                 <!--begin:Input-->
                                                 <span class="form-check form-check-custom form-check-solid">
-															<input class="form-check-input" type="radio" name="category" value="3" />
+															<input class="form-check-input" type="radio" name="category"
+                                                                   value="3"/>
 														</span>
                                                 <!--end:Input-->
                                             </label>
@@ -848,7 +879,8 @@
                                         <!--begin::Label-->
                                         <label class="d-flex align-items-center fs-5 fw-semibold mb-4">
                                             <span class="required">Select Framework</span>
-                                            <span class="ms-1" data-bs-toggle="tooltip" title="Specify your apps framework">
+                                            <span class="ms-1" data-bs-toggle="tooltip"
+                                                  title="Specify your apps framework">
 														<i class="ki-duotone ki-information-5 text-gray-500 fs-6">
 															<span class="path1"></span>
 															<span class="path2"></span>
@@ -881,7 +913,8 @@
                                             <!--end:Label-->
                                             <!--begin:Input-->
                                             <span class="form-check form-check-custom form-check-solid">
-														<input class="form-check-input" type="radio" checked="checked" name="framework" value="1" />
+														<input class="form-check-input" type="radio" checked="checked"
+                                                               name="framework" value="1"/>
 													</span>
                                             <!--end:Input-->
                                         </label>
@@ -910,7 +943,8 @@
                                             <!--end:Label-->
                                             <!--begin:Input-->
                                             <span class="form-check form-check-custom form-check-solid">
-														<input class="form-check-input" type="radio" name="framework" value="2" />
+														<input class="form-check-input" type="radio" name="framework"
+                                                               value="2"/>
 													</span>
                                             <!--end:Input-->
                                         </label>
@@ -940,7 +974,8 @@
                                             <!--end:Label-->
                                             <!--begin:Input-->
                                             <span class="form-check form-check-custom form-check-solid">
-														<input class="form-check-input" type="radio" name="framework" value="3" />
+														<input class="form-check-input" type="radio" name="framework"
+                                                               value="3"/>
 													</span>
                                             <!--end:Input-->
                                         </label>
@@ -969,7 +1004,8 @@
                                             <!--end:Label-->
                                             <!--begin:Input-->
                                             <span class="form-check form-check-custom form-check-solid">
-														<input class="form-check-input" type="radio" name="framework" value="4" />
+														<input class="form-check-input" type="radio" name="framework"
+                                                               value="4"/>
 													</span>
                                             <!--end:Input-->
                                         </label>
@@ -988,7 +1024,8 @@
                                         <label class="required fs-5 fw-semibold mb-2">Database Name</label>
                                         <!--end::Label-->
                                         <!--begin::Input-->
-                                        <input type="text" class="form-control form-control-lg form-control-solid" name="dbname" placeholder="" value="master_db" />
+                                        <input type="text" class="form-control form-control-lg form-control-solid"
+                                               name="dbname" placeholder="" value="master_db"/>
                                         <!--end::Input-->
                                     </div>
                                     <!--end::Input group-->
@@ -997,7 +1034,8 @@
                                         <!--begin::Label-->
                                         <label class="d-flex align-items-center fs-5 fw-semibold mb-4">
                                             <span class="required">Select Database Engine</span>
-                                            <span class="ms-1" data-bs-toggle="tooltip" title="Select your app database engine">
+                                            <span class="ms-1" data-bs-toggle="tooltip"
+                                                  title="Select your app database engine">
 														<i class="ki-duotone ki-information-5 text-gray-500 fs-6">
 															<span class="path1"></span>
 															<span class="path2"></span>
@@ -1030,7 +1068,8 @@
                                             <!--end::Label-->
                                             <!--begin::Input-->
                                             <span class="form-check form-check-custom form-check-solid">
-														<input class="form-check-input" type="radio" name="dbengine" checked="checked" value="1" />
+														<input class="form-check-input" type="radio" name="dbengine"
+                                                               checked="checked" value="1"/>
 													</span>
                                             <!--end::Input-->
                                         </label>
@@ -1059,7 +1098,8 @@
                                             <!--end::Label-->
                                             <!--begin::Input-->
                                             <span class="form-check form-check-custom form-check-solid">
-														<input class="form-check-input" type="radio" name="dbengine" value="2" />
+														<input class="form-check-input" type="radio" name="dbengine"
+                                                               value="2"/>
 													</span>
                                             <!--end::Input-->
                                         </label>
@@ -1090,7 +1130,8 @@
                                             <!--end::Label-->
                                             <!--begin::Input-->
                                             <span class="form-check form-check-custom form-check-solid">
-														<input class="form-check-input" type="radio" name="dbengine" value="3" />
+														<input class="form-check-input" type="radio" name="dbengine"
+                                                               value="3"/>
 													</span>
                                             <!--end::Input-->
                                         </label>
@@ -1108,7 +1149,8 @@
                                         <!--begin::Label-->
                                         <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
                                             <span class="required">Name On Card</span>
-                                            <span class="ms-1" data-bs-toggle="tooltip" title="Specify a card holder's name">
+                                            <span class="ms-1" data-bs-toggle="tooltip"
+                                                  title="Specify a card holder's name">
 														<i class="ki-duotone ki-information-5 text-gray-500 fs-6">
 															<span class="path1"></span>
 															<span class="path2"></span>
@@ -1117,7 +1159,8 @@
 													</span>
                                         </label>
                                         <!--end::Label-->
-                                        <input type="text" class="form-control form-control-solid" placeholder="" name="card_name" value="Max Doe" />
+                                        <input type="text" class="form-control form-control-solid" placeholder=""
+                                               name="card_name" value="Max Doe"/>
                                     </div>
                                     <!--end::Input group-->
                                     <!--begin::Input group-->
@@ -1128,13 +1171,17 @@
                                         <!--begin::Input wrapper-->
                                         <div class="position-relative">
                                             <!--begin::Input-->
-                                            <input type="text" class="form-control form-control-solid" placeholder="Enter card number" name="card_number" value="4111 1111 1111 1111" />
+                                            <input type="text" class="form-control form-control-solid"
+                                                   placeholder="Enter card number" name="card_number"
+                                                   value="4111 1111 1111 1111"/>
                                             <!--end::Input-->
                                             <!--begin::Card logos-->
                                             <div class="position-absolute translate-middle-y top-50 end-0 me-5">
-                                                <img src="assets/media/svg/card-logos/visa.svg" alt="" class="h-25px" />
-                                                <img src="assets/media/svg/card-logos/mastercard.svg" alt="" class="h-25px" />
-                                                <img src="assets/media/svg/card-logos/american-express.svg" alt="" class="h-25px" />
+                                                <img src="assets/media/svg/card-logos/visa.svg" alt="" class="h-25px"/>
+                                                <img src="assets/media/svg/card-logos/mastercard.svg" alt=""
+                                                     class="h-25px"/>
+                                                <img src="assets/media/svg/card-logos/american-express.svg" alt=""
+                                                     class="h-25px"/>
                                             </div>
                                             <!--end::Card logos-->
                                         </div>
@@ -1146,13 +1193,16 @@
                                         <!--begin::Col-->
                                         <div class="col-md-8 fv-row">
                                             <!--begin::Label-->
-                                            <label class="required fs-6 fw-semibold form-label mb-2">Expiration Date</label>
+                                            <label class="required fs-6 fw-semibold form-label mb-2">Expiration
+                                                Date</label>
                                             <!--end::Label-->
                                             <!--begin::Row-->
                                             <div class="row fv-row">
                                                 <!--begin::Col-->
                                                 <div class="col-6">
-                                                    <select name="card_expiry_month" class="form-select form-select-solid" data-control="select2" data-hide-search="true" data-placeholder="Month">
+                                                    <select name="card_expiry_month"
+                                                            class="form-select form-select-solid" data-control="select2"
+                                                            data-hide-search="true" data-placeholder="Month">
                                                         <option></option>
                                                         <option value="1">1</option>
                                                         <option value="2">2</option>
@@ -1171,7 +1221,9 @@
                                                 <!--end::Col-->
                                                 <!--begin::Col-->
                                                 <div class="col-6">
-                                                    <select name="card_expiry_year" class="form-select form-select-solid" data-control="select2" data-hide-search="true" data-placeholder="Year">
+                                                    <select name="card_expiry_year"
+                                                            class="form-select form-select-solid" data-control="select2"
+                                                            data-hide-search="true" data-placeholder="Year">
                                                         <option></option>
                                                         <option value="2026">2026</option>
                                                         <option value="2027">2027</option>
@@ -1196,7 +1248,8 @@
                                             <!--begin::Label-->
                                             <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
                                                 <span class="required">CVV</span>
-                                                <span class="ms-1" data-bs-toggle="tooltip" title="Enter a card CVV code">
+                                                <span class="ms-1" data-bs-toggle="tooltip"
+                                                      title="Enter a card CVV code">
 															<i class="ki-duotone ki-information-5 text-gray-500 fs-6">
 																<span class="path1"></span>
 																<span class="path2"></span>
@@ -1208,7 +1261,8 @@
                                             <!--begin::Input wrapper-->
                                             <div class="position-relative">
                                                 <!--begin::Input-->
-                                                <input type="text" class="form-control form-control-solid" minlength="3" maxlength="4" placeholder="CVV" name="card_cvv" />
+                                                <input type="text" class="form-control form-control-solid" minlength="3"
+                                                       maxlength="4" placeholder="CVV" name="card_cvv"/>
                                                 <!--end::Input-->
                                                 <!--begin::CVV icon-->
                                                 <div class="position-absolute translate-middle-y top-50 end-0 me-3">
@@ -1228,13 +1282,17 @@
                                     <div class="d-flex flex-stack">
                                         <!--begin::Label-->
                                         <div class="me-5">
-                                            <label class="fs-6 fw-semibold form-label">Save Card for further billing?</label>
-                                            <div class="fs-7 fw-semibold text-muted">If you need more info, please check budget planning</div>
+                                            <label class="fs-6 fw-semibold form-label">Save Card for further
+                                                billing?</label>
+                                            <div class="fs-7 fw-semibold text-muted">If you need more info, please check
+                                                budget planning
+                                            </div>
                                         </div>
                                         <!--end::Label-->
                                         <!--begin::Switch-->
                                         <label class="form-check form-switch form-check-custom form-check-solid">
-                                            <input class="form-check-input" type="checkbox" value="1" checked="checked" />
+                                            <input class="form-check-input" type="checkbox" value="1"
+                                                   checked="checked"/>
                                             <span class="form-check-label fw-semibold text-muted">Save Card</span>
                                         </label>
                                         <!--end::Switch-->
@@ -1250,11 +1308,14 @@
                                     <h1 class="fw-bold text-gray-900 mb-3">Release!</h1>
                                     <!--end::Heading-->
                                     <!--begin::Description-->
-                                    <div class="text-muted fw-semibold fs-3">Submit your app to kickstart your project.</div>
+                                    <div class="text-muted fw-semibold fs-3">Submit your app to kickstart your
+                                        project.
+                                    </div>
                                     <!--end::Description-->
                                     <!--begin::Illustration-->
                                     <div class="text-center px-4 py-15">
-                                        <img src="assets/media/illustrations/sketchy-1/9.png" alt="" class="mw-100 mh-300px" />
+                                        <img src="assets/media/illustrations/sketchy-1/9.png" alt=""
+                                             class="mw-100 mh-300px"/>
                                     </div>
                                     <!--end::Illustration-->
                                 </div>
@@ -1264,16 +1325,19 @@
                             <div class="d-flex flex-stack pt-10">
                                 <!--begin::Wrapper-->
                                 <div class="me-2">
-                                    <button type="button" class="btn btn-lg btn-light-primary me-3" data-kt-stepper-action="previous">
+                                    <button type="button" class="btn btn-lg btn-light-primary me-3"
+                                            data-kt-stepper-action="previous">
                                         <i class="ki-duotone ki-arrow-left fs-3 me-1">
                                             <span class="path1"></span>
                                             <span class="path2"></span>
-                                        </i>Back</button>
+                                        </i>Back
+                                    </button>
                                 </div>
                                 <!--end::Wrapper-->
                                 <!--begin::Wrapper-->
                                 <div>
-                                    <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="submit">
+                                    <button type="button" class="btn btn-lg btn-primary"
+                                            data-kt-stepper-action="submit">
 												<span class="indicator-label">Submit
 												<i class="ki-duotone ki-arrow-right fs-3 ms-2 me-0">
 													<span class="path1"></span>
@@ -1282,7 +1346,8 @@
                                         <span class="indicator-progress">Please wait...
 												<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                                     </button>
-                                    <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="next">Continue
+                                    <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="next">
+                                        Continue
                                         <i class="ki-duotone ki-arrow-right fs-3 ms-1 me-0">
                                             <span class="path1"></span>
                                             <span class="path2"></span>
@@ -1334,7 +1399,8 @@
                         <!--end::Title-->
                         <!--begin::Description-->
                         <div class="text-muted fw-semibold fs-5">If you need more info, please check
-                            <a href="#" class="fw-bold link-primary">Project Guidelines</a>.</div>
+                            <a href="#" class="fw-bold link-primary">Project Guidelines</a>.
+                        </div>
                         <!--end::Description-->
                     </div>
                     <!--end::Heading-->
@@ -1343,7 +1409,8 @@
                         <!--begin::Label-->
                         <label class="d-flex align-items-center fs-6 fw-semibold mb-2">
                             <span class="required">Target Title</span>
-                            <span class="ms-1" data-bs-toggle="tooltip" title="Specify a target name for future usage and reference">
+                            <span class="ms-1" data-bs-toggle="tooltip"
+                                  title="Specify a target name for future usage and reference">
 										<i class="ki-duotone ki-information-5 text-gray-500 fs-6">
 											<span class="path1"></span>
 											<span class="path2"></span>
@@ -1352,7 +1419,8 @@
 									</span>
                         </label>
                         <!--end::Label-->
-                        <input type="text" class="form-control form-control-solid" placeholder="Enter Target Title" name="target_title" />
+                        <input type="text" class="form-control form-control-solid" placeholder="Enter Target Title"
+                               name="target_title"/>
                     </div>
                     <!--end::Input group-->
                     <!--begin::Input group-->
@@ -1360,7 +1428,8 @@
                         <!--begin::Col-->
                         <div class="col-md-6 fv-row">
                             <label class="required fs-6 fw-semibold mb-2">Assign</label>
-                            <select class="form-select form-select-solid" data-control="select2" data-hide-search="true" data-placeholder="Select a Team Member" name="target_assign">
+                            <select class="form-select form-select-solid" data-control="select2" data-hide-search="true"
+                                    data-placeholder="Select a Team Member" name="target_assign">
                                 <option value="">Select user...</option>
                                 <option value="1">Karina Clark</option>
                                 <option value="2">Robert Doe</option>
@@ -1386,7 +1455,8 @@
                                 </i>
                                 <!--end::Icon-->
                                 <!--begin::Datepicker-->
-                                <input class="form-control form-control-solid ps-12" placeholder="Select a date" name="due_date" />
+                                <input class="form-control form-control-solid ps-12" placeholder="Select a date"
+                                       name="due_date"/>
                                 <!--end::Datepicker-->
                             </div>
                             <!--end::Input-->
@@ -1397,7 +1467,8 @@
                     <!--begin::Input group-->
                     <div class="d-flex flex-column mb-8">
                         <label class="fs-6 fw-semibold mb-2">Target Details</label>
-                        <textarea class="form-control form-control-solid" rows="3" name="target_details" placeholder="Type Target Details"></textarea>
+                        <textarea class="form-control form-control-solid" rows="3" name="target_details"
+                                  placeholder="Type Target Details"></textarea>
                     </div>
                     <!--end::Input group-->
                     <!--begin::Input group-->
@@ -1414,7 +1485,7 @@
 									</span>
                         </label>
                         <!--end::Label-->
-                        <input class="form-control form-control-solid" value="Important, Urgent" name="tags" />
+                        <input class="form-control form-control-solid" value="Important, Urgent" name="tags"/>
                     </div>
                     <!--end::Input group-->
                     <!--begin::Input group-->
@@ -1422,12 +1493,14 @@
                         <!--begin::Label-->
                         <div class="me-5">
                             <label class="fs-6 fw-semibold">Adding Users by Team Members</label>
-                            <div class="fs-7 fw-semibold text-muted">If you need more info, please check budget planning</div>
+                            <div class="fs-7 fw-semibold text-muted">If you need more info, please check budget
+                                planning
+                            </div>
                         </div>
                         <!--end::Label-->
                         <!--begin::Switch-->
                         <label class="form-check form-switch form-check-custom form-check-solid">
-                            <input class="form-check-input" type="checkbox" value="1" checked="checked" />
+                            <input class="form-check-input" type="checkbox" value="1" checked="checked"/>
                             <span class="form-check-label fw-semibold text-muted">Allowed</span>
                         </label>
                         <!--end::Switch-->
@@ -1447,13 +1520,15 @@
                             <div class="d-flex align-items-center">
                                 <!--begin::Checkbox-->
                                 <label class="form-check form-check-custom form-check-solid me-10">
-                                    <input class="form-check-input h-20px w-20px" type="checkbox" name="communication[]" value="email" checked="checked" />
+                                    <input class="form-check-input h-20px w-20px" type="checkbox" name="communication[]"
+                                           value="email" checked="checked"/>
                                     <span class="form-check-label fw-semibold">Email</span>
                                 </label>
                                 <!--end::Checkbox-->
                                 <!--begin::Checkbox-->
                                 <label class="form-check form-check-custom form-check-solid">
-                                    <input class="form-check-input h-20px w-20px" type="checkbox" name="communication[]" value="phone" />
+                                    <input class="form-check-input h-20px w-20px" type="checkbox" name="communication[]"
+                                           value="phone"/>
                                     <span class="form-check-label fw-semibold">Phone</span>
                                 </label>
                                 <!--end::Checkbox-->
@@ -1510,7 +1585,8 @@
                     <!--end::Title-->
                     <!--begin::Description-->
                     <div class="text-muted fw-semibold fs-5">If you need more info, please check out our
-                        <a href="#" class="link-primary fw-bold">Users Directory</a>.</div>
+                        <a href="#" class="link-primary fw-bold">Users Directory</a>.
+                    </div>
                     <!--end::Description-->
                 </div>
                 <!--end::Heading-->
@@ -1524,13 +1600,15 @@
                             <div class="d-flex align-items-center">
                                 <!--begin::Avatar-->
                                 <div class="symbol symbol-35px symbol-circle">
-                                    <img alt="Pic" src="assets/media/avatars/300-6.jpg" />
+                                    <img alt="Pic" src="assets/media/avatars/300-6.jpg"/>
                                 </div>
                                 <!--end::Avatar-->
                                 <!--begin::Details-->
                                 <div class="ms-6">
                                     <!--begin::Name-->
-                                    <a href="#" class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Emma Smith
+                                    <a href="#"
+                                       class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Emma
+                                        Smith
                                         <span class="badge badge-light fs-8 fw-semibold ms-2">Art Director</span></a>
                                     <!--end::Name-->
                                     <!--begin::Email-->
@@ -1564,7 +1642,9 @@
                                 <!--begin::Details-->
                                 <div class="ms-6">
                                     <!--begin::Name-->
-                                    <a href="#" class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Melody Macy
+                                    <a href="#"
+                                       class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Melody
+                                        Macy
                                         <span class="badge badge-light fs-8 fw-semibold ms-2">Marketing Analytic</span></a>
                                     <!--end::Name-->
                                     <!--begin::Email-->
@@ -1592,13 +1672,15 @@
                             <div class="d-flex align-items-center">
                                 <!--begin::Avatar-->
                                 <div class="symbol symbol-35px symbol-circle">
-                                    <img alt="Pic" src="assets/media/avatars/300-1.jpg" />
+                                    <img alt="Pic" src="assets/media/avatars/300-1.jpg"/>
                                 </div>
                                 <!--end::Avatar-->
                                 <!--begin::Details-->
                                 <div class="ms-6">
                                     <!--begin::Name-->
-                                    <a href="#" class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Max Smith
+                                    <a href="#"
+                                       class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Max
+                                        Smith
                                         <span class="badge badge-light fs-8 fw-semibold ms-2">Software Enginer</span></a>
                                     <!--end::Name-->
                                     <!--begin::Email-->
@@ -1626,13 +1708,15 @@
                             <div class="d-flex align-items-center">
                                 <!--begin::Avatar-->
                                 <div class="symbol symbol-35px symbol-circle">
-                                    <img alt="Pic" src="assets/media/avatars/300-5.jpg" />
+                                    <img alt="Pic" src="assets/media/avatars/300-5.jpg"/>
                                 </div>
                                 <!--end::Avatar-->
                                 <!--begin::Details-->
                                 <div class="ms-6">
                                     <!--begin::Name-->
-                                    <a href="#" class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Sean Bean
+                                    <a href="#"
+                                       class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Sean
+                                        Bean
                                         <span class="badge badge-light fs-8 fw-semibold ms-2">Web Developer</span></a>
                                     <!--end::Name-->
                                     <!--begin::Email-->
@@ -1660,13 +1744,15 @@
                             <div class="d-flex align-items-center">
                                 <!--begin::Avatar-->
                                 <div class="symbol symbol-35px symbol-circle">
-                                    <img alt="Pic" src="assets/media/avatars/300-25.jpg" />
+                                    <img alt="Pic" src="assets/media/avatars/300-25.jpg"/>
                                 </div>
                                 <!--end::Avatar-->
                                 <!--begin::Details-->
                                 <div class="ms-6">
                                     <!--begin::Name-->
-                                    <a href="#" class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Brian Cox
+                                    <a href="#"
+                                       class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Brian
+                                        Cox
                                         <span class="badge badge-light fs-8 fw-semibold ms-2">UI/UX Designer</span></a>
                                     <!--end::Name-->
                                     <!--begin::Email-->
@@ -1700,7 +1786,9 @@
                                 <!--begin::Details-->
                                 <div class="ms-6">
                                     <!--begin::Name-->
-                                    <a href="#" class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Mikaela Collins
+                                    <a href="#"
+                                       class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Mikaela
+                                        Collins
                                         <span class="badge badge-light fs-8 fw-semibold ms-2">Head Of Marketing</span></a>
                                     <!--end::Name-->
                                     <!--begin::Email-->
@@ -1728,13 +1816,15 @@
                             <div class="d-flex align-items-center">
                                 <!--begin::Avatar-->
                                 <div class="symbol symbol-35px symbol-circle">
-                                    <img alt="Pic" src="assets/media/avatars/300-9.jpg" />
+                                    <img alt="Pic" src="assets/media/avatars/300-9.jpg"/>
                                 </div>
                                 <!--end::Avatar-->
                                 <!--begin::Details-->
                                 <div class="ms-6">
                                     <!--begin::Name-->
-                                    <a href="#" class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Francis Mitcham
+                                    <a href="#"
+                                       class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Francis
+                                        Mitcham
                                         <span class="badge badge-light fs-8 fw-semibold ms-2">Software Arcitect</span></a>
                                     <!--end::Name-->
                                     <!--begin::Email-->
@@ -1768,7 +1858,9 @@
                                 <!--begin::Details-->
                                 <div class="ms-6">
                                     <!--begin::Name-->
-                                    <a href="#" class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Olivia Wild
+                                    <a href="#"
+                                       class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Olivia
+                                        Wild
                                         <span class="badge badge-light fs-8 fw-semibold ms-2">System Admin</span></a>
                                     <!--end::Name-->
                                     <!--begin::Email-->
@@ -1802,7 +1894,9 @@
                                 <!--begin::Details-->
                                 <div class="ms-6">
                                     <!--begin::Name-->
-                                    <a href="#" class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Neil Owen
+                                    <a href="#"
+                                       class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Neil
+                                        Owen
                                         <span class="badge badge-light fs-8 fw-semibold ms-2">Account Manager</span></a>
                                     <!--end::Name-->
                                     <!--begin::Email-->
@@ -1830,13 +1924,15 @@
                             <div class="d-flex align-items-center">
                                 <!--begin::Avatar-->
                                 <div class="symbol symbol-35px symbol-circle">
-                                    <img alt="Pic" src="assets/media/avatars/300-23.jpg" />
+                                    <img alt="Pic" src="assets/media/avatars/300-23.jpg"/>
                                 </div>
                                 <!--end::Avatar-->
                                 <!--begin::Details-->
                                 <div class="ms-6">
                                     <!--begin::Name-->
-                                    <a href="#" class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Dan Wilson
+                                    <a href="#"
+                                       class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Dan
+                                        Wilson
                                         <span class="badge badge-light fs-8 fw-semibold ms-2">Web Desinger</span></a>
                                     <!--end::Name-->
                                     <!--begin::Email-->
@@ -1870,7 +1966,9 @@
                                 <!--begin::Details-->
                                 <div class="ms-6">
                                     <!--begin::Name-->
-                                    <a href="#" class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Emma Bold
+                                    <a href="#"
+                                       class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Emma
+                                        Bold
                                         <span class="badge badge-light fs-8 fw-semibold ms-2">Corporate Finance</span></a>
                                     <!--end::Name-->
                                     <!--begin::Email-->
@@ -1898,13 +1996,15 @@
                             <div class="d-flex align-items-center">
                                 <!--begin::Avatar-->
                                 <div class="symbol symbol-35px symbol-circle">
-                                    <img alt="Pic" src="assets/media/avatars/300-12.jpg" />
+                                    <img alt="Pic" src="assets/media/avatars/300-12.jpg"/>
                                 </div>
                                 <!--end::Avatar-->
                                 <!--begin::Details-->
                                 <div class="ms-6">
                                     <!--begin::Name-->
-                                    <a href="#" class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Ana Crown
+                                    <a href="#"
+                                       class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Ana
+                                        Crown
                                         <span class="badge badge-light fs-8 fw-semibold ms-2">Customer Relationship</span></a>
                                     <!--end::Name-->
                                     <!--begin::Email-->
@@ -1938,7 +2038,9 @@
                                 <!--begin::Details-->
                                 <div class="ms-6">
                                     <!--begin::Name-->
-                                    <a href="#" class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Robert Doe
+                                    <a href="#"
+                                       class="d-flex align-items-center fs-5 fw-bold text-gray-900 text-hover-primary">Robert
+                                        Doe
                                         <span class="badge badge-light fs-8 fw-semibold ms-2">Marketing Executive</span></a>
                                     <!--end::Name-->
                                     <!--begin::Email-->
@@ -1974,7 +2076,7 @@
                     <!--end::Label-->
                     <!--begin::Switch-->
                     <label class="form-check form-switch form-check-custom form-check-solid">
-                        <input class="form-check-input" type="checkbox" value="" checked="checked" />
+                        <input class="form-check-input" type="checkbox" value="" checked="checked"/>
                         <span class="form-check-label fw-semibold text-muted">Allowed</span>
                     </label>
                     <!--end::Switch-->
@@ -1991,19 +2093,19 @@
 <!--end::Modals-->
 <!--begin::Javascript-->
 <!--begin::Global Javascript Bundle(mandatory for all pages)-->
-<script src="assets/plugins/global/plugins.bundle.js"></script>
-<script src="assets/js/scripts.bundle.js"></script>
+<script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script>
+<script src="{{ asset('assets/js/scripts.bundle.js') }}"></script>
 <!--end::Global Javascript Bundle-->
 <!--begin::Vendors Javascript(used for this page only)-->
 <!--end::Vendors Javascript-->
 <!--begin::Custom Javascript(used for this page only)-->
 
-<script src="assets/js/widgets.bundle.js"></script>
-<script src="assets/js/custom/widgets.js"></script>
-<script src="assets/js/custom/apps/chat/chat.js"></script>
-<script src="assets/js/custom/utilities/modals/upgrade-plan.js"></script>
-<script src="assets/js/custom/utilities/modals/create-app.js"></script>
-<script src="assets/js/custom/utilities/modals/new-target.js"></script>
+<script src="{{ asset('assets/js/widgets.bundle.js') }}"></script>
+<script src="{{ asset('assets/js/custom/widgets.js') }}"></script>
+<script src="{{ asset('assets/js/custom/apps/chat/chat.js') }}"></script>
+<script src="{{ asset('assets/js/custom/utilities/modals/upgrade-plan.js') }}"></script>
+<script src="{{ asset('assets/js/custom/utilities/modals/create-app.js') }}"></script>
+<script src="{{ asset('assets/js/custom/utilities/modals/new-target.js') }}"></script>
 
 <!--end::Custom Javascript-->
 <!--end::Javascript-->

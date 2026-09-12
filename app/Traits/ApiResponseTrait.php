@@ -1,18 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Traits;
 
-use App\Traits\ApiResponseTrait;
-use App\Traits\RolePermissionTrait;
-use Illuminate\Routing\Controller as Controller;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Facades\Auth;
 
-class BaseController extends Controller
+trait ApiResponseTrait
 {
-    use ApiResponseTrait;
-    use RolePermissionTrait;
-    use AuthorizesRequests;
-
     protected function checkPermission($permission, $model = null, $message = null)
     {
         try{
@@ -113,7 +108,7 @@ class BaseController extends Controller
         $hasAnyPermission = collect($permissions)->pluck('has')->contains(true);
 
         if (!$hasAnyPermission) {
-            return redirect()->route('login');
+            return redirect()->route('login')->with('error', $message);
             exit;
         }
 
@@ -124,5 +119,4 @@ class BaseController extends Controller
             'permissions' => $permissions
         ];
     }
-
 }
