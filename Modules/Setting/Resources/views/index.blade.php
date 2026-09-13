@@ -1,4 +1,4 @@
-@extends('setting::layouts.master')
+@extends('setting::layout.master')
 
 @section('content')
     <h1>Hello World</h1>

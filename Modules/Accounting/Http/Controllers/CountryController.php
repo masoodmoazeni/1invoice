@@ -24,13 +24,19 @@ class CountryController extends BaseController
      */
     public function index(Request $request)
     {
+        $breadcrumbs = [
+            ['label' => __('messages.menu.main'), 'url' => route('country.index')],
+            ['label' => __('messages.menu.setting.item'), 'url' => route('country.index')],
+            ['label' => __('messages.item.label.title_index')]
+        ];
+
         $page = $request->get('page', 1);
         $filter = $request->get('filter', []);
         $perPage = $request->get('per_page', 15);
 
         $country = $this->countryService->getPaginate($perPage, $filter);
 
-        return view('accounting::country.index' , compact('country'));
+        return view('accounting::country.index' , compact('country', 'breadcrumbs'));
     }
 
     /**

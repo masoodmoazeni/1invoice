@@ -1,4 +1,4 @@
-@extends('accounting::layouts.master')
+@extends('accounting::layout.master')
 
 @section('content')
     <h1>Hello World</h1>
