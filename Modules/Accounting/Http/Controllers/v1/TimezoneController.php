@@ -2,11 +2,11 @@
 
 namespace Modules\Accounting\Http\Controllers\v1;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Modules\Accounting\Http\Requests\TimezoneRequest;
-use Modules\Accounting\Services\TimezoneService;
+use Modules\System\Services\TimezoneService;
 
 class TimezoneController extends BaseController
 {

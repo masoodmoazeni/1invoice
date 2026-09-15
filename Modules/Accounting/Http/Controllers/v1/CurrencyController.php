@@ -2,13 +2,12 @@
 
 namespace Modules\Accounting\Http\Controllers\v1;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Modules\Accounting\Services\CurrencyService;
-
 use Modules\Accounting\Http\Requests\Currency\CurrencyRequest;
 use Modules\Accounting\Http\Requests\Currency\CurrencyUpdateRequest;
+use Modules\System\Services\CurrencyService;
 
 class CurrencyController extends BaseController
 {
@@ -41,29 +40,29 @@ class CurrencyController extends BaseController
     {
         try {
             $perPage = $request->get('per_page', 15);
-            
+
             $filters = [];
-            
+
             if ($request->has('search')) {
                 $filters['search'] = $request->get('search');
             }
-            
+
             if ($request->has('code')) {
                 $filters['code'] = $request->get('code');
             }
-            
+
             if ($request->has('is_active')) {
                 $filters['is_active'] = $request->get('is_active');
             }
-            
+
             if ($request->has('decimal_places')) {
                 $filters['decimal_places'] = $request->get('decimal_places');
             }
-            
+
             if ($request->has('sort_by')) {
                 $filters['sort_by'] = $request->get('sort_by');
             }
-            
+
 
             $currencies = $this->currencyService->getPaginate($perPage, $filters);
 
@@ -100,12 +99,12 @@ class CurrencyController extends BaseController
     {
         try {
             $validatedData = $request->validated();
-            
+
             // تبدیل کد به حروف بزرگ
             if (isset($validatedData['code'])) {
                 $validatedData['code'] = strtoupper($validatedData['code']);
             }
-            
+
             $currency = $this->currencyService->create($validatedData);
 
             return $this->successResponse($currency, 'ارز با موفقیت ایجاد شد', 201);
@@ -129,7 +128,7 @@ class CurrencyController extends BaseController
     {
         try {
             $currency = $this->currencyService->find($id);
-            
+
             if (!$currency) {
                 return $this->errorResponse('ارز مورد نظر یافت نشد', 404);
             }
@@ -167,7 +166,7 @@ class CurrencyController extends BaseController
     {
         try {
             $validatedData = $request->validated();
-            
+
             // تبدیل کد به حروف بزرگ
             if (isset($validatedData['code'])) {
                 $validatedData['code'] = strtoupper($validatedData['code']);
@@ -197,11 +196,11 @@ class CurrencyController extends BaseController
         try {
             // بررسی می‌کنیم که آیا ارز در حال استفاده است یا خیر
             $isUsed = $this->currencyService->isCurrencyInUse($id);
-            
+
             if ($isUsed) {
                 return $this->errorResponse('این ارز در حال استفاده است و قابل حذف نمی‌باشد', 422);
             }
-            
+
             $this->currencyService->delete($id);
 
             return $this->successResponse(null, 'ارز با موفقیت حذف شد');
@@ -245,7 +244,7 @@ class CurrencyController extends BaseController
     {
         try {
             $currencies = $this->currencyService->getActiveCurrencies();
-            
+
             return $this->successResponse($currencies, 'لیست ارزهای فعال با موفقیت دریافت شد');
         } catch (\Exception $ex) {
             Log::error('Error in CurrencyController@getActive: ' . $ex->getMessage());
@@ -266,7 +265,7 @@ class CurrencyController extends BaseController
     {
         try {
             $currency = $this->currencyService->getDefaultCurrency();
-            
+
             if (!$currency) {
                 return $this->errorResponse('ارز پیش‌فرضی یافت نشد', 404);
             }
@@ -293,9 +292,9 @@ class CurrencyController extends BaseController
         try {
             $onlyActive = $request->get('only_active', true);
             $withCode = $request->get('with_code', false);
-            
+
             $currencies = $this->currencyService->getList($onlyActive, $withCode);
-            
+
             return $this->successResponse($currencies, 'لیست ارزها با موفقیت دریافت شد');
         } catch (\Exception $ex) {
             Log::error('Error in CurrencyController@getList: ' . $ex->getMessage());
@@ -317,7 +316,7 @@ class CurrencyController extends BaseController
     {
         try {
             $currency = $this->currencyService->getByCode(strtoupper($code));
-            
+
             if (!$currency) {
                 return $this->errorResponse('ارز مورد نظر یافت نشد', 404);
             }
@@ -343,7 +342,7 @@ class CurrencyController extends BaseController
         try {
             $onlyActive = $request->get('only_active', true);
             $currencies = $this->currencyService->getByDecimalPlaces($places, $onlyActive);
-            
+
             return $this->successResponse($currencies, 'لیست ارزها با موفقیت دریافت شد');
         } catch (\Exception $ex) {
             Log::error('Error in CurrencyController@getByDecimalPlaces: ' . $ex->getMessage());
@@ -363,7 +362,7 @@ class CurrencyController extends BaseController
     {
         try {
             $statistics = $this->currencyService->getStatistics();
-            
+
             return $this->successResponse($statistics, 'آمار ارزها با موفقیت دریافت شد');
         } catch (\Exception $ex) {
             Log::error('Error in CurrencyController@statistics: ' . $ex->getMessage());
@@ -396,19 +395,19 @@ class CurrencyController extends BaseController
                 'amount' => 'required|numeric',
                 'with_symbol' => 'boolean',
             ]);
-            
+
             $currency = $this->currencyService->find($id);
-            
+
             if (!$currency) {
                 return $this->errorResponse('ارز مورد نظر یافت نشد', 404);
             }
-            
+
             $formatted = $this->currencyService->formatAmount(
                 $currency,
                 $request->amount,
                 $request->get('with_symbol', true)
             );
-            
+
             return $this->successResponse([
                 'original' => $request->amount,
                 'formatted' => $formatted,
@@ -443,15 +442,15 @@ class CurrencyController extends BaseController
             $request->validate([
                 'amount' => 'required|numeric',
             ]);
-            
+
             $currency = $this->currencyService->find($id);
-            
+
             if (!$currency) {
                 return $this->errorResponse('ارز مورد نظر یافت نشد', 404);
             }
-            
+
             $rounded = $this->currencyService->roundAmount($currency, $request->amount);
-            
+
             return $this->successResponse([
                 'original' => $request->amount,
                 'rounded' => $rounded,

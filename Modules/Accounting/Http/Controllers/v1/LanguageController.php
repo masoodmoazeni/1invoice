@@ -2,13 +2,12 @@
 
 namespace Modules\Accounting\Http\Controllers\v1;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Modules\Accounting\Services\LanguageService;
-
 use Modules\Accounting\Http\Requests\Language\LanguageRequest;
 use Modules\Accounting\Http\Requests\Language\LanguageUpdateRequest;
+use Modules\System\Services\LanguageService;
 
 class LanguageController extends BaseController
 {
@@ -95,7 +94,7 @@ class LanguageController extends BaseController
     {
         try {
             $language = $this->languageService->find($id);
-            
+
             if (!$language) {
                 return $this->errorResponse('زبان مورد نظر یافت نشد', 404);
             }
@@ -146,7 +145,7 @@ class LanguageController extends BaseController
     public function destroy($id)
     {
         try {
-            
+
             $this->languageService->delete($id);
 
             return $this->successResponse(null, 'زبان با موفقیت حذف شد');
@@ -169,7 +168,7 @@ class LanguageController extends BaseController
     public function toggleStatus($id)
     {
         try {
-            
+
 
             $language = $this->languageService->toggleStatus($id);
 

@@ -2,12 +2,12 @@
 
 namespace Modules\Accounting\Http\Controllers\v1;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Modules\Accounting\Services\ExchangeRateService;
 use Modules\Accounting\Http\Requests\ExchangeRate\ExchangeRateRequest;
 use Modules\Accounting\Http\Requests\ExchangeRate\ExchangeRateUpdateRequest;
+use Modules\System\Services\ExchangeRateService;
 
 class ExchangeRateController extends BaseController
 {
@@ -193,7 +193,7 @@ class ExchangeRateController extends BaseController
     {
         try {
             $exchangeRate = $this->exchangeRateService->find($id);
-            
+
             if (!$exchangeRate) {
                 return $this->errorResponse('نرخ ارز مورد نظر یافت نشد', 404);
             }
@@ -551,7 +551,7 @@ class ExchangeRateController extends BaseController
                 'rates.*.from_currency_id' => 'required|exists:currencies,id',
                 'rates.*.to_currency_id' => 'required|exists:currencies,id|different:from_currency_id',
                 'rates.*.rate' => 'required|numeric|min:0.000001',
-                'source' => 'nullable|string|in:' . implode(',', array_keys(\Modules\Accounting\Entities\ExchangeRate::$sources)),
+                'source' => 'nullable|string|in:' . implode(',', array_keys(\Modules\System\Entities\ExchangeRate::$sources)),
                 'effective_date' => 'nullable|date',
             ]);
 
@@ -586,7 +586,7 @@ class ExchangeRateController extends BaseController
     public function getSources()
     {
         try {
-            $sources = \Modules\Accounting\Entities\ExchangeRate::$sources;
+            $sources = \Modules\System\Entities\ExchangeRate::$sources;
             return $this->successResponse($sources, 'لیست منابع با موفقیت دریافت شد');
         } catch (\Exception $ex) {
             Log::error('Error in getSources: ' . $ex->getMessage());

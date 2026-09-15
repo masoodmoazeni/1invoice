@@ -1,5 +1,6 @@
 {
     "User": true,
     "Setting": true,
-    "Accounting": true
+    "Accounting": true,
+    "System": true
 }

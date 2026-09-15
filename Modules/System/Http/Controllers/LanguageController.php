@@ -1,42 +1,20 @@
 <?php
 
-namespace Modules\Accounting\Http\Controllers;
+namespace Modules\System\Http\Controllers;
 
-use App\Http\Controllers\BaseController;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
-use Modules\System\Services\CountryService;
+use Illuminate\Routing\Controller;
 
-class CountryController extends BaseController
+class LanguageController extends Controller
 {
-    protected CountryService $countryService;
-
-    public function __construct(
-        CountryService $countryService,
-    )
-    {
-        $this->countryService = $countryService;
-    }
-
     /**
      * Display a listing of the resource.
      * @return Renderable
      */
-    public function index(Request $request)
+    public function index()
     {
-        $breadcrumbs = [
-            ['label' => __('messages.menu.main'), 'url' => route('country.index')],
-            ['label' => __('messages.menu.setting.item'), 'url' => route('country.index')],
-            ['label' => __('messages.item.label.title_index')]
-        ];
-
-        $page = $request->get('page', 1);
-        $filter = $request->get('filter', []);
-        $perPage = $request->get('per_page', 15);
-
-        $country = $this->countryService->getPaginate($perPage, $filter);
-
-        return view('accounting::country.index' , compact('country', 'breadcrumbs'));
+        return view('system::index');
     }
 
     /**
@@ -45,7 +23,7 @@ class CountryController extends BaseController
      */
     public function create()
     {
-        return view('accounting::create');
+        return view('system::create');
     }
 
     /**
@@ -65,7 +43,7 @@ class CountryController extends BaseController
      */
     public function show($id)
     {
-        return view('accounting::show');
+        return view('system::show');
     }
 
     /**
@@ -75,7 +53,7 @@ class CountryController extends BaseController
      */
     public function edit($id)
     {
-        return view('accounting::edit');
+        return view('system::edit');
     }
 
     /**
