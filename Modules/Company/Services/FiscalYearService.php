@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\Accounting\Services;
+namespace Modules\Company\Services;
 
 
 use App\Services\BaseService;
-use Modules\Accounting\Repositories\FiscalYearRepository;
+use Modules\Company\Repositories\FiscalYearRepository;
 
 class FiscalYearService extends BaseService
 {

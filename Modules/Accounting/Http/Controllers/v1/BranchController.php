@@ -2,13 +2,12 @@
 
 namespace Modules\Accounting\Http\Controllers\v1;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Modules\Accounting\Services\BranchService;
-
 use Modules\Accounting\Http\Requests\Branch\BranchRequest;
 use Modules\Accounting\Http\Requests\Branch\BranchUpdateRequest;
+use Modules\Company\Services\BranchService;
 
 class BranchController extends BaseController
 {
@@ -44,29 +43,29 @@ class BranchController extends BaseController
     {
         try {
             $perPage = $request->get('per_page', 15);
-            
+
             $filters = [];
-            
+
             if ($request->has('search')) {
                 $filters['search'] = $request->get('search');
             }
-            
+
             if ($request->has('company_id')) {
                 $filters['company_id'] = $request->get('company_id');
             }
-            
+
             if ($request->has('country_id')) {
                 $filters['country_id'] = $request->get('country_id');
             }
-            
+
             if ($request->has('city')) {
                 $filters['city'] = $request->get('city');
             }
-            
+
             if ($request->has('is_active')) {
                 $filters['is_active'] = $request->get('is_active');
             }
-            
+
             if ($request->has('is_default')) {
                 $filters['is_default'] = $request->get('is_default');
             }
@@ -111,7 +110,7 @@ class BranchController extends BaseController
     {
         try {
             $validatedData = $request->validated();
-            
+
             // اگر کد ارسال نشده، به صورت خودکار تولید می‌شود
             if (!isset($validatedData['code']) || empty($validatedData['code'])) {
                 $validatedData['code'] = $this->branchService->generateBranchCode(
@@ -119,7 +118,7 @@ class BranchController extends BaseController
                     $validatedData['company_id']
                 );
             }
-            
+
             $branch = $this->branchService->create($validatedData);
 
             return $this->successResponse($branch, 'شعبه با موفقیت ایجاد شد', 201);
@@ -143,7 +142,7 @@ class BranchController extends BaseController
     {
         try {
             $branch = $this->branchService->find($id);
-            
+
             if (!$branch) {
                 return $this->errorResponse('شعبه مورد نظر یافت نشد', 404);
             }
@@ -210,11 +209,11 @@ class BranchController extends BaseController
         try {
             // بررسی می‌کنیم که آیا شعبه پیش‌فرض است یا خیر
             $branch = $this->branchService->find($id);
-            
+
             if ($branch && $branch->is_default) {
                 return $this->errorResponse('شعبه پیش‌فرض قابل حذف نیست. ابتدا شعبه دیگری را به عنوان پیش‌فرض انتخاب کنید.', 422);
             }
-            
+
             $this->branchService->delete($id);
 
             return $this->successResponse(null, 'شعبه با موفقیت حذف شد');
@@ -283,7 +282,7 @@ class BranchController extends BaseController
         try {
             $companyId = $request->get('company_id');
             $branches = $this->branchService->getActiveBranches($companyId);
-            
+
             return $this->successResponse($branches, 'لیست شعب فعال با موفقیت دریافت شد');
         } catch (\Exception $ex) {
             Log::error('Error in BranchController@getActive: ' . $ex->getMessage());
@@ -305,13 +304,13 @@ class BranchController extends BaseController
     {
         try {
             $companyId = $request->get('company_id');
-            
+
             if (!$companyId) {
                 return $this->errorResponse('شناسه شرکت الزامی است', 422);
             }
-            
+
             $branch = $this->branchService->getDefaultBranch($companyId);
-            
+
             if (!$branch) {
                 return $this->errorResponse('شعبه پیش‌فرضی برای این شرکت یافت نشد', 404);
             }
@@ -338,7 +337,7 @@ class BranchController extends BaseController
         try {
             $onlyActive = $request->get('only_active', true);
             $branches = $this->branchService->getByCompany($companyId, $onlyActive);
-            
+
             return $this->successResponse($branches, 'لیست شعب شرکت با موفقیت دریافت شد');
         } catch (\Exception $ex) {
             Log::error('Error in BranchController@getByCompany: ' . $ex->getMessage());
@@ -361,7 +360,7 @@ class BranchController extends BaseController
         try {
             $onlyActive = $request->get('only_active', true);
             $branches = $this->branchService->getByCountry($countryId, $onlyActive);
-            
+
             return $this->successResponse($branches, 'لیست شعب کشور با موفقیت دریافت شد');
         } catch (\Exception $ex) {
             Log::error('Error in BranchController@getByCountry: ' . $ex->getMessage());
@@ -382,13 +381,13 @@ class BranchController extends BaseController
     {
         try {
             $companyId = $request->get('company_id');
-            
+
             if (!$companyId) {
                 return $this->errorResponse('شناسه شرکت الزامی است', 422);
             }
-            
+
             $statistics = $this->branchService->getStatistics($companyId);
-            
+
             return $this->successResponse($statistics, 'آمار شعب با موفقیت دریافت شد');
         } catch (\Exception $ex) {
             Log::error('Error in BranchController@statistics: ' . $ex->getMessage());
@@ -411,16 +410,16 @@ class BranchController extends BaseController
     {
         try {
             $companyId = $request->get('company_id');
-            
+
             if (!$companyId) {
                 return $this->errorResponse('شناسه شرکت الزامی است', 422);
             }
-            
+
             $onlyActive = $request->get('only_active', true);
             $withCode = $request->get('with_code', false);
-            
+
             $branches = $this->branchService->getList($companyId, $onlyActive, $withCode);
-            
+
             return $this->successResponse($branches, 'لیست شعب با موفقیت دریافت شد');
         } catch (\Exception $ex) {
             Log::error('Error in BranchController@getList: ' . $ex->getMessage());

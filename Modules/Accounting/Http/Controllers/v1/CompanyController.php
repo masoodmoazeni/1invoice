@@ -2,16 +2,13 @@
 
 namespace Modules\Accounting\Http\Controllers\v1;
 
+use App\Http\Controllers\BaseController;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
-use App\Http\Controllers\BaseController;
-use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
-
-use Modules\Accounting\Services\CompanyService;
-
 use Modules\Accounting\Http\Requests\Company\CompanyRequest;
 use Modules\Accounting\Http\Requests\Company\CompanyUpdateRequest;
+use Modules\Company\Services\CompanyService;
 
 class CompanyController extends BaseController
 {
@@ -118,7 +115,7 @@ class CompanyController extends BaseController
     {
         try {
             $validatedData = $request->validated();
-        
+
             $company = $this->companyService->create($validatedData);
 
             return $this->successResponse($company, 'company created successfully');
@@ -168,7 +165,7 @@ class CompanyController extends BaseController
     {
         try {
             $company = $this->companyService->find($id);
-            
+
             if (!$company) {
                 return $this->errorResponse('Company not found', 404);
             }
@@ -237,9 +234,9 @@ class CompanyController extends BaseController
     {
         try {
             $validatedData = $request->validated();
-            
+
             $company = $this->companyService->update($id, $validatedData);
-            
+
             if (!$company) {
                 return $this->errorResponse('Company not found', 404);
             }
@@ -281,7 +278,7 @@ class CompanyController extends BaseController
     {
         try {
             $result = $this->companyService->delete($id);
-            
+
             if (!$result) {
                 return $this->errorResponse('Company not found', 404);
             }
@@ -323,7 +320,7 @@ class CompanyController extends BaseController
     {
         try {
             $company = $this->companyService->toggleStatus($id);
-            
+
             if (!$company) {
                 return $this->errorResponse('Company not found', 404);
             }

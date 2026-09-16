@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\Accounting\Services;
+namespace Modules\Company\Services;
 
 
 use App\Services\BaseService;
-use Modules\Accounting\Repositories\DepartmentRepository;
+use Modules\Company\Repositories\DepartmentRepository;
 
 class DepartmentService extends BaseService
 {

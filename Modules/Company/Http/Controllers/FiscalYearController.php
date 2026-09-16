@@ -1,12 +1,12 @@
 <?php
 
-namespace Modules\System\Http\Controllers;
+namespace Modules\Company\Http\Controllers;
 
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
-class CountryController extends Controller
+class FiscalYearController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +14,7 @@ class CountryController extends Controller
      */
     public function index()
     {
-        return view('system::country.index');
+        return view('company::fiscal-year.index');
     }
 
     /**
@@ -23,7 +23,7 @@ class CountryController extends Controller
      */
     public function create()
     {
-        return view('system::create');
+        return view('company::create');
     }
 
     /**
@@ -43,7 +43,7 @@ class CountryController extends Controller
      */
     public function show($id)
     {
-        return view('system::show');
+        return view('company::show');
     }
 
     /**
@@ -53,7 +53,7 @@ class CountryController extends Controller
      */
     public function edit($id)
     {
-        return view('system::edit');
+        return view('company::edit');
     }
 
     /**

@@ -2,5 +2,6 @@
     "User": true,
     "Setting": true,
     "Accounting": true,
-    "System": true
+    "System": true,
+    "Company": true
 }

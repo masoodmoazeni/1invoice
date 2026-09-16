@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\Accounting\Repositories;
+namespace Modules\Company\Repositories;
 
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Model;
-use Modules\Accounting\Entities\Company;
+use Modules\Company\Entities\Company;
 
 class CompanyRepository extends BaseRepository
 {

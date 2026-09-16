@@ -2,13 +2,12 @@
 
 namespace Modules\Accounting\Http\Controllers\v1;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Modules\Accounting\Services\DepartmentService;
-
 use Modules\Accounting\Http\Requests\Department\DepartmentRequest;
 use Modules\Accounting\Http\Requests\Department\DepartmentUpdateRequest;
+use Modules\Company\Services\DepartmentService;
 
 class DepartmentController extends BaseController
 {
@@ -43,38 +42,38 @@ class DepartmentController extends BaseController
     {
         try {
             $perPage = $request->get('per_page', 15);
-            
+
             $filters = [];
-            
+
             if ($request->has('search')) {
                 $filters['search'] = $request->get('search');
             }
-            
+
             if ($request->has('company_id')) {
                 $filters['company_id'] = $request->get('company_id');
             }
-            
+
             if ($request->has('parent_id')) {
                 $filters['parent_id'] = $request->get('parent_id');
             }
-            
+
             if ($request->has('is_active')) {
                 $filters['is_active'] = $request->get('is_active');
             }
-            
+
             if ($request->has('has_children')) {
                 $filters['has_children'] = $request->get('has_children');
             }
-            
+
             if ($request->has('is_root')) {
                 $filters['is_root'] = $request->get('is_root');
             }
-            
+
             if ($request->has('sort_by')) {
                 $filters['sort_by'] = $request->get('sort_by');
             }
-            
-            
+
+
             $departments = $this->departmentService->getPaginate($perPage, $filters);
 
             return $this->successResponse($departments, 'لیست دپارتمان‌ها با موفقیت دریافت شد');
@@ -110,7 +109,7 @@ class DepartmentController extends BaseController
     {
         try {
             $validatedData = $request->validated();
-            
+
             // اگر کد ارسال نشده، به صورت خودکار تولید می‌شود
             if (!isset($validatedData['code']) || empty($validatedData['code'])) {
                 $validatedData['code'] = $this->departmentService->generateDepartmentCode(
@@ -118,7 +117,7 @@ class DepartmentController extends BaseController
                     $validatedData['company_id']
                 );
             }
-            
+
             $department = $this->departmentService->create($validatedData);
 
             return $this->successResponse($department, 'دپارتمان با موفقیت ایجاد شد', 201);
@@ -142,7 +141,7 @@ class DepartmentController extends BaseController
     {
         try {
             $department = $this->departmentService->find($id);
-            
+
             if (!$department) {
                 return $this->errorResponse('دپارتمان مورد نظر یافت نشد', 404);
             }
@@ -208,11 +207,11 @@ class DepartmentController extends BaseController
         try {
             // بررسی می‌کنیم که آیا دپارتمان دارای زیرمجموعه است یا خیر
             $hasChildren = $this->departmentService->hasChildren($id);
-            
+
             if ($hasChildren) {
                 return $this->errorResponse('این دپارتمان دارای زیرمجموعه است و قابل حذف نمی‌باشد', 422);
             }
-            
+
             $this->departmentService->delete($id);
 
             return $this->successResponse(null, 'دپارتمان با موفقیت حذف شد');
@@ -281,13 +280,13 @@ class DepartmentController extends BaseController
         try {
             $companyId = $request->get('company_id');
             $parentId = $request->get('parent_id');
-            
+
             if (!$companyId) {
                 return $this->errorResponse('شناسه شرکت الزامی است', 422);
             }
-            
+
             $tree = $this->departmentService->getTree($companyId, $parentId);
-            
+
             return $this->successResponse($tree, 'درختواره دپارتمان‌ها با موفقیت دریافت شد');
         } catch (\Exception $ex) {
             Log::error('Error in DepartmentController@getTree: ' . $ex->getMessage());
@@ -308,13 +307,13 @@ class DepartmentController extends BaseController
     {
         try {
             $companyId = $request->get('company_id');
-            
+
             if (!$companyId) {
                 return $this->errorResponse('شناسه شرکت الزامی است', 422);
             }
-            
+
             $flatTree = $this->departmentService->getFlatTree($companyId);
-            
+
             return $this->successResponse($flatTree, 'لیست تخت دپارتمان‌ها با موفقیت دریافت شد');
         } catch (\Exception $ex) {
             Log::error('Error in DepartmentController@getFlatTree: ' . $ex->getMessage());
@@ -335,13 +334,13 @@ class DepartmentController extends BaseController
     {
         try {
             $companyId = $request->get('company_id');
-            
+
             if (!$companyId) {
                 return $this->errorResponse('شناسه شرکت الزامی است', 422);
             }
-            
+
             $departments = $this->departmentService->getRootDepartments($companyId);
-            
+
             return $this->successResponse($departments, 'لیست دپارتمان‌های ریشه با موفقیت دریافت شد');
         } catch (\Exception $ex) {
             Log::error('Error in DepartmentController@getRootDepartments: ' . $ex->getMessage());
@@ -364,14 +363,14 @@ class DepartmentController extends BaseController
     {
         try {
             $department = $this->departmentService->find($id);
-            
+
             if (!$department) {
                 return $this->errorResponse('دپارتمان مورد نظر یافت نشد', 404);
             }
-            
+
             $onlyActive = $request->get('only_active', true);
             $children = $this->departmentService->getChildren($id, $onlyActive);
-            
+
             return $this->successResponse($children, 'زیرمجموعه‌ها با موفقیت دریافت شد');
         } catch (\Exception $ex) {
             Log::error('Error in DepartmentController@getChildren: ' . $ex->getMessage());
@@ -393,13 +392,13 @@ class DepartmentController extends BaseController
     {
         try {
             $department = $this->departmentService->find($id);
-            
+
             if (!$department) {
                 return $this->errorResponse('دپارتمان مورد نظر یافت نشد', 404);
             }
-            
+
             $ancestors = $this->departmentService->getAncestors($id);
-            
+
             return $this->successResponse($ancestors, 'والدها با موفقیت دریافت شد');
         } catch (\Exception $ex) {
             Log::error('Error in DepartmentController@getAncestors: ' . $ex->getMessage());
@@ -422,16 +421,16 @@ class DepartmentController extends BaseController
     {
         try {
             $companyId = $request->get('company_id');
-            
+
             if (!$companyId) {
                 return $this->errorResponse('شناسه شرکت الزامی است', 422);
             }
-            
+
             $onlyActive = $request->get('only_active', true);
             $flat = $request->get('flat', true);
-            
+
             $departments = $this->departmentService->getList($companyId, $onlyActive, $flat);
-            
+
             return $this->successResponse($departments, 'لیست دپارتمان‌ها با موفقیت دریافت شد');
         } catch (\Exception $ex) {
             Log::error('Error in DepartmentController@getList: ' . $ex->getMessage());
@@ -453,13 +452,13 @@ class DepartmentController extends BaseController
     {
         try {
             $companyId = $request->get('company_id');
-            
+
             if (!$companyId) {
                 return $this->errorResponse('شناسه شرکت الزامی است', 422);
             }
-            
+
             $departments = $this->departmentService->getByLevel($companyId, $level);
-            
+
             return $this->successResponse($departments, 'لیست دپارتمان‌ها با موفقیت دریافت شد');
         } catch (\Exception $ex) {
             Log::error('Error in DepartmentController@getByLevel: ' . $ex->getMessage());
@@ -480,13 +479,13 @@ class DepartmentController extends BaseController
     {
         try {
             $companyId = $request->get('company_id');
-            
+
             if (!$companyId) {
                 return $this->errorResponse('شناسه شرکت الزامی است', 422);
             }
-            
+
             $statistics = $this->departmentService->getStatistics($companyId);
-            
+
             return $this->successResponse($statistics, 'آمار دپارتمان‌ها با موفقیت دریافت شد');
         } catch (\Exception $ex) {
             Log::error('Error in DepartmentController@statistics: ' . $ex->getMessage());
@@ -519,12 +518,12 @@ class DepartmentController extends BaseController
                 'department_id' => 'required|exists:departments,id',
                 'new_parent_id' => 'nullable|exists:departments,id',
             ]);
-            
+
             $department = $this->departmentService->move(
                 $request->department_id,
                 $request->new_parent_id
             );
-            
+
             return $this->successResponse($department, 'دپارتمان با موفقیت جابه‌جا شد');
         } catch (\Exception $ex) {
             Log::error('Error in DepartmentController@move: ' . $ex->getMessage());

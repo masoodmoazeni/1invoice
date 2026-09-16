@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Modules\Accounting\Http\Requests\FiscalYear\FiscalYearRequest;
 use Modules\Accounting\Http\Requests\FiscalYear\FiscalYearUpdateRequest;
-use Modules\Accounting\Services\FiscalYearService;
+use Modules\Company\Services\FiscalYearService;
 
 class FiscalYearController extends BaseController
 {
