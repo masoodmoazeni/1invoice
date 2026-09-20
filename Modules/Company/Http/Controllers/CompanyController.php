@@ -2,78 +2,74 @@
 
 namespace Modules\Company\Http\Controllers;
 
-use Illuminate\Contracts\Support\Renderable;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
+use Modules\Company\Http\Requests\Company\CreateCompanyRequest;
+use Modules\Company\Http\Requests\Company\UpdateCompanyRequest;
+use Modules\Company\Services\CompanyService;
 
 class CompanyController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
+    public function __construct(protected CompanyService $companyService)
+    {
+    }
+
     public function index()
     {
-        return view('company::company.index');
+        $companies = $this->companyService->getAll([], ['*'], [], ['id' => 'desc']);
+
+        return view('company::company.index', compact('companies'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
     public function create()
     {
-        return view('company::create');
+        return view('company::company.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Renderable
-     */
-    public function store(Request $request)
+    public function store(CreateCompanyRequest $request): RedirectResponse
     {
-        //
+        $result = $this->companyService->create($request->validated());
+
+        if (!($result['success'] ?? false)) {
+            return back()->withInput()->withErrors(['message' => $result['message'] ?? 'Unable to create company.']);
+        }
+
+        return redirect()->route('company.company.index')->with('success', $result['message'] ?? 'Company created successfully.');
     }
 
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function show($id)
+    public function show(int $company)
     {
-        return view('company::show');
+        $company = $this->companyService->findOrFail($company, ['country', 'baseCurrency', 'language', 'timezone']);
+
+        return view('company::company.show', compact('company'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function edit($id)
+    public function edit(int $company)
     {
-        return view('company::edit');
+        $company = $this->companyService->findOrFail($company);
+
+        return view('company::company.edit', compact('company'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
-    public function update(Request $request, $id)
+    public function update(UpdateCompanyRequest $request, int $company): RedirectResponse
     {
-        //
+        $result = $this->companyService->update($company, $request->validated());
+
+        if (!($result['success'] ?? false)) {
+            return back()->withInput()->withErrors(['message' => $result['message'] ?? 'Unable to update company.']);
+        }
+
+        return redirect()->route('company.company.index')->with('success', $result['message'] ?? 'Company updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
-    public function destroy($id)
+    public function destroy(int $company): RedirectResponse
     {
-        //
+        $result = $this->companyService->delete($company);
+
+        if (!($result['success'] ?? false)) {
+            return back()->withErrors(['message' => $result['message'] ?? 'Unable to delete company.']);
+        }
+
+        return redirect()->route('company.company.index')->with('success', $result['message'] ?? 'Company deleted successfully.');
     }
 }
