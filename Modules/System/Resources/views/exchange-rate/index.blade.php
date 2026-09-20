@@ -1,1 +1,20 @@
-@include('system::components.crud-table', ['title' => 'نرخ‌های ارز', 'resource' => 'system.exchange-rate', 'rows' => $exchangeRates, 'columns' => [['key'=>'id','label'=>'شناسه'],['key'=>'from_currency_id','label'=>'ارز مبدأ'],['key'=>'to_currency_id','label'=>'ارز مقصد'],['key'=>'rate','label'=>'نرخ'],['key'=>'effective_date','label'=>'تاریخ اعتبار'],['key'=>'source','label'=>'منبع']]])
+@extends('layout.master')
+@section('content')
+<div class="container-fluid py-5">
+    <x-breadcrumb :items="[['label' => 'System'], ['label' => 'Exchange rates']]" />
+    <x-data-table
+        :headers="[
+            ['key' => 'fromCurrency.code', 'label' => 'From'], ['key' => 'toCurrency.code', 'label' => 'To'],
+            ['key' => 'rate', 'label' => 'Rate'], ['key' => 'effective_date', 'label' => 'Effective date'],
+            ['key' => 'source_label', 'label' => 'Source'],
+        ]"
+        :rows="$exchangeRates" title="Exchange rates" title-create="Add exchange rate"
+        resource-name="system.exchange-rate"
+        :actions="[
+            ['type' => 'link', 'route' => 'system.exchange-rate.show', 'label' => 'Show'],
+            ['type' => 'link', 'route' => 'system.exchange-rate.edit', 'label' => 'Edit'],
+            ['type' => 'delete', 'route' => 'system.exchange-rate.destroy', 'label' => 'Delete'],
+        ]"
+    />
+</div>
+@endsection
