@@ -2,78 +2,75 @@
 
 namespace Modules\System\Http\Controllers;
 
-use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Modules\System\Http\Requests\Country\CreateCountryRequest;
+use Modules\System\Http\Requests\Country\UpdateCountryRequest;
+use Modules\System\Services\CountryService;
 
 class CountryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
+    public function __construct(protected CountryService $countryService)
+    {
+    }
+
     public function index()
     {
-        return view('system::country.index');
+        $countries = $this->countryService->getAll();
+
+        return view('system::country.index', compact('countries'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
     public function create()
     {
-        return view('system::create');
+        return view('system::country.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Renderable
-     */
-    public function store(Request $request)
+    public function store(CreateCountryRequest $request): RedirectResponse
     {
-        //
+        $result = $this->countryService->create($request->validated());
+
+        if (!($result['success'] ?? false)) {
+            return back()->withInput()->withErrors(['message' => $result['message'] ?? 'Unable to create country.']);
+        }
+
+        return redirect()->route('system.country.index')->with('success', $result['message'] ?? 'Country created successfully.');
     }
 
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function show($id)
+    public function show(int $id)
     {
-        return view('system::show');
+        $country = $this->countryService->findOrFail($id);
+
+        return view('system::country.show', compact('country'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function edit($id)
+    public function edit(int $id)
     {
-        return view('system::edit');
+        $country = $this->countryService->findOrFail($id);
+
+        return view('system::country.edit', compact('country'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
-    public function update(Request $request, $id)
+    public function update(UpdateCountryRequest $request, int $id): RedirectResponse
     {
-        //
+        $result = $this->countryService->update($id, $request->validated());
+
+        if (!($result['success'] ?? false)) {
+            return back()->withInput()->withErrors(['message' => $result['message'] ?? 'Unable to update country.']);
+        }
+
+        return redirect()->route('system.country.index')->with('success', $result['message'] ?? 'Country updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
-    public function destroy($id)
+    public function destroy(int $id): RedirectResponse
     {
-        //
+        $result = $this->countryService->delete($id);
+
+        if (!($result['success'] ?? false)) {
+            return back()->withErrors(['message' => $result['message'] ?? 'Unable to delete country.']);
+        }
+
+        return redirect()->route('system.country.index')->with('success', $result['message'] ?? 'Country deleted successfully.');
     }
 }

@@ -2,78 +2,74 @@
 
 namespace Modules\System\Http\Controllers;
 
-use Illuminate\Contracts\Support\Renderable;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
+use Modules\System\Http\Requests\TimeZone\CreateTimeZoneRequest;
+use Modules\System\Http\Requests\TimeZone\UpdateTimeZoneRequest;
+use Modules\System\Services\TimeZoneService;
 
 class TimeZoneController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
+    public function __construct(protected TimeZoneService $timeZoneService)
+    {
+    }
+
     public function index()
     {
-        return view('system::index');
+        $timeZones = $this->timeZoneService->getAll();
+
+        return view('system::time-zone.index', compact('timeZones'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
     public function create()
     {
-        return view('system::create');
+        return view('system::time-zone.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Renderable
-     */
-    public function store(Request $request)
+    public function store(CreateTimeZoneRequest $request): RedirectResponse
     {
-        //
+        $result = $this->timeZoneService->create($request->validated());
+
+        if (!($result['success'] ?? false)) {
+            return back()->withInput()->withErrors(['message' => $result['message'] ?? 'Unable to create timezone.']);
+        }
+
+        return redirect()->route('system.time-zone.index')->with('success', $result['message'] ?? 'Timezone created successfully.');
     }
 
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function show($id)
+    public function show(int $id)
     {
-        return view('system::show');
+        $timeZone = $this->timeZoneService->findOrFail($id);
+
+        return view('system::time-zone.show', compact('timeZone'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function edit($id)
+    public function edit(int $id)
     {
-        return view('system::edit');
+        $timeZone = $this->timeZoneService->findOrFail($id);
+
+        return view('system::time-zone.edit', compact('timeZone'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
-    public function update(Request $request, $id)
+    public function update(UpdateTimeZoneRequest $request, int $id): RedirectResponse
     {
-        //
+        $result = $this->timeZoneService->update($id, $request->validated());
+
+        if (!($result['success'] ?? false)) {
+            return back()->withInput()->withErrors(['message' => $result['message'] ?? 'Unable to update timezone.']);
+        }
+
+        return redirect()->route('system.time-zone.index')->with('success', $result['message'] ?? 'Timezone updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
-    public function destroy($id)
+    public function destroy(int $id): RedirectResponse
     {
-        //
+        $result = $this->timeZoneService->delete($id);
+
+        if (!($result['success'] ?? false)) {
+            return back()->withErrors(['message' => $result['message'] ?? 'Unable to delete timezone.']);
+        }
+
+        return redirect()->route('system.time-zone.index')->with('success', $result['message'] ?? 'Timezone deleted successfully.');
     }
 }

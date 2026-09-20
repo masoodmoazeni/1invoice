@@ -2,78 +2,74 @@
 
 namespace Modules\System\Http\Controllers;
 
-use Illuminate\Contracts\Support\Renderable;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
+use Modules\System\Http\Requests\Currency\CreateCurrencyRequest;
+use Modules\System\Http\Requests\Currency\UpdateCurrencyRequest;
+use Modules\System\Services\CurrencyService;
 
 class CurrencyController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
+    public function __construct(protected CurrencyService $currencyService)
+    {
+    }
+
     public function index()
     {
-        return view('system::index');
+        $currencies = $this->currencyService->getAll();
+
+        return view('system::currency.index', compact('currencies'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
     public function create()
     {
-        return view('system::create');
+        return view('system::currency.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Renderable
-     */
-    public function store(Request $request)
+    public function store(CreateCurrencyRequest $request): RedirectResponse
     {
-        //
+        $result = $this->currencyService->create($request->validated());
+
+        if (!($result['success'] ?? false)) {
+            return back()->withInput()->withErrors(['message' => $result['message'] ?? 'Unable to create currency.']);
+        }
+
+        return redirect()->route('system.currency.index')->with('success', $result['message'] ?? 'Currency created successfully.');
     }
 
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function show($id)
+    public function show(int $id)
     {
-        return view('system::show');
+        $currency = $this->currencyService->findOrFail($id);
+
+        return view('system::currency.show', compact('currency'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function edit($id)
+    public function edit(int $id)
     {
-        return view('system::edit');
+        $currency = $this->currencyService->findOrFail($id);
+
+        return view('system::currency.edit', compact('currency'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
-    public function update(Request $request, $id)
+    public function update(UpdateCurrencyRequest $request, int $id): RedirectResponse
     {
-        //
+        $result = $this->currencyService->update($id, $request->validated());
+
+        if (!($result['success'] ?? false)) {
+            return back()->withInput()->withErrors(['message' => $result['message'] ?? 'Unable to update currency.']);
+        }
+
+        return redirect()->route('system.currency.index')->with('success', $result['message'] ?? 'Currency updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
-    public function destroy($id)
+    public function destroy(int $id): RedirectResponse
     {
-        //
+        $result = $this->currencyService->delete($id);
+
+        if (!($result['success'] ?? false)) {
+            return back()->withErrors(['message' => $result['message'] ?? 'Unable to delete currency.']);
+        }
+
+        return redirect()->route('system.currency.index')->with('success', $result['message'] ?? 'Currency deleted successfully.');
     }
 }

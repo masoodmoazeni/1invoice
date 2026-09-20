@@ -2,78 +2,74 @@
 
 namespace Modules\System\Http\Controllers;
 
-use Illuminate\Contracts\Support\Renderable;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
+use Modules\System\Http\Requests\ExchangeRate\CreateExchangeRateRequest;
+use Modules\System\Http\Requests\ExchangeRate\UpdateExchangeRateRequest;
+use Modules\System\Services\ExchangeRateService;
 
 class ExchangeRateController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
+    public function __construct(protected ExchangeRateService $exchangeRateService)
+    {
+    }
+
     public function index()
     {
-        return view('system::index');
+        $exchangeRates = $this->exchangeRateService->getAll();
+
+        return view('system::exchange-rate.index', compact('exchangeRates'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
     public function create()
     {
-        return view('system::create');
+        return view('system::exchange-rate.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Renderable
-     */
-    public function store(Request $request)
+    public function store(CreateExchangeRateRequest $request): RedirectResponse
     {
-        //
+        $result = $this->exchangeRateService->create($request->validated());
+
+        if (!($result['success'] ?? false)) {
+            return back()->withInput()->withErrors(['message' => $result['message'] ?? 'Unable to create exchange rate.']);
+        }
+
+        return redirect()->route('system.exchange-rate.index')->with('success', $result['message'] ?? 'Exchange rate created successfully.');
     }
 
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function show($id)
+    public function show(int $id)
     {
-        return view('system::show');
+        $exchangeRate = $this->exchangeRateService->findOrFail($id);
+
+        return view('system::exchange-rate.show', compact('exchangeRate'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function edit($id)
+    public function edit(int $id)
     {
-        return view('system::edit');
+        $exchangeRate = $this->exchangeRateService->findOrFail($id);
+
+        return view('system::exchange-rate.edit', compact('exchangeRate'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
-    public function update(Request $request, $id)
+    public function update(UpdateExchangeRateRequest $request, int $id): RedirectResponse
     {
-        //
+        $result = $this->exchangeRateService->update($id, $request->validated());
+
+        if (!($result['success'] ?? false)) {
+            return back()->withInput()->withErrors(['message' => $result['message'] ?? 'Unable to update exchange rate.']);
+        }
+
+        return redirect()->route('system.exchange-rate.index')->with('success', $result['message'] ?? 'Exchange rate updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
-    public function destroy($id)
+    public function destroy(int $id): RedirectResponse
     {
-        //
+        $result = $this->exchangeRateService->delete($id);
+
+        if (!($result['success'] ?? false)) {
+            return back()->withErrors(['message' => $result['message'] ?? 'Unable to delete exchange rate.']);
+        }
+
+        return redirect()->route('system.exchange-rate.index')->with('success', $result['message'] ?? 'Exchange rate deleted successfully.');
     }
 }
