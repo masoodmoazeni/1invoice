@@ -2,78 +2,21 @@
 
 namespace Modules\Company\Http\Controllers;
 
-use Illuminate\Contracts\Support\Renderable;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
+use Modules\Company\Http\Requests\FiscalYear\CreateFiscalYearRequest;
+use Modules\Company\Http\Requests\FiscalYear\UpdateFiscalYearRequest;
+use Modules\Company\Services\FiscalYearService;
 
 class FiscalYearController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
-    public function index()
-    {
-        return view('company::fiscal-year.index');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
-    public function create()
-    {
-        return view('company::create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Renderable
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function show($id)
-    {
-        return view('company::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function edit($id)
-    {
-        return view('company::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
-    public function destroy($id)
-    {
-        //
-    }
+    public function __construct(protected FiscalYearService $fiscalYearService) {}
+    public function index() { $fiscalYears = $this->fiscalYearService->getAll([], ['*'], ['company'], ['start_date' => 'desc']); return view('company::fiscal-year.index', compact('fiscalYears')); }
+    public function create() { return view('company::fiscal-year.create'); }
+    public function store(CreateFiscalYearRequest $request): RedirectResponse { return $this->redirectResult($this->fiscalYearService->create($request->validated())); }
+    public function show(int $fiscalYear) { $fiscalYear = $this->fiscalYearService->findOrFail($fiscalYear, ['company']); return view('company::fiscal-year.show', compact('fiscalYear')); }
+    public function edit(int $fiscalYear) { $fiscalYear = $this->fiscalYearService->findOrFail($fiscalYear); return view('company::fiscal-year.edit', compact('fiscalYear')); }
+    public function update(UpdateFiscalYearRequest $request, int $fiscalYear): RedirectResponse { return $this->redirectResult($this->fiscalYearService->update($fiscalYear, $request->validated())); }
+    public function destroy(int $fiscalYear): RedirectResponse { return $this->redirectResult($this->fiscalYearService->delete($fiscalYear)); }
+    private function redirectResult(array $result): RedirectResponse { if (!($result['success'] ?? false)) return back()->withInput()->withErrors(['message' => $result['message'] ?? 'Operation failed.']); return redirect()->route('company.fiscal-year.index')->with('success', $result['message'] ?? 'Operation completed successfully.'); }
 }

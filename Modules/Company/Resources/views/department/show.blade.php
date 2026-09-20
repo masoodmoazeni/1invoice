@@ -1,0 +1,2 @@
+@extends('layout.master')
+@section('content')<div class="container-fluid py-5"><x-breadcrumb :items="[['label'=>'Company'],['label'=>'Departments'],['label'=>'Show']]" /><div class="card"><div class="card-body"><h3>{{ $department->full_name }}</h3><p>Parent: {{ $department->parent?->name ?? '-' }}</p><a href="{{ route('company.department.edit',$department) }}">Edit</a></div></div></div>@endsection

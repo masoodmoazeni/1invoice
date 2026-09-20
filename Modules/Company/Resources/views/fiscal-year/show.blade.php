@@ -1,0 +1,2 @@
+@extends('layout.master')
+@section('content')<div class="container-fluid py-5"><x-breadcrumb :items="[['label'=>'Company'],['label'=>'Fiscal Years'],['label'=>'Show']]" /><div class="card"><div class="card-body"><h3>{{ $fiscalYear->full_name }}</h3><p>Status: {{ $fiscalYear->status_text }}</p><p>Duration: {{ $fiscalYear->duration }} days</p><a href="{{ route('company.fiscal-year.edit',$fiscalYear) }}">Edit</a></div></div></div>@endsection
