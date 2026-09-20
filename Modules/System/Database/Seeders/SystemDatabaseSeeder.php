@@ -7,15 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class SystemDatabaseSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
+    public function run(): void
     {
         Model::unguard();
 
-        // $this->call("OthersTableSeeder");
+        $this->call([
+            CountriesTableSeeder::class,
+            CurrenciesTableSeeder::class,
+            LanguagesTableSeeder::class,
+            TimeZonesTableSeeder::class,
+            ExchangeRatesTableSeeder::class,
+        ]);
     }
 }
